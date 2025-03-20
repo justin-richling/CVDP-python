@@ -95,13 +95,6 @@ def get_eof(ds, season, latlon_dict, neof):
         if i == 1:
             pcs[i, :] *= (-1)
             eofs[i, :, :] *= (-1)
-        
-
-    """
-    eofs[1, :, :] = eofs[1, :, :] #* (-1)
-
-    pcs[1, :] = pcs[1, :] #* (-1)
-    """
 
     # Sum spatial weights over the area used.
     nLon = xw.sizes["lon"]
