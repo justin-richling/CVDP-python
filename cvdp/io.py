@@ -10,11 +10,121 @@ IO library for CVDP workflow:
 import xarray
 import cftime
 from glob import glob
+from pathlib import Path
 import yaml
 import numpy as np
+import old_utils.file_creation as fc
+
+vname = {"sst":'ts',"TS":'ts',"ts":'ts',"t_surf":'ts',"skt":'ts',
+             "TREFHT":'trefht',"tas":'trefht',"temp":'trefht',"air":'trefht',"temperature_anomaly":'trefht',"temperature":'trefht',"t2m":'trefht',"t_ref":'trefht',"T2":'trefht',"tempanomaly":'trefht',
+             "PSL":'psl',"psl":'psl',"slp":'psl',"SLP":'psl',"prmsl":'psl',"msl":'psl',"slp_dyn":'psl',
+             "PRECC":'prect',"PRECL":'prect',"PRECT":'prect',"pr":'prect',"PPT":'prect',"ppt":'prect',"p":'prect',"P":'prect',"precip":'prect',"PRECIP":'prect',"tp":'prect',"prcp":'prect',"prate":'prect'
+            }
 
 
-def read_datasets(paths: str, members: str=None):
+def read_datasets(paths: str, vn: str, yrs: list, members: str=None) -> xarray.DataArray:
+    """
+    Read datasets and create monthly data 
+    """
+    paths = [path for path in paths if ".nc" in path]
+    if members is not None:
+        print("Looks like an ensemble?")
+        grouped_datasets = []
+        for member in members:
+            #grouped_datasets.append(xarray.open_mfdataset([path for path in paths if member in path]))
+            # da will be a monthly time dimension array
+            da,err = fc.data_read_in_3D([path for path in paths if member in path],yrs[0],yrs[1],vn)
+            if not isinstance(da, xarray.DataArray):
+                print("Borken")
+            grouped_datasets.append(da)
+        da = xarray.concat(grouped_datasets, dim=xarray.DataArray(members, dims="member"))
+        #ds = xarray.concat(grouped_datasets, dim=xarray.DataArray(members, dims="member"))
+    else:
+        #ds = xarray.open_mfdataset(paths)
+        print("vn BEFORE going into read_3D...",vn,type(vn))
+        da,err = fc.data_read_in_3D(paths,yrs[0],yrs[1],vn)
+        if not isinstance(da, xarray.DataArray):
+            print("Borken")
+    return da #ds
+
+
+def get_input_data(config_path: str) -> dict:
+    with open(config_path) as stream:
+        config = yaml.safe_load(stream)
+
+    ref_dataarray = {}
+    sim_dataarray = {}
+
+    for ds_name in config["Data"]:
+        ds_info = config["Data"][ds_name]
+
+        if type(ds_info["paths"]) is str:
+            paths = glob(ds_info["paths"])
+        else:
+            paths = ds_info["paths"]
+        cpathS = paths[0]
+        cpathE = paths[-1]
+        sydata = int(cpathS[len(cpathS)-16:len(cpathS)-12])  # start year of data (specified in file name)
+        smdata = int(cpathS[len(cpathS)-12:len(cpathS)-10])  # start month of data
+        eydata = int(cpathE[len(cpathE)-9:len(cpathE)-5])    # end year of data
+        emdata = int(cpathE[len(cpathE)-5:len(cpathE)-3])    # end month of data
+
+        if "start_yr" in ds_info:
+            syr = ds_info["start_yr"]
+        else:
+            syr = sydata
+        if "end_yr" in ds_info:
+            eyr = ds_info["end_yr"]
+        else:
+            eyr = eydata
+
+        #print('ds_info["members"]',type(ds_info["members"]),ds_info["members"])
+        mems = ds_info.get("members",None)
+        print('ds_info["variable"]',ds_info["variable"],"\n")
+        var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
+        print("Data set model run name (ds_name)",ds_name,"\n")
+
+        
+        vn = ds_info["variable"]
+        """
+        fno = f'{ds_name}.cvdp_data.{vn}.climo.{syr}-{eyr}.nc'
+        save_loc = Path(config["Paths"]["nc_save_loc"])
+        file_name = save_loc / fno
+        print("save_loc",save_loc,"\n")
+        if not save_loc.is_dir():
+            print(f"\tINFO: Directory not found, making new netcdf save location")
+            save_loc.mkdir(parents=True)
+        clobber = False
+        if file_name.is_file() and not clobber:
+            var_data_array = xarray.open_mfdataset(file_name,coords="minimal", compat="override", decode_times=True)
+        else:
+            var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
+            #Path(save_loc).unlink(missing_ok=True)
+            var_data_array.to_netcdf(file_name)"""
+
+        cvdp_var = vname[vn]
+        if ds_info["reference"]:
+            ref_dataarray[ds_name] = {}
+            ref_dataarray[ds_name][cvdp_var] = var_data_array
+        else:
+            sim_dataarray[ds_name] = {}
+            sim_dataarray[ds_name][cvdp_var] = var_data_array
+
+    return (ref_dataarray, sim_dataarray)
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''def read_datasets(paths: str, members: str=None):
     paths = [path for path in paths if ".nc" in path]
     if members is not None:
         grouped_datasets = []
@@ -66,4 +176,4 @@ def get_input_data(config_path: str) -> dict:
     #
     #
     
-    return (ref_datasets, sim_datasets)
+    return (ref_datasets, sim_datasets)'''
