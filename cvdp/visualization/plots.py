@@ -69,7 +69,7 @@ cmap_name="ncl_default"
 amwg_cmap = LinearSegmentedColormap.from_list(
             cmap_name, amwg_colors)"""
 
-bg_cmap = get_NCL_colormap("ncl_default", extend='None')
+amwg_cmap = get_NCL_colormap("ncl_default", extend='None')
 # Blue Green - used for Rank plots
 #---------------------------------
 """#bg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}BlueGreen14.csv")
