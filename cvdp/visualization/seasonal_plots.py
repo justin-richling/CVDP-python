@@ -18,7 +18,8 @@ def plot_seasonal_means(seasonal_avgs: xarray.DataArray) -> Figure:
     :return: Figure with four seasonal, ensemble mean maps plotted
     :rtype: matplotlib.figure.Figure
     """
-    plt.style.use("cvdp/visualization/cvdp.mplstyle")
+    #plt.style.use("cvdp/visualization/cvdp.mplstyle")
+    plt.style.use("cvdp.mplstyle")
 
     f = plt.figure()
     gridspec = f.add_gridspec(2, 2, height_ratios=[2, 2])
