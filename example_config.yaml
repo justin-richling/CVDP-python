@@ -22,8 +22,8 @@ Data:
   CESM2-LE:
     reference: False
     variable: "PSL"
-    start_yr: 1979
-    end_yr: 2013
+    start_yr: 1900
+    end_yr: 2023
     paths: "/glade/campaign/cgd/cesm/CESM2-LE/*/proc/tseries/month_1/*/*1251.001.**.PSL.*"
     #members: ['.001.', '.002.']
   ERA5:
