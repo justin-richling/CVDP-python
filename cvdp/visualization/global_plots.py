@@ -408,14 +408,14 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
         # Difference plot
         if r == 2:
-            arr = arr_diff
+            arr = arr_diff.sel(season=season)
             #run = f"{finarrs[0].run} - {finarrs[1].run}"
             yrs_text = ''
         # End if
 
         # Case plots
         if r < 2:
-            arr = arrs[r]
+            arr = arrs[r].sel(season=season)
 
             # Get run name
             #TODO: run names need to be better to get
