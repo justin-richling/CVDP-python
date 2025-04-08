@@ -318,7 +318,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 from vis import *
 from visualization.vis_utils import *
 import old_utils.avg_functions as af
-ncl_masks = af.ncl_masks
+lsmask, ncl_masks = af.land_mask()
 
 #def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug=False):
 def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False):
