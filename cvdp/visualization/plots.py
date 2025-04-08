@@ -38,9 +38,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 """import cvdp.utils.analysis as an
 import cvdp.utils.avg_functions as af
 import cvdp.utils.file_creation as fc"""
-import utils.analysis as an
-import utils.avg_functions as af
-import utils.file_creation as fc
+import old_utils.analysis as an
+import old_utils.avg_functions as af
+import old_utils.file_creation as fc
 from definitions import *
 
 # Grab land mask data
