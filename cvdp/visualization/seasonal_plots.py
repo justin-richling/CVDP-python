@@ -22,7 +22,7 @@ def plot_seasonal_means(seasonal_avgs: xarray.DataArray) -> Figure:
     #plt.style.use("cvdp.mplstyle")
 
     import os
-    style_path = os.path.abspath("cvdp.mplstyle")
+    style_path = os.path.abspath("visualization/cvdp.mplstyle")
     plt.style.use(style_path)
 
     f = plt.figure()
