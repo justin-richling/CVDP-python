@@ -83,7 +83,7 @@ def main():
 
     ptype = "spatialmean"
 
-    arrs_raw = [ref_seas_avgs,sim_seas_avgs]
+    """arrs_raw = [ref_seas_avgs,sim_seas_avgs]
 
     arrs = []
     for i in arrs_raw:
@@ -99,7 +99,7 @@ def main():
     # Attempt to get difference data
     #-------------------------------
     arr_anom1 = arrs[0]
-    arr_anom2 = arrs[1]
+    arr_anom2 = arrs[1]"""
 
     # If the cases are different shapes, we need to interpolate one to the other first
     #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
