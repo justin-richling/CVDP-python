@@ -19,7 +19,11 @@ def plot_seasonal_means(seasonal_avgs: xarray.DataArray) -> Figure:
     :rtype: matplotlib.figure.Figure
     """
     #plt.style.use("cvdp/visualization/cvdp.mplstyle")
-    plt.style.use("cvdp.mplstyle")
+    #plt.style.use("cvdp.mplstyle")
+
+    import os
+    style_path = os.path.abspath("cvdp.mplstyle")
+    plt.style.use(style_path)
 
     f = plt.figure()
     gridspec = f.add_gridspec(2, 2, height_ratios=[2, 2])
