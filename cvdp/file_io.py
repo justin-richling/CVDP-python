@@ -83,6 +83,7 @@ def get_input_data(config_path: str) -> dict:
         print('ds_info["variable"]',ds_info["variable"],"\n")
         var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
         print("Data set model run name (ds_name)",ds_name,"\n")
+        var_data_array.attrs["run_name"] = ds_name
         print("var_data_array",var_data_array,"\n",type(var_data_array),"\n\n\n")
 
         
