@@ -70,6 +70,8 @@ def main():
     ref_0 = list(ref_datasets.keys())[0]
     sim_0 = list(sim_datasets.keys())[0]
     ref_seas_avgs = compute_seasonal_avgs(ref_datasets[ref_0][vn])
+    if "member" in ref_seas_avgs:
+        ref_seas_avgs = ref_seas_avgs.mean(dim="member")
     sim_seas_avgs = compute_seasonal_avgs(sim_datasets[sim_0][vn])
     print("AHHHH",sim_seas_avgs,"\n\n")
 
