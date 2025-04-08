@@ -159,7 +159,7 @@ def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_ty
 
 
 
-def ensemble_plot(finarrs, arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False):
+def ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False):
     #if not var:
     #    var = vn
 
@@ -186,7 +186,9 @@ def ensemble_plot(finarrs, arrs, arr_diff, vn, var=None, season="ANN", ptype="tr
 
     if map_type == "global":
         print(map_type)
-        global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
+        #global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False)
+        ####global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
+        global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug)
     if map_type == "polar":
         print(map_type)
         polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
