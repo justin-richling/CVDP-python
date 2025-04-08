@@ -16,7 +16,8 @@ from cvdp.scripts.atm_mean_stddev_gr import calcAtmOcnMeanStdGR
 """
 #from cvdp.visualization.AtmOcnGR import *
 from visualization.AtmOcnGR import *
-from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS 
+from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
+from vis import *
 
 def main():
     #parser = argparse.ArgumentParser(description = f"Command Line Interface (CLI) for Climate Variability and Diagnostics Package (CVDP) Version {getVersion('cvdp')}")

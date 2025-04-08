@@ -8,6 +8,12 @@ License: MIT
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import xarray
+"""import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from cartopy.util import add_cyclic_point
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+import matplotlib as mpl"""
 
 '''
 def plot_seasonal_means(seasonal_avgs: xarray.DataArray) -> Figure:
@@ -310,9 +316,9 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 '''
 
 from vis import *
-
-
-
+from vis_utils import *
+import old_utils.avg_functions as af
+ncl_masks = af.ncl_masks
 
 #def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug=False):
 def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False):

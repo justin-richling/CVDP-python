@@ -22,7 +22,7 @@ eof_vars = nh_vars+sh_vars
             
 ptypes = ["trends","spatialmean"]#,"spatialstddev"
 
-
+from global_plots import *
 
 plot_dict_mean = {"psl": {"range": np.linspace(968,1048,21),
                           "ticks": np.arange(976,1041,8),
@@ -186,10 +186,10 @@ def ensemble_plot(finarrs, arrs, arr_diff, vn, var=None, season="ANN", ptype="tr
 
     if map_type == "global":
         print(map_type)
-        #global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
+        global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
     if map_type == "polar":
         print(map_type)
-        #polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
+        polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
 
 
 #vn = "ts"
