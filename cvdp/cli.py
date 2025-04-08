@@ -76,6 +76,42 @@ def main():
     seasonal_ensemble_fig = plot_seasonal_means(sim_seas_avgs)
     seasonal_ensemble_fig.savefig(plot_loc / "my_plot.png")
 
+    import old_utils.analysis as an
+
+    #arr_var = finarrs[0][f"{vn}_{ptype}_{season.lower()}"]
+    #arr_var2 = finarrs[1][f"{vn}_{ptype}_{season.lower()}"]
+
+    ptype = "spatialmean"
+
+    arrs_raw = [ref_seas_avgs,sim_seas_avgs]
+
+    arrs = []
+    for i in arrs_raw:
+        if vn == "ts":
+            # interp to mask
+            i = an.interp_mask(i, lsmask)
+        if ptype == "trends":
+            arr, res, fit = af.lin_regress(i)
+        else:
+            arr = i.mean(dim="time")
+        arrs.append(arr)
+
+    # Attempt to get difference data
+    #-------------------------------
+    arr_anom1 = arrs[0]
+    arr_anom2 = arrs[1]
+
+    # If the cases are different shapes, we need to interpolate one to the other first
+    #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
+    arr_prime = an.interp_diff(arr_anom1, arr_anom2)
+
+    #print("arr_prime type:",type(arr_prime),"\n")
+    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+    if arr_prime is None:
+        arr_diff = arr_anom1 - arr_anom2
+    else:
+        arr_diff = (arr_prime - arr_anom2)
+
 
 
     """# Timeseries Plot
@@ -151,8 +187,8 @@ def main():
                 "trends": plot_dict_trends}
     
     #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
-    global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], sim_seas_avgs-ref_seas_avgs, vn, "PSL","DJF", "spatialmean", plot_dict["spatialmean"], "global")
-    global_ensemble_fig(plot_loc / "psl_ensemble_djf.png",bbox_inches="tight")
+    global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, "PSL","DJF", ptype, plot_dict[ptype], "global")
+    global_ensemble_fig.savefig(plot_loc / "psl_ensemble_djf.png",bbox_inches="tight")
 
 #ensemble_avgs = seasonal_avgs.mean(dim="member").compute()
 if __name__ == '__main__':
