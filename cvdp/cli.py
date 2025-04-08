@@ -151,7 +151,7 @@ def main():
                 "trends": plot_dict_trends}
     
     #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
-    global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], sim_seas_avgs-ref_seas_avgs, vn, "PSL","DJF", "spatialmean", plot_dict, "global")
+    global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], sim_seas_avgs-ref_seas_avgs, vn, "PSL","DJF", "spatialmean", plot_dict["spatialmean"], "global")
     global_ensemble_fig(plot_loc / "psl_ensemble_djf.png",bbox_inches="tight")
 
 #ensemble_avgs = seasonal_avgs.mean(dim="member").compute()
