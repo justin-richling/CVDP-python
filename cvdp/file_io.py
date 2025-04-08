@@ -84,6 +84,9 @@ def get_input_data(config_path: str) -> dict:
         var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
         print("Data set model run name (ds_name)",ds_name,"\n")
         var_data_array.attrs["run_name"] = ds_name
+        # Add desired start and end years to metadata
+        season_yrs = np.unique(var_data_array["time.year"])
+        var_data_array.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
         print("var_data_array",var_data_array,"\n",type(var_data_array),"\n\n\n")
 
         

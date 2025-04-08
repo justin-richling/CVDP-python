@@ -420,14 +420,14 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             # Get run name
             #TODO: run names need to be better to get
             run = arr.run_name
-            """run = f"{finarrs[r].run}"
+            #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
-            syr = finarrs[r].yrs[0]
-            eyr = finarrs[r].yrs[1]
+            syr = arr.yrs[0]
+            eyr = arr.yrs[1]
             yrs_text = f'{syr}-{eyr}'
             if debug:
-                print(yrs_text,"\n")"""
+                print(yrs_text,"\n")
         # End if
 
         # Get wrapped data around zeroth longitude
