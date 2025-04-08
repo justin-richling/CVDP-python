@@ -55,7 +55,8 @@ lsmask, ncl_masks = an.land_mask(PATH_LANDSEA_MASK_NC)
 
 # NCL rainbow - used for most plots
 #---------------------------------
-amwg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}ncl_default.csv")
+amwg = pd.read_csv(f"{PATH_COLORMAPS_DIR}ncl_default.csv")
+#amwg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}ncl_default.csv")
 amwg_colors = []
 for i in range(0,254):
     amwg_colors.append((float(amwg["r "][i]),
@@ -70,7 +71,8 @@ amwg_cmap = LinearSegmentedColormap.from_list(
 
 # Blue Green - used for Rank plots
 #---------------------------------
-bg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}BlueGreen14.csv")
+#bg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}BlueGreen14.csv")
+bg = pd.read_csv(f"{PATH_COLORMAPS_DIR}BlueGreen14.csv")
 bg_colors = []
 for i in range(1,14):
     bg_colors.append((float(bg["r"][i]/255),
