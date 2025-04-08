@@ -81,7 +81,7 @@ def main():
     #----------------
     #timeseries_plot(var, season, test, obs)
     time_series_fig = timeseries_plot(vn, sim_seas_avgs, ref_seas_avgs)
-    plt.time_series_fig(plot_loc / "my_plot.png",bbox_inches="tight")
+    time_series_fig(plot_loc / "psl_timeseries_djf.png",bbox_inches="tight")
 
 #ensemble_avgs = seasonal_avgs.mean(dim="member").compute()
 if __name__ == '__main__':
