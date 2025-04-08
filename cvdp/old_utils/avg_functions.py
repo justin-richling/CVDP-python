@@ -78,7 +78,7 @@ class PiecewiseNorm(Normalize):
 import sys
 import os
 
-# Add the directory to sys.path
+"""# Add the directory to sys.path
 #avg_functions.py
 script_dir = '/glade/work/richling/CVDP-LE/dev/utils/'
 sys.path.append(script_dir)
@@ -89,7 +89,7 @@ import avg_functions as af
 import file_creation as fc
 
 # Or import specific functions or classes from the script
-#from analysis import interp_mask, mask_ocean, land_mask
+#from analysis import interp_mask, mask_ocean, land_mask"""
 
 
 
