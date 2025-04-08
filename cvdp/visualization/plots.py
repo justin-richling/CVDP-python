@@ -35,12 +35,17 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Now you can import the script
-import cvdp.utils.analysis as an
+"""import cvdp.utils.analysis as an
 import cvdp.utils.avg_functions as af
-import cvdp.utils.file_creation as fc
+import cvdp.utils.file_creation as fc"""
+import utils.analysis as an
+import utils.avg_functions as af
+import utils.file_creation as fc
+from definitions import *
 
 # Grab land mask data
-lsmask, ncl_masks = an.land_mask(definitions.PATH_LANDSEA_MASK_NC)
+#lsmask, ncl_masks = an.land_mask(definitions.PATH_LANDSEA_MASK_NC)
+lsmask, ncl_masks = an.land_mask(PATH_LANDSEA_MASK_NC)
 # Or import specific functions or classes from the script
 #from analysis import interp_mask, mask_ocean, land_mask
 
@@ -979,8 +984,8 @@ def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug
             wrap_data = np.where(wrap_data < 0, 0, wrap_data)
             norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
             contourf_args['norm'] = norm
-            axs[r].contourf(wrap_lon_land, landsies.lat, wrap_data_land, colors="w", transform=ccrs.PlateCarree(), zorder=300)
-            axs[r].add_feature(cfeature.LAKES.with_scale('110m'), edgecolor="#b5b5b5", facecolor="none", zorder=300)
+            axs.contourf(wrap_lon_land, landsies.lat, wrap_data_land, colors="w", transform=ccrs.PlateCarree(), zorder=300)
+            axs.add_feature(cfeature.LAKES.with_scale('110m'), edgecolor="#b5b5b5", facecolor="none", zorder=300)
 
         if vn == "psl-a":
             wrap_data = np.where(wrap_data < -9, -9, wrap_data)
