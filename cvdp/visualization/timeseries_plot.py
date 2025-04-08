@@ -9,16 +9,21 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-def timeseries_plot(var, season, test, obs):
+#def timeseries_plot(var, season, test, obs):
+def timeseries_plot(var, test_da, obs_da):
+    season = "DJF"
+    testz = test_da.DJF
+    obsz = obs_da.DJF
 
-    yrs_obs = obs["time.year"].values
-    yrs = test["time.year"].values
+
+    yrs_obs = obsz["time.year"].values
+    yrs = testz["time.year"].values
     
     # Generate figure and axes using Cartopy projection  and set figure size (width, height) in inches
     fig, ax = plt.subplots(2,1, figsize=(12, 8))
     
-    ax[0].plot(yrs, test, color="#1A658F")
-    ax[0].plot(yrs_obs, obs, color="#b5b5b5")
+    ax[0].plot(yrs, testz, color="#1A658F")
+    ax[0].plot(yrs_obs, obsz, color="#b5b5b5")
     
     ax[0].axhline(y=0, color='grey', linestyle='-',alpha=0.3)
     ax[0].set_ylim(-3.,3.)
@@ -45,8 +50,8 @@ def timeseries_plot(var, season, test, obs):
     fig.text(0.9, 0.99, "$\\copyright$ CVDP-LE", fontsize=10, color='#b5b5b5', weight='bold', alpha=0.75, ha='right', va='top')
     
     ax[1].set_title("Ensemble Mean Summary", loc='left', fontdict={'fontsize': 20, 'color': 'k'}, y=1.03)
-    ax[1].plot(yrs, test, color='#0c80ab') #1A658F
-    ax[1].plot(yrs_obs, obs, color="#b5b5b5")
+    ax[1].plot(yrs, testz, color='#0c80ab') #1A658F
+    ax[1].plot(yrs_obs, obsz, color="#b5b5b5")
     #ax.plot(yrs, pcs_norm_1, color="#53565A",alpha=0.5)
     
     ax[1].axhline(y=0, color='grey', linestyle='-',alpha=0.3)

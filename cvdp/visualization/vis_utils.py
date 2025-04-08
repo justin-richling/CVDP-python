@@ -1,7 +1,9 @@
 
 import numpy as np
+import pandas as pd
 import xarray as xr
 from matplotlib.colors import Normalize
+from matplotlib.colors import LinearSegmentedColormap
 
 # Land mask: for TS -> SST masking
 def land_mask():
@@ -66,4 +68,34 @@ class PiecewiseNorm(Normalize):
         # linearly interpolate to get the normalized value
         return np.ma.masked_array(np.interp(value, self._levels, self._normed))
 
+
+
+# NCL rainbow - used for most plots
+#---------------------------------
+amwg = pd.read_csv("/glade/work/richling/CVDP-LE/dev/ncl_default.csv")
+amwg_colors = []
+for i in range(0,254):
+    amwg_colors.append((float(amwg["r "][i]),
+                               float(amwg["g"][i]),
+                               float(amwg["b"][i]),
+                               #float(amwg["a"][i])
+                             ))
+cmap_name="ncl_default"
+amwg_cmap = LinearSegmentedColormap.from_list(
+            cmap_name, amwg_colors)
+
+
+# Blue Green - used for Rank plots
+#---------------------------------
+bg = pd.read_csv("/glade/work/richling/CVDP-LE/dev/BlueGreen14.csv")
+bg_colors = []
+for i in range(1,14):
+    bg_colors.append((float(bg["r"][i]/255),
+                               float(bg["g"][i]/255),
+                               float(bg["b"][i]/255),
+                               #float(amwg["a"][i])
+                             ))
+cmap_name="blue_green"
+bg_cmap = LinearSegmentedColormap.from_list(
+            cmap_name, bg_colors)
 

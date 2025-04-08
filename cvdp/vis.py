@@ -11,4 +11,6 @@ from cvdp.visualization.notebook_build import *"""
 
 from visualization.colormaps import get_NCL_colormap
 from visualization.seasonal_plots import *
+from visualization.timeseries_plot import *
 from visualization.notebook_build import *
+from visualization.plots import *

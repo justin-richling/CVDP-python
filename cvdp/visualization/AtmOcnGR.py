@@ -6,6 +6,9 @@ CVDP functions for plotting means, standard deviations, and trends.
 License: MIT
 """
 
+import numpy as np
+from vis import *
+
 season_list = ["DJF","JFM","MAM","JJA","JAS","SON","ANN"]
 var_seasons = {"psl": season_list+["NDJFM"],
                "ts": season_list,
@@ -18,6 +21,74 @@ sh_vars = ["SAM", "PSA1", "PSA2"]
 eof_vars = nh_vars+sh_vars
             
 ptypes = ["trends","spatialmean"]#,"spatialstddev"
+
+
+
+plot_dict_mean = {"psl": {"range": np.linspace(968,1048,21),
+                          "ticks": np.arange(976,1041,8),
+                          #"cbarticks":"",
+                          #"diff_cbarticks":np.arange(-10,11,2),
+                          "diff_range": np.arange(-11,12,1),
+                          "diff_ticks": np.arange(-10,11,1),
+                          #"cmap": cm.get_NCL_colormap("amwg256", extend='None'),#amwg_cmap,
+                          "cmap": amwg_cmap,
+                          "units":"hPa"},
+                  "ts": {"range": np.linspace(-2,38,21),
+                         "ticks": np.linspace(-2,38,21),
+                         #"ticks": np.arange(0,38,2),
+                         #"tick_labels": np.arange(0,38,2),
+                         "cbarticks": np.arange(0,37,2),
+                         "diff_cbarticks":np.arange(-5,6,1),
+                         "diff_range": np.arange(-5.5,5.6,0.5),
+                         "diff_ticks": np.arange(-5.5,5.6,0.5),
+                         #"diff_ticks": np.arange(-5,6,1),
+                         "cmap": amwg_cmap,
+                         "units":"C"}
+            }
+
+plot_dict_trends = {"psl": {"range": np.linspace(-9,9,19),
+                            "ticks": np.arange(-8, 9, 1),
+                            "cbarticks": np.arange(0,37,2),
+                            "diff_cbarticks":np.arange(-8, 9, 1),
+                            "cmap": amwg_cmap,
+                            "units":"hPa"},
+                    "ts": {"range": [-8, -7, -6, -5, -4, -3, -2, -1, -0.5, -0.25, 0, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8],
+                            #"ticks": [-6, -4, -2, -0.5, 0, 0.5, 2, 4, 6],
+                            "ticks": [-8, -7, -6, -5, -4, -3, -2, -1, -0.5, -0.25, 0, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8],
+                            #"diff_range": np.arange(-5,6,1),
+                            #"diff_ticks": np.arange(-5,6,1),
+                            "cbarticks": [-6, -4, -2, -0.5, 0, 0.5, 2, 4, 6],
+                            "cmap": amwg_cmap,
+                            "units":"C"},
+                    "NAM": {"range": np.linspace(-8, 8, 17),
+                            "ticks": np.arange(-7,8,1),
+                            "cmap": amwg_cmap,
+                            "units": "hPa"},
+                    "PNA": {"range": np.linspace(-8, 8, 17),
+                            "ticks": np.arange(-7,8,1),
+                            "cmap": amwg_cmap,
+                            "units": "hPa"},
+                    "PNO": {"range": np.linspace(-8, 8, 17),
+                            "ticks": np.arange(-7,8,1),
+                            "cmap": amwg_cmap,
+                            "units": "hPa"},
+                    "SAM": {"range": np.linspace(-8, 8, 17),
+                            "ticks": np.arange(-7,8,1),
+                            "cmap": amwg_cmap,
+                            "units": "hPa"},
+                    "PSA1": {"range": np.linspace(-8, 8, 17),
+                            "ticks": np.arange(-7,8,1),
+                            "cmap": amwg_cmap,
+                            "units": "hPa"},
+                    "PSA2": {"range": np.linspace(-8, 8, 17),
+                            "ticks": np.arange(-7,8,1),
+                            "cmap": amwg_cmap,
+                            "units": "hPa"}
+            }
+
+
+
+
 
 # Plot functions
 #---------------
@@ -38,9 +109,9 @@ def indmem_plot(finarrs, arrs, vn, var=None, season="ANN", ptype="trends", plot_
         title = f'{vn.upper()} {ptype.capitalize()} ({season.upper()})\n'
 
     if map_type == "global":
-        pf.stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
+        stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
     if map_type == "polar":
-        pf.stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
+        stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
 
 
 def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_type, debug=False):
@@ -77,10 +148,10 @@ def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_ty
 
     if map_type == "global":
         print(title,"\n",plot_name)
-        #pf.global_latlon_diff_plot(vn, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
+        #global_latlon_diff_plot(vn, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
     if map_type == "polar":
         print(title,"\n",plot_name)
-        #pf.polar_diff_plot(vn, var, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
+        #polar_diff_plot(vn, var, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
 
 
 
@@ -114,10 +185,10 @@ def ensemble_plot(finarrs, arrs, arr_diff, vn, var=None, season="ANN", ptype="tr
 
     if map_type == "global":
         print(map_type)
-        #pf.global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
+        #global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
     if map_type == "polar":
         print(map_type)
-        #pf.polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
+        #polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
 
 
 #vn = "ts"
