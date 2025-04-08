@@ -409,7 +409,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # Difference plot
         if r == 2:
             arr = arr_diff.sel(season=season)
-            #run = f"{finarrs[0].run} - {finarrs[1].run}"
+            run = f"{arrs[0].run_name} - {arrs[1].run_name}"
             yrs_text = ''
         # End if
 
@@ -419,6 +419,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
             # Get run name
             #TODO: run names need to be better to get
+            run = arr.run_name
             """run = f"{finarrs[r].run}"
 
             # Get start and end years for run
