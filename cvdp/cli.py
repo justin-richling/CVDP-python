@@ -191,8 +191,9 @@ def main():
                 "trends": plot_dict_trends}
     
     #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
-    global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, "PSL","DJF", ptype, plot_dict[ptype], "global")
-    global_ensemble_fig.savefig(plot_loc / "psl_ensemble_djf.png",bbox_inches="tight")
+    season = "SON"
+    global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, "PSL","SON", ptype, plot_dict[ptype], "global")
+    global_ensemble_fig.savefig(plot_loc / f"psl_ensemble_{season.lower()}.png",bbox_inches="tight")
 
 #ensemble_avgs = seasonal_avgs.mean(dim="member").compute()
 if __name__ == '__main__':
