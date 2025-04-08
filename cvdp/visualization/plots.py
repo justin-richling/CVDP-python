@@ -42,6 +42,7 @@ import old_utils.analysis as an
 import old_utils.avg_functions as af
 import old_utils.file_creation as fc
 from definitions import *
+from vis import *
 
 # Grab land mask data
 #lsmask, ncl_masks = an.land_mask(definitions.PATH_LANDSEA_MASK_NC)
@@ -55,7 +56,7 @@ lsmask, ncl_masks = an.land_mask(PATH_LANDSEA_MASK_NC)
 
 # NCL rainbow - used for most plots
 #---------------------------------
-amwg = pd.read_csv(f"{PATH_COLORMAPS_DIR}ncl_default.csv")
+"""amwg = pd.read_csv(f"{PATH_COLORMAPS_DIR}ncl_default.csv")
 #amwg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}ncl_default.csv")
 amwg_colors = []
 for i in range(0,254):
@@ -66,12 +67,12 @@ for i in range(0,254):
                              ))
 cmap_name="ncl_default"
 amwg_cmap = LinearSegmentedColormap.from_list(
-            cmap_name, amwg_colors)
+            cmap_name, amwg_colors)"""
 
-
+bg_cmap = get_NCL_colormap("ncl_default", extend='None')
 # Blue Green - used for Rank plots
 #---------------------------------
-#bg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}BlueGreen14.csv")
+"""#bg = pd.read_csv(f"{cvdp.PATH_COLORMAPS_DIR}BlueGreen14.csv")
 bg = pd.read_csv(f"{PATH_COLORMAPS_DIR}BlueGreen14.csv")
 bg_colors = []
 for i in range(1,14):
@@ -82,9 +83,9 @@ for i in range(1,14):
                              ))
 cmap_name="blue_green"
 bg_cmap = LinearSegmentedColormap.from_list(
-            cmap_name, bg_colors)
+            cmap_name, bg_colors)"""
 
-
+bg_cmap = get_NCL_colormap("BlueGreen14", extend='None')
 # Normailize colorbar for Rank plots
 #-----------------------------------
 import numpy as np
