@@ -367,7 +367,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 #########
 
 
-def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug=False):
+'''def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug=False):
     """
     Args
     ----
@@ -490,23 +490,7 @@ def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, 
             wrap_data_land, wrap_lon_land = add_cyclic_point(landsies.values,
                                                              coord=landsies.lon,
                                                              axis=lon_idx)
-            '''
-            if ptype == "spatialmean":
-                wrap_data = np.where(wrap_data<-6, -6, wrap_data)
-                if r != 2:
-                    wrap_data = np.where(wrap_data>40, np.nan, wrap_data)
-            '''
-        '''
-        if  vn == "psl":
-            if r < 2:
-                if ptype == "trends":
-                    wrap_data = np.where(wrap_data<-9, -9, wrap_data)
-            if r == 2:
-                if ptype == "trends":
-                    wrap_data = np.where(wrap_data>9, 9, wrap_data)
-                else:
-                    wrap_data = np.where(wrap_data<-11, -11, wrap_data)
-        '''
+
         if r < 2:
             wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
         if r == 2:
@@ -689,7 +673,7 @@ def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, 
         plt.show()
     else:
         plt.close()
-
+'''
 
 
 

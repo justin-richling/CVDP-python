@@ -87,7 +87,8 @@ plot_dict_trends = {"psl": {"range": np.linspace(-9,9,19),
             }
 
 
-
+plot_dict = {"spatialmean": plot_dict_mean,
+              "trends": plot_dict_trends}
 
 
 # Plot functions
