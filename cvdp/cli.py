@@ -71,8 +71,14 @@ def main():
     sim_0 = list(sim_datasets.keys())[0]
     ref_seas_avgs = compute_seasonal_avgs(ref_datasets[ref_0][vn])
     if "member" in ref_seas_avgs:
+        members = ref_seas_avgs.members
         ref_seas_avgs = ref_seas_avgs.mean(dim="member")
+        ref_seas_avgs.attrs["members"] = members
     sim_seas_avgs = compute_seasonal_avgs(sim_datasets[sim_0][vn])
+    if "member" in sim_seas_avgs:
+        members = sim_seas_avgs.members
+        sim_seas_avgs = sim_seas_avgs.mean(dim="member")
+        sim_seas_avgs.attrs["members"] = members
     print("AHHHH",sim_seas_avgs,"\n\n")
 
     seasonal_ensemble_fig = plot_seasonal_means(sim_seas_avgs)
