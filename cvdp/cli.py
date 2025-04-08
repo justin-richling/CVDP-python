@@ -52,7 +52,8 @@ def main():
             #var_data_array.to_netcdf(save_loc)
             return None
 
-    from file_io import get_input_data
+    #from file_io import get_input_data
+    from io import get_input_data
     #from cvdp.io import get_input_data
     from diag import compute_seasonal_avgs, compute_seasonal_stds
     #from cvdp.diag import compute_seasonal_avgs, compute_seasonal_stds
