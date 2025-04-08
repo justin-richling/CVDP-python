@@ -1625,7 +1625,7 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
 
 
 
-# Time Series Plots
+"""# Time Series Plots
 #------------------
 def timeseries_plot(var, season, test, obs, debug=False):
 
@@ -1692,3 +1692,4 @@ def timeseries_plot(var, season, test, obs, debug=False):
         plt.show()
     else:
         plt.close()
+"""
