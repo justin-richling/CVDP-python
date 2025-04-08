@@ -624,3 +624,5 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         plt.show()
     else:
         plt.close()"""
+
+    return fig
