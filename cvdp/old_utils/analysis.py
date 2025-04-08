@@ -41,9 +41,9 @@ import os
 
 
 # Now you can import the script
-import analysis as an
-import avg_functions as af
-import file_creation as fc
+#import analysis as an
+#import avg_functions as af
+#import file_creation as fc
 
 # Or import specific functions or classes from the script
 #from analysis import interp_mask, mask_ocean, land_mask
