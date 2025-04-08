@@ -468,6 +468,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # End data gather/clean
         #----------------------
 
+        print("wrap_data.shape",wrap_data.shape)
 
         # Start plot exceptions
         #----------------------
