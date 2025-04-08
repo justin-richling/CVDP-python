@@ -22,7 +22,7 @@ eof_vars = nh_vars+sh_vars
             
 ptypes = ["trends","spatialmean"]#,"spatialstddev"
 
-from global_plots import *
+from visualization.global_plots import *
 
 plot_dict_mean = {"psl": {"range": np.linspace(968,1048,21),
                           "ticks": np.arange(976,1041,8),
