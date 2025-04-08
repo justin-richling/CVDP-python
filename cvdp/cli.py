@@ -77,11 +77,80 @@ def main():
 
 
 
-    # Timeseries Plot
+    """# Timeseries Plot
     #----------------
     #timeseries_plot(var, season, test, obs)
     time_series_fig = timeseries_plot(var=vn, test_da=sim_seas_avgs, obs_da=ref_seas_avgs)
-    time_series_fig(plot_loc / "psl_timeseries_djf.png",bbox_inches="tight")
+    time_series_fig(plot_loc / "psl_timeseries_djf.png",bbox_inches="tight")"""
+
+    plot_dict_mean = {"psl": {"range": np.linspace(968,1048,21),
+                            "ticks": np.arange(976,1041,8),
+                            #"cbarticks":"",
+                            #"diff_cbarticks":np.arange(-10,11,2),
+                            "diff_range": np.arange(-11,12,1),
+                            "diff_ticks": np.arange(-10,11,1),
+                            #"cmap": cm.get_NCL_colormap("amwg256", extend='None'),#amwg_cmap,
+                            "cmap": amwg_cmap,
+                            "units":"hPa"},
+                    "ts": {"range": np.linspace(-2,38,21),
+                            "ticks": np.linspace(-2,38,21),
+                            #"ticks": np.arange(0,38,2),
+                            #"tick_labels": np.arange(0,38,2),
+                            "cbarticks": np.arange(0,37,2),
+                            "diff_cbarticks":np.arange(-5,6,1),
+                            "diff_range": np.arange(-5.5,5.6,0.5),
+                            "diff_ticks": np.arange(-5.5,5.6,0.5),
+                            #"diff_ticks": np.arange(-5,6,1),
+                            "cmap": amwg_cmap,
+                            "units":"C"}
+                }
+
+    plot_dict_trends = {"psl": {"range": np.linspace(-9,9,19),
+                                "ticks": np.arange(-8, 9, 1),
+                                "cbarticks": np.arange(0,37,2),
+                                "diff_cbarticks":np.arange(-8, 9, 1),
+                                "cmap": amwg_cmap,
+                                "units":"hPa"},
+                        "ts": {"range": [-8, -7, -6, -5, -4, -3, -2, -1, -0.5, -0.25, 0, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8],
+                                #"ticks": [-6, -4, -2, -0.5, 0, 0.5, 2, 4, 6],
+                                "ticks": [-8, -7, -6, -5, -4, -3, -2, -1, -0.5, -0.25, 0, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8],
+                                #"diff_range": np.arange(-5,6,1),
+                                #"diff_ticks": np.arange(-5,6,1),
+                                "cbarticks": [-6, -4, -2, -0.5, 0, 0.5, 2, 4, 6],
+                                "cmap": amwg_cmap,
+                                "units":"C"},
+                        "NAM": {"range": np.linspace(-8, 8, 17),
+                                "ticks": np.arange(-7,8,1),
+                                "cmap": amwg_cmap,
+                                "units": "hPa"},
+                        "PNA": {"range": np.linspace(-8, 8, 17),
+                                "ticks": np.arange(-7,8,1),
+                                "cmap": amwg_cmap,
+                                "units": "hPa"},
+                        "PNO": {"range": np.linspace(-8, 8, 17),
+                                "ticks": np.arange(-7,8,1),
+                                "cmap": amwg_cmap,
+                                "units": "hPa"},
+                        "SAM": {"range": np.linspace(-8, 8, 17),
+                                "ticks": np.arange(-7,8,1),
+                                "cmap": amwg_cmap,
+                                "units": "hPa"},
+                        "PSA1": {"range": np.linspace(-8, 8, 17),
+                                "ticks": np.arange(-7,8,1),
+                                "cmap": amwg_cmap,
+                                "units": "hPa"},
+                        "PSA2": {"range": np.linspace(-8, 8, 17),
+                                "ticks": np.arange(-7,8,1),
+                                "cmap": amwg_cmap,
+                                "units": "hPa"}
+                }
+
+
+    plot_dict = {"spatialmean": plot_dict_mean,
+                "trends": plot_dict_trends}
+    
+    global_ensemble_fig = global_ensemble_plot([sim_seas_avgs,ref_seas_avgs], sim_seas_avgs-ref_seas_avgs, vn, "DJF", "spatialmean", plot_dict, "AHHH")
+    global_ensemble_fig(plot_loc / "psl_ensemble_djf.png",bbox_inches="tight")
 
 #ensemble_avgs = seasonal_avgs.mean(dim="member").compute()
 if __name__ == '__main__':
