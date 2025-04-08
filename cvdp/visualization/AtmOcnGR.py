@@ -188,10 +188,11 @@ def ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", pl
         print(map_type)
         #global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False)
         ####global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
-        global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug)
+        fig = global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug)
     if map_type == "polar":
         print(map_type)
         polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
+    return fig
 
 
 #vn = "ts"
