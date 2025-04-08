@@ -6,7 +6,7 @@ import os
 import xarray as xr
 import numpy as np
 import pandas as pd
-import functions as func
+#import functions as func
 import calendar as calendar
 from glob import glob
 from pathlib import Path
