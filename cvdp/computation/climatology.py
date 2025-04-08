@@ -35,7 +35,7 @@ def compute_seasonal_avgs(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_
     for season_label in CLIMATOLOGY_SEASON_MONTHS:
         season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
         seasonal_avgs.append(monthly_avgs.sel(month=season_months).mean(dim="month"))
-    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"], combine_attrs="identical"))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]), combine_attrs="identical")
 
 
 def compute_seasonal_stds(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
