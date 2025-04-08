@@ -92,7 +92,7 @@ import file_creation as fc
 #from analysis import interp_mask, mask_ocean, land_mask"""
 
 
-
+from definitions import *
 
 # Land mask: for TS -> SST masking
 def land_mask():
@@ -113,7 +113,7 @@ def land_mask():
      - lsmask: xarray.DataArray
         data array of the masked data set
     """
-    ncl_masks = xr.open_mfdataset("landsea.nc", decode_times=True)
+    ncl_masks = xr.open_mfdataset(PATH_LANDSEA_MASK_NC, decode_times=True)
     lsmask = ncl_masks.LSMASK
     ncl_masks.close()
     return lsmask, ncl_masks
