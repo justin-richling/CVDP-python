@@ -2,7 +2,7 @@
 import old_utils.analysis as an
 from diag import compute_seasonal_avgs, compute_seasonal_stds
 
-def ahh(ref_dataset, sim_dataset):
+def AtmOcnMean(ref_dataset, sim_dataset):
     ref_seas_avgs = compute_seasonal_avgs(ref_dataset)
     if "member" in ref_seas_avgs.coords:
         attrs = ref_seas_avgs.attrs  # save before doing groupby/mean
