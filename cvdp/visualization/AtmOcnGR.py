@@ -25,7 +25,7 @@ eof_vars = nh_vars+sh_vars
 ptypes = ["spatialmean"]#,"trends","spatialstddev"
 
 def graphics(plot_loc, **kwargs):
-    print("\Plotting climatological seasonal means...")
+    print("\nPlotting climatological seasonal means...")
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     arr_diff = kwargs["diff_seas"]
