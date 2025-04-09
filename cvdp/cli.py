@@ -208,8 +208,8 @@ def main():
     global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, "PSL","SON", ptype, plot_dict[ptype], "global")
     global_ensemble_fig.savefig(plot_loc / f"psl_ensemble_{season.lower()}.png",bbox_inches="tight")"""
 
-    import computation.AtmOcnMean as mean_calc
-    ref_seas_avgs, sim_seas_avgs, arr_diff = mean_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
+    from computation.AtmOcnMean import mean_seasonal_calc
+    ref_seas_avgs, sim_seas_avgs, arr_diff = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
 
     import visualization.AtmOcnGR as graphics
     kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs, "diff_seas":arr_diff,
