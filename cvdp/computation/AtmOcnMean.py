@@ -11,6 +11,8 @@ from diag import compute_seasonal_avgs, compute_seasonal_stds
 
 #def AtmOcnMean(ref_dataset, sim_dataset):
 def mean_seasonal_calc(ref_dataset, sim_dataset):
+
+    print("\nCalculating climatological seasonal means...")
     ref_seas_avgs = compute_seasonal_avgs(ref_dataset)
     if "member" in ref_seas_avgs.coords:
         attrs = ref_seas_avgs.attrs  # save before doing groupby/mean
