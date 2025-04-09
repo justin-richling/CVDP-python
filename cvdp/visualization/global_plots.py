@@ -351,7 +351,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
     nrows = 1
     ncols = 4
 
-    proj = projection=ccrs.Robinson(central_longitude=210)
+    proj = ccrs.Robinson(central_longitude=210)
     fig_width = 15+(2.5*ncols)
     fig_height = 15
     fig, axs = plt.subplots(nrows=nrows,ncols=ncols,figsize=(fig_width,fig_height),
@@ -361,10 +361,10 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
     img = []
     for r in range(0,ncols):
         if r == 2:
-            levels = plot_info.get("diff_range",plot_info["range"])
+            levels = np.arange(*plot_info.get("diff_range",plot_info["range"]))
 
             # colorbar ticks
-            ticks = plot_info.get("diff_ticks_range",plot_info["ticks"])
+            ticks = np.arange(*plot_info.get("diff_ticks_range",plot_info["ticks"]))
 
             #cbarticks = plot_info.get("diff_cbarticks", None)
             cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
@@ -375,10 +375,10 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
         if r in [0,1]:
             # plot contour range
-            levels = plot_info["contour_levels_linspace"]
+            levels = np.linspace(*plot_info["contour_levels_linspace"])
         
             # colorbar ticks
-            ticks = plot_info["ticks_range"]
+            ticks = np.arange(*plot_info["ticks_range"])
 
             cbarticks = plot_info.get("cbarticks", None)
             if cbarticks is None:
