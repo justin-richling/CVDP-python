@@ -31,9 +31,10 @@ def graphics(plot_loc, **kwargs):
     arr_diff = kwargs["diff_seas"]
     vn = 'psl'
     res = get_variable_defaults()
-    tres = res[type]
-    vtres = tres[vn]
+
     for type in ptypes:
+        tres = res[type]
+        vtres = tres[vn]
 
         #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
         season = "SON"
