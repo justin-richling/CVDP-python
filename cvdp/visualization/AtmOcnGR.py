@@ -33,8 +33,8 @@ def graphics(plot_loc, **kwargs):
     res = get_variable_defaults()
 
     for type in ptypes:
-        tres = res[type]
-        vtres = tres[vn]
+        vres = res[vn]
+        vtres = vres[type]
 
         #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
         season = "SON"
