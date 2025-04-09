@@ -9,13 +9,14 @@ Parses user input from command line and passes arguments to automation in cvdp.p
 import xarray as xr
 import argparse
 from importlib.metadata import version as getVersion
+
 #import cvdp
 """from cvdp.scripts.namelist import createNameList
 from cvdp.scripts.atm_ocn_mean_stddev_calc import calcAtmOcnMeanStd
 from cvdp.scripts.atm_mean_stddev_gr import calcAtmOcnMeanStdGR
 """
 #from cvdp.visualization.AtmOcnGR import *
-from visualization.AtmOcnGR import *
+#from visualization.AtmOcnGR import *
 from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 from vis import *
 
@@ -43,7 +44,7 @@ def main():
         var_configs = args.c[0]
 
     from pathlib import Path
-    def check_or_save_nc(save_loc, clobber, var_data_array=None):
+    """def check_or_save_nc(save_loc, clobber, var_data_array=None):
         if Path(save_loc).is_file() and not clobber:
             var_data_array = xr.open_mfdataset(save_loc,coords="minimal", compat="override", decode_times=True)
             return var_data_array
@@ -51,7 +52,7 @@ def main():
             #var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
             #Path(save_loc).unlink(missing_ok=True)
             #var_data_array.to_netcdf(save_loc)
-            return None
+            return None"""
 
     from file_io import get_input_data
     #from io import get_input_data
@@ -61,7 +62,7 @@ def main():
     from vis import plot_seasonal_means
     #from cvdp.vis import plot_seasonal_ensemble_means, CVDPNotebook
 
-    from definitions import PARENT_DIR
+    #from definitions import PARENT_DIR
     #from cvdp.definitions import parent_dir
     #ref_datasets, sim_datasets = get_input_data("../example_config.yaml")
     ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
@@ -69,7 +70,7 @@ def main():
     vn = "psl"
     ref_0 = list(ref_datasets.keys())[0]
     sim_0 = list(sim_datasets.keys())[0]
-    ref_seas_avgs = compute_seasonal_avgs(ref_datasets[ref_0][vn])
+    """ref_seas_avgs = compute_seasonal_avgs(ref_datasets[ref_0][vn])
     if "member" in ref_seas_avgs.coords:
         attrs = ref_seas_avgs.attrs  # save before doing groupby/mean
         members = ref_seas_avgs.member
@@ -86,9 +87,9 @@ def main():
     print("AHHHH",sim_seas_avgs,"\n\n")
 
     seasonal_ensemble_fig = plot_seasonal_means(sim_seas_avgs)
-    seasonal_ensemble_fig.savefig(plot_loc / "my_plot.png")
+    seasonal_ensemble_fig.savefig(plot_loc / "my_plot.png")"""
 
-    import old_utils.analysis as an
+    #import old_utils.analysis as an
 
     #arr_var = finarrs[0][f"{vn}_{ptype}_{season.lower()}"]
     #arr_var2 = finarrs[1][f"{vn}_{ptype}_{season.lower()}"]
@@ -113,7 +114,7 @@ def main():
     arr_anom1 = arrs[0]
     arr_anom2 = arrs[1]"""
 
-    # If the cases are different shapes, we need to interpolate one to the other first
+    """# If the cases are different shapes, we need to interpolate one to the other first
     #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
     #arr_prime = an.interp_diff(arr_anom1, arr_anom2)
     arr_prime = an.interp_diff(sim_seas_avgs, ref_seas_avgs)
@@ -126,7 +127,7 @@ def main():
         arr_diff = sim_seas_avgs - ref_seas_avgs
     else:
         #arr_diff = (arr_prime - arr_anom2)
-        arr_diff = (arr_prime - ref_seas_avgs)
+        arr_diff = (arr_prime - ref_seas_avgs)"""
 
 
 
@@ -136,7 +137,7 @@ def main():
     time_series_fig = timeseries_plot(var=vn, test_da=sim_seas_avgs, obs_da=ref_seas_avgs)
     time_series_fig(plot_loc / "psl_timeseries_djf.png",bbox_inches="tight")"""
 
-    plot_dict_mean = {"psl": {"range": np.linspace(968,1048,21),
+    """plot_dict_mean = {"psl": {"range": np.linspace(968,1048,21),
                             "ticks": np.arange(976,1041,8),
                             #"cbarticks":"",
                             #"diff_cbarticks":np.arange(-10,11,2),
@@ -205,7 +206,15 @@ def main():
     #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
     season = "SON"
     global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, "PSL","SON", ptype, plot_dict[ptype], "global")
-    global_ensemble_fig.savefig(plot_loc / f"psl_ensemble_{season.lower()}.png",bbox_inches="tight")
+    global_ensemble_fig.savefig(plot_loc / f"psl_ensemble_{season.lower()}.png",bbox_inches="tight")"""
+
+    import computation.AtmOcnMean as mean_calc
+    ref_seas_avgs, sim_seas_avgs, arr_diff = mean_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
+
+    import visualization.AtmOcnGR as graphics
+    kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs, "diff_seas":arr_diff,
+             }
+    graphics(plot_loc, **kwargs)
 
 #ensemble_avgs = seasonal_avgs.mean(dim="member").compute()
 if __name__ == '__main__':
