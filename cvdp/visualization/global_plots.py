@@ -361,8 +361,15 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
     img = []
     for r in range(0,ncols):
         if r == 2:
-            levels = plot_info.get("diff_range",plot_info["range"])
-            levels = np.arange(*levels)
+
+            levels = plot_info.get("diff_range",None)
+            if not levels:
+                diff = arrs[0]-arrs[1]
+                diff_max = diff.max().item()
+                diff_min = diff.min().item()
+                levels = np.linspace(diff_min, diff_max, 20)
+            else:
+                levels = np.arange(*levels)
 
             # colorbar ticks
             ticks = np.arange(*plot_info.get("diff_ticks_range",plot_info["ticks"]))
