@@ -77,7 +77,7 @@ def main():
     sim_seas_avgs = compute_seasonal_avgs(sim_datasets[sim_0][vn])
     if "member" in sim_seas_avgs.coords:
         members = sim_seas_avgs.member
-        sim_seas_avgs = sim_seas_avgs.mean(coord="member")
+        sim_seas_avgs = sim_seas_avgs.mean(dim="member")
         sim_seas_avgs.attrs["members"] = members
     print("AHHHH",sim_seas_avgs,"\n\n")
 
