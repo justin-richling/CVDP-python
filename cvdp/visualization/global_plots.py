@@ -364,7 +364,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             levels = plot_info.get("diff_range",plot_info["range"])
 
             # colorbar ticks
-            ticks = plot_info.get("diff_ticks",plot_info["ticks"])
+            ticks = plot_info.get("diff_ticks_range",plot_info["ticks"])
 
             #cbarticks = plot_info.get("diff_cbarticks", None)
             cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
@@ -375,10 +375,10 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
         if r in [0,1]:
             # plot contour range
-            levels = plot_info["range"]
+            levels = plot_info["contour_levels_linspace"]
         
             # colorbar ticks
-            ticks = plot_info["ticks"]
+            ticks = plot_info["ticks_range"]
 
             cbarticks = plot_info.get("cbarticks", None)
             if cbarticks is None:
@@ -484,7 +484,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
         if vn == "psl":
-            ticks = plot_info["ticks"][::2]
+            #ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
 
         # Create a dictionary with arguments for contourf
