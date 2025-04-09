@@ -340,10 +340,11 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
     # Get variable plot info
     #-----------------------
-    plot_info = plot_dict[vn]
+    plot_info = plot_dict
 
     # get units
-    unit = plot_info["units"]
+    #unit = plot_info["units"]
+    unit = arrs[0].units
 
     # Set up plot
     #------------
