@@ -72,7 +72,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             # color map
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
             if not cmap in plt.colormaps():
-                print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+                #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
                 cmap = get_NCL_colormap(cmap, extend='None')
         if r in [0,1]:
             # plot contour range
@@ -88,7 +88,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             # color map
             cmap = plot_info["cmap"]
             if cmap not in plt.colormaps():
-                print(f"Ref/Sim colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+                #print(f"Ref/Sim colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
                 cmap = get_NCL_colormap(cmap, extend='None')
 
             
@@ -158,7 +158,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # End data gather/clean
         #----------------------
 
-        print("wrap_data.shape",wrap_data.shape)
+        #print("wrap_data.shape",wrap_data.shape)
 
         # Start plot exceptions
         #----------------------

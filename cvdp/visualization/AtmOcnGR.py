@@ -12,7 +12,7 @@ from visualization.global_plots import *
 from utils import *
 
 season_list = ["DJF","JFM","MAM","JJA","JAS","SON","ANN"]
-var_seasons = {"psl": season_list+["NDJFM"],
+var_seasons = {"psl":{"global": season_list,"polar": season_list+["NDJFM"]},
                "ts": season_list,
                "trefht": season_list,
                "prect": season_list
@@ -23,6 +23,7 @@ sh_vars = ["SAM", "PSA1", "PSA2"]
 eof_vars = nh_vars+sh_vars
             
 ptypes = ["spatialmean"]#,"trends","spatialstddev"
+vns = ['psl']
 
 map_type = "global"
 
@@ -37,14 +38,14 @@ def graphics(plot_loc, **kwargs):
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     arr_diff = kwargs["diff_seas"]
-    vns = ['psl']
     res = get_variable_defaults()
     for vn in vns:
         for type in ptypes:
             vres = res[vn]
             vtres = vres[type]
 
-            seasons = var_seasons[vn]
+            seasons_ptypes = var_seasons[vn]
+            seasons = seasons_ptypes[map_type]
             for season in seasons:
                 for plot_type in ["summary","indmem","indmemdiff"]:
                     if type == "spatialmean":
@@ -92,6 +93,7 @@ def graphics(plot_loc, **kwargs):
                         print()
 
                     fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                    fig.close()
 
 
 
