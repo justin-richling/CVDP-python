@@ -16,7 +16,8 @@ from cvdp.scripts.atm_ocn_mean_stddev_calc import calcAtmOcnMeanStd
 from cvdp.scripts.atm_mean_stddev_gr import calcAtmOcnMeanStdGR
 """
 #from cvdp.visualization.AtmOcnGR import *
-#from visualization.AtmOcnGR import *
+from computation.AtmOcnMean import *
+from visualization.AtmOcnGR import *
 from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 from vis import *
 
@@ -63,10 +64,10 @@ def main():
     sim_0 = list(sim_datasets.keys())[0]
 
 
-    from computation.AtmOcnMean import mean_seasonal_calc
+    #from computation.AtmOcnMean import mean_seasonal_calc
     ref_seas_avgs, sim_seas_avgs, arr_diff = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
 
-    from visualization.AtmOcnGR import graphics
+    #from visualization.AtmOcnGR import graphics
     kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
               "diff_seas":arr_diff,
              }

@@ -24,22 +24,74 @@ eof_vars = nh_vars+sh_vars
             
 ptypes = ["spatialmean"]#,"trends","spatialstddev"
 
+map_type = "global"
+
+full_dict = {}
+title_deets = {}
+
+#full_dict[]
+
+
 def graphics(plot_loc, **kwargs):
     print("\nPlotting climatological seasonal means...")
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     arr_diff = kwargs["diff_seas"]
-    vn = 'psl'
+    vns = ['psl']
     res = get_variable_defaults()
+    for vn in vns:
+        for type in ptypes:
+            vres = res[vn]
+            vtres = vres[type]
 
-    for type in ptypes:
-        vres = res[vn]
-        vtres = vres[type]
+            seasons = var_seasons[vn]
+            for season in seasons:
+                for plot_type in ["summary","indmem","indmemdiff"]:
+                    if type == "spatialmean":
+                        if map_type == "global":
+                            if vn == "ts":
+                                plot_name = f"sst_{type}_{season.lower()}.{plot_type}.png"
+                                if plot_type == "summary":
+                                    title = f'Ensemble Summary: SST {type.capitalize()} ({season.upper()})'
+                            else:
+                                plot_name = f"{vn}_{type}_{season.lower()}.{plot_type}.png"
+                                if plot_type == "summary":
+                                    title = f'Ensemble Summary: {vn.upper()} {type.capitalize()} ({season.upper()})'
+                        
+                        fig = global_enesmble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
+                        #global_sim_ref_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
 
-        #ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False)
-        season = "SON"
-        global_ensemble_fig = ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, "PSL", season, type, vtres, "global")
-        global_ensemble_fig.savefig(plot_loc / f"psl_ensemble_{season.lower()}.png",bbox_inches="tight")
+                        if map_type == "polar":
+                            if vn == "ts":
+                                plot_name = f"sst_{type}_{season.lower()}.{plot_type}.png"
+                                if plot_type == "summary":
+                                    title = f'Ensemble Summary: SST {type.capitalize()} ({season.upper()})'
+                            elif season == "NDJFM":
+                                plot_name = f"npi_pattern_{season.lower()}.{plot_type}.png"
+                                if plot_type == "summary":
+                                    title = f'Ensemble Summary: NPI Pattern ({season.upper()})'
+                                if plot_type == "indmemdiff":
+                                    title = f'NPI Pattern Differences ({season.upper()})\n'
+                                if plot_type == "indmem":
+                                    title = f'NPI Pattern ({season.upper()})\n'
+                            elif vn in eof_vars:
+                                print("EOF func")
+                                plot_name = f"{vn.lower()}_pattern_{season.lower()}.{plot_type}.png"
+                                if plot_type == "summary":
+                                    title = f'Ensemble Summary: {vn} Pattern ({season.upper()})\n'
+                                if plot_type == "indmem":
+                                    title = f'{vn} Pattern ({season.upper()})\n'
+                                if plot_type == "indmemdiff":
+                                    title = f'{vn} Pattern Differences ({season.upper()})\n'
+                            else:
+                                plot_name = f"{vn}_{type}_{season.lower()}.{plot_type}.png"
+                                if plot_type == "summary":
+                                    title = f'Ensemble Summary: {vn.upper()} {type.capitalize()} ({season.upper()})'
+                    
+                    if type == "trends":
+                        print()
+
+                    fig.savefig(plot_loc / plot_name, bbox_inches="tight")
 
 
 
@@ -53,7 +105,6 @@ def indmem_plot(finarrs, arrs, vn, var=None, season="ANN", ptype="trends", plot_
     elif season == "NDJFM":
         plot_name = f"output/npi_pattern_{season.lower()}.indmem.png"
         title = f'NPI Pattern ({season.upper()})\n'
-    #elif var == "NAM" or var == "SAM":
     elif var in eof_vars:
         plot_name = f"output/{var.lower()}_pattern_{season.lower()}.indmem.png"
         title = f'{var} Pattern ({season.upper()})\n'
@@ -62,7 +113,7 @@ def indmem_plot(finarrs, arrs, vn, var=None, season="ANN", ptype="trends", plot_
         title = f'{vn.upper()} {ptype.capitalize()} ({season.upper()})\n'
 
     if map_type == "global":
-        stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
+        global_sim_ref_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
     if map_type == "polar":
         stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
 
@@ -111,7 +162,18 @@ def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_ty
 
 
 
-def ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False):
+def ensemble_plot(arrs, arr_diff, vn, var, season, ptype, plot_dict, map_type):
+    """
+    arrs
+    arr_diff
+    vn
+    var=None
+    season="ANN"
+    ptype="trends"
+    plot_dict=None
+    map_type="global"
+
+    """
     #if not var:
     #    var = vn
 
@@ -127,7 +189,7 @@ def ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", pl
         #title = f'NPI Pattern ({season})\n'
         title = f'Ensemble Summary: NPI Pattern ({season.upper()})'
     elif var in eof_vars:
-        print("IS IT HERE?")
+        print("EOF func")
         plot_name = f"output/{var.lower()}_pattern_{season.lower()}.summary.png"
         title = f'Ensemble Summary: {var} Pattern ({season.upper()})\n'
     else:
@@ -138,26 +200,16 @@ def ensemble_plot(arrs, arr_diff, vn, var=None, season="ANN", ptype="trends", pl
 
     if map_type == "global":
         print(map_type)
-        #global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False)
-        ####global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug)
-        fig = global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug)
+        fig = global_enesmble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title)
     if map_type == "polar":
         print(map_type)
-        polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug)
+        polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name)
     return fig
 
-
-#vn = "ts"
 #vns = ["ts", "psl"]
 vns = ["psl"]
-#vns = ["ts"]
-#ptypez = ["spatialmean"]
 season = "SON"
 
-#finarrs_dict
-#ptypes
-#lsmask
-#plot_dict
 """
 #finarrs = [ts_cesm_avg,ts_obs_avg]
 for i,vn in enumerate(vns):

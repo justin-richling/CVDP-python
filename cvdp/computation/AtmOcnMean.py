@@ -7,7 +7,7 @@ License: MIT
 """
 
 import old_utils.analysis as an
-from diag import compute_seasonal_avgs, compute_seasonal_stds
+from diag import compute_seasonal_avgs
 
 #def AtmOcnMean(ref_dataset, sim_dataset):
 def mean_seasonal_calc(ref_dataset, sim_dataset):
