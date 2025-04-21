@@ -93,7 +93,7 @@ def graphics(plot_loc, **kwargs):
                         print()
 
                     fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                    fig.close()
+                    plt.close(fig)
 
 
 
