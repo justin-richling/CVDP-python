@@ -162,7 +162,7 @@ def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_ty
 
 
 
-def ensemble_plot(arrs, arr_diff, vn, var, season, ptype, plot_dict, map_type):
+'''def ensemble_plot(arrs, arr_diff, vn, var, season, ptype, plot_dict, map_type):
     """
     arrs
     arr_diff
@@ -204,7 +204,7 @@ def ensemble_plot(arrs, arr_diff, vn, var, season, ptype, plot_dict, map_type):
     if map_type == "polar":
         print(map_type)
         polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name)
-    return fig
+    return fig'''
 
 #vns = ["ts", "psl"]
 vns = ["psl"]
