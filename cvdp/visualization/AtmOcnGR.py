@@ -58,7 +58,7 @@ def graphics(plot_loc, **kwargs):
                                 if plot_type == "summary":
                                     title = f'Ensemble Summary: {vn.upper()} {type.capitalize()} ({season.upper()})'
                         
-                        fig = global_enesmble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
+                        fig = global_ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
                         #global_sim_ref_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
 
                         if map_type == "polar":
