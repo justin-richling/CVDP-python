@@ -284,12 +284,17 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         cb.set_ticks(ticks)
         # 
         cb.set_ticklabels(tick_labels)
-        # Set title of colorbar to units
-        cb.ax.set_xlabel(unit,fontsize=18)
+        
         # Set tick label size and remove the tick lines (optional)
         cb.ax.tick_params(labelsize=12, size=0)
         # Remove border of colorbar
         cb.outline.set_visible(False)
+        if r in [0,1]:
+            stuff = "$^{-1}$"
+            yr_range = (eyr-syr)+1
+            cb.ax.set_xlabel(f'{unit} {yr_range}yr{stuff}',fontsize=18)
+        else:
+            cb.ax.set_xlabel(unit,fontsize=18)
 
     madeup_r = 0.28
     r_text = f'r={madeup_r}'
