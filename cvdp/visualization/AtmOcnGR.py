@@ -95,9 +95,9 @@ def graphics(plot_loc, **kwargs):
 
                     if plot_type == "summary":
                         fig = global_ensemble_plot([sim_seas_avgs, ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
-                    elif plot_type == "indmem":
+                    if plot_type == "indmem":
                         fig = global_indmem_latlon_plot([sim_seas_avgs, ref_seas_avgs], vn, season, vtres, title, type)
-                    elif plot_type == "indmemdiff":
+                    if plot_type == "indmemdiff":
                         continue  # add logic if "indmemdiff" becomes active again
 
                     fig.savefig(plot_loc / plot_name, bbox_inches="tight")
