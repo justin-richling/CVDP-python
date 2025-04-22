@@ -358,7 +358,7 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
         eyr = arr.yrs[-1]
 
         # Run name
-        run = f"{arr[r].run}"
+        run = f"{arr[r].run_name}"
 
         # For having 180 as the cental longitude (Pacific centric view), sometimes the data and longitude
         # have to be "wrapped" around this lingitude. Is this an xarray problem?
@@ -509,12 +509,16 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
     cb.outline.set_visible(False)
 
     # Add climo years if test case
-    if r == 0:
+    """if r == 0:
         stuff = "$^{-1}$"
         yr_range = (eyr-syr)+1
         cb.ax.set_xlabel(f'{unit} {yr_range}yr{stuff}',fontsize=25)
     else:
-        cb.ax.set_xlabel(unit, fontsize=18)
+        cb.ax.set_xlabel(unit, fontsize=18)"""
+
+    stuff = "$^{-1}$"
+    yr_range = (eyr-syr)+1
+    cb.ax.set_xlabel(f'{unit} {yr_range}yr{stuff}',fontsize=25)
 
     # Set values to floats for decimals and int for integers for tick labels
     #bound_labels = [str(v) if v <= 1 else str(int(v)) for v in ticks]
