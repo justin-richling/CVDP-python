@@ -54,13 +54,18 @@ def graphics(plot_loc, **kwargs):
                                 plot_name = f"sst_{type}_{season.lower()}.{plot_type}.png"
                                 if plot_type == "summary":
                                     title = f'Ensemble Summary: SST {type.capitalize()} ({season.upper()})'
+                                if plot_type == "indmem":
+                                    title = f'SST {type.capitalize()} ({season.upper()})\n'
+                                if plot_type == "indmemdiff":
+                                    title = f'SST {type.capitalize()} Differences ({season.upper()})\n'
                             else:
                                 plot_name = f"{vn}_{type}_{season.lower()}.{plot_type}.png"
                                 if plot_type == "summary":
                                     title = f'Ensemble Summary: {vn.upper()} {type.capitalize()} ({season.upper()})'
-                        
-                        fig = global_ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
-                        #global_sim_ref_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
+                                if plot_type == "indmem":
+                                    title = f'{vn.upper()} {type.capitalize()} ({season.upper()})\n'
+                                if plot_type == "indmemdiff":
+                                    title = f'{vn.upper()} {type.capitalize()} Differences ({season.upper()})\n'
 
                         if map_type == "polar":
                             if vn == "ts":
@@ -92,8 +97,20 @@ def graphics(plot_loc, **kwargs):
                     if type == "trends":
                         print()
 
+                    if plot_type == "summary":
+                        fig = global_ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
+                        #fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                        #plt.close(fig)
+
+                    if plot_type == "indmem":
+                        #fig = global_indmem_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season)
+                        fig = global_indmem_latlon_plot([sim_seas_avgs,ref_seas_avgs], vn, vtres, title, type)
+                        #fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                        #plt.close(fig)
+
                     fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                     plt.close(fig)
+                    
 
 
 
@@ -115,7 +132,7 @@ def indmem_plot(finarrs, arrs, vn, var=None, season="ANN", ptype="trends", plot_
         title = f'{vn.upper()} {ptype.capitalize()} ({season.upper()})\n'
 
     if map_type == "global":
-        global_sim_ref_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
+        global_indmem_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
     if map_type == "polar":
         stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
 
@@ -154,7 +171,7 @@ def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_ty
 
     if map_type == "global":
         print(title,"\n",plot_name)
-        #global_latlon_diff_plot(vn, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
+        #global_diff_latlon_plot(vn, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
     if map_type == "polar":
         print(title,"\n",plot_name)
         #polar_diff_plot(vn, var, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
