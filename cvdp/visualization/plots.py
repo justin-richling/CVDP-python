@@ -367,7 +367,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 #########
 
 
-'''def global_ensemble_plot(finarrs, arrs, arr_diff, vn, season, ptype, plot_dict, title, plot_name, debug=False):
+def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False):
     """
     Args
     ----
@@ -386,17 +386,18 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 
     # Get variable plot info
     #-----------------------
-    plot_info = plot_dict[vn]
+    plot_info = plot_dict
 
     # get units
-    unit = plot_info["units"]
+    #unit = plot_info["units"]
+    unit = arrs[0].units
 
     # Set up plot
     #------------
     nrows = 1
     ncols = 4
 
-    proj = projection=ccrs.Robinson(central_longitude=210)
+    proj = ccrs.Robinson(central_longitude=210)
     fig_width = 15+(2.5*ncols)
     fig_height = 15
     fig, axs = plt.subplots(nrows=nrows,ncols=ncols,figsize=(fig_width,fig_height),
@@ -406,24 +407,33 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
     img = []
     for r in range(0,ncols):
         if r == 2:
-            levels = plot_info.get("diff_range",plot_info["range"])
+
+            levels = plot_info.get("diff_range",None)
+            if not levels:
+                diff = arrs[0]-arrs[1]
+                diff_max = diff.max().item()
+                diff_min = diff.min().item()
+                levels = np.linspace(diff_min, diff_max, 20)
+            else:
+                levels = np.arange(*levels)
 
             # colorbar ticks
-            ticks = plot_info.get("diff_ticks",plot_info["ticks"])
-
-            #cbarticks = plot_info.get("diff_cbarticks", None)
+            ticks = np.arange(*plot_info.get("diff_ticks_range",levels))
             cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
             if cbarticks is None:
                 cbarticks = ticks
 
             # color map
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
+            if not cmap in plt.colormaps():
+                #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+                cmap = get_NCL_colormap(cmap, extend='None')
         if r in [0,1]:
             # plot contour range
-            levels = plot_info["range"]
+            levels = np.linspace(*plot_info["contour_levels_linspace"])
         
             # colorbar ticks
-            ticks = plot_info["ticks"]
+            ticks = np.arange(*plot_info["ticks_range"])
 
             cbarticks = plot_info.get("cbarticks", None)
             if cbarticks is None:
@@ -431,6 +441,10 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 
             # color map
             cmap = plot_info["cmap"]
+            if cmap not in plt.colormaps():
+                #print(f"Ref/Sim colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+                cmap = get_NCL_colormap(cmap, extend='None')
+
             
 
         # Start data gather/clean
@@ -454,22 +468,23 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 
         # Difference plot
         if r == 2:
-            arr = arr_diff
-            run = f"{finarrs[0].run} - {finarrs[1].run}"
+            arr = arr_diff.sel(season=season)
+            run = f"{arrs[0].run_name} - {arrs[1].run_name}"
             yrs_text = ''
         # End if
 
         # Case plots
         if r < 2:
-            arr = arrs[r]
+            arr = arrs[r].sel(season=season)
 
             # Get run name
             #TODO: run names need to be better to get
-            run = f"{finarrs[r].run}"
+            run = arr.run_name
+            #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
-            syr = finarrs[r].yrs[0]
-            eyr = finarrs[r].yrs[1]
+            syr = arr.yrs[0]
+            eyr = arr.yrs[1]
             yrs_text = f'{syr}-{eyr}'
             if debug:
                 print(yrs_text,"\n")
@@ -482,7 +497,6 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 
         # Variable exceptions:
         if vn == "ts":
-
             landsies = ncl_masks.LSMASK.where(ncl_masks.LSMASK==1)
             lon_idx = landsies.dims.index('lon')
 
@@ -490,7 +504,6 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
             wrap_data_land, wrap_lon_land = add_cyclic_point(landsies.values,
                                                              coord=landsies.lon,
                                                              axis=lon_idx)
-
         if r < 2:
             wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
         if r == 2:
@@ -499,6 +512,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
         # End data gather/clean
         #----------------------
 
+        #print("wrap_data.shape",wrap_data.shape)
 
         # Start plot exceptions
         #----------------------
@@ -512,7 +526,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
             ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
         if vn == "psl":
-            ticks = plot_info["ticks"][::2]
+            #ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
 
         # Create a dictionary with arguments for contourf
@@ -579,35 +593,21 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
 
         # COLORBARS
         #--------------
-        #cbarticks = ticks
-        #print("cbarticks ensemble",r,ptype,cbarticks,"\n")
-        
         # Format colorbar for plots other than Rank:
         if r != 3:
             if vn == "ts":
                 if ptype == "trends":
-                    # Define the locations for custom set of labels
-                    #cbarticks = [-6, -4, -2, -0.5, 0, 0.5, 2, 4, 6]
-
                     # Define specific tick locations for the colorbar
                     ticks = levels
                     # Create a list of labels where only the selected labels are shown
                     tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
                 if ptype == "spatialmean":
-                    # Define the locations for custom set of labels
-                    #if r != 2:
-                    #    cbarticks = np.arange(0,37,4)
-                    #else:
-                    #    cbarticks = np.arange(-5,6,1)
                     # Define specific tick locations for the colorbar
                     ticks = levels
                     # Create a list of labels where only the selected labels are shown
                     tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
             elif vn == "psl":
                 if ptype == "spatialmean":
-                    # Define the locations for custom set of labels
-                    #if r == 2:
-                    #    cbarticks = np.arange(-10,11,2)
                     # Define specific tick locations for the colorbar
                     ticks = levels
                     # Create a list of labels where only the selected labels are shown
@@ -616,9 +616,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
                 else:
                     cbarticks = ticks
                     tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
-                #print("tick_labels ensemble",r,ptype,tick_labels,"\n")
             else:
-                #cbarticks = ticks
                 tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
             #End if
         else:
@@ -638,16 +636,12 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
         #----------------
         # Set the ticks on the colorbar
         cb.set_ticks(ticks)
-        
         # 
         cb.set_ticklabels(tick_labels)
-
         # Set title of colorbar to units
         cb.ax.set_xlabel(unit,fontsize=18)
-
         # Set tick label size and remove the tick lines (optional)
         cb.ax.tick_params(labelsize=12, size=0)
-
         # Remove border of colorbar
         cb.outline.set_visible(False)
 
@@ -664,16 +658,7 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
     # Clean up the spacing a bit
     plt.subplots_adjust(wspace=wspace)
 
-    # Save figure
-    #------------
-    plt.savefig(plot_name,bbox_inches="tight")
-
-    # If debugging, go ahead and show the plot
-    if debug:
-        plt.show()
-    else:
-        plt.close()
-'''
+    return fig
 
 
 
