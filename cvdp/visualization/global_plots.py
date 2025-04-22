@@ -330,6 +330,8 @@ def global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype):
 
     # color map
     cmap = plot_info["cmap"]
+    if cmap not in plt.colormaps():
+        cmap = get_NCL_colormap(cmap, extend='None')
 
     # get units
     unit = arrs[0].units
