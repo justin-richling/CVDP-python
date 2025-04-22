@@ -99,14 +99,9 @@ def graphics(plot_loc, **kwargs):
 
                     if plot_type == "summary":
                         fig = global_ensemble_plot([sim_seas_avgs,ref_seas_avgs], arr_diff, vn, season, type, vtres, title)
-                        #fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                        #plt.close(fig)
 
                     if plot_type == "indmem":
-                        #global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype)
                         fig = global_indmem_latlon_plot([sim_seas_avgs,ref_seas_avgs], vn, season, vtres, title, type)
-                        #fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                        #plt.close(fig)
 
                     fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                     plt.close(fig)
@@ -114,67 +109,7 @@ def graphics(plot_loc, **kwargs):
 
 
 
-# Plot functions
-#---------------
-def indmem_plot(finarrs, arrs, vn, var=None, season="ANN", ptype="trends", plot_dict=None, map_type="global", debug=False):
 
-    if vn == "ts":
-        plot_name = f"output/sst_{ptype}_{season.lower()}.indmem.png"
-        title = f'SST {ptype.capitalize()} ({season.upper()})\n'
-    elif season == "NDJFM":
-        plot_name = f"output/npi_pattern_{season.lower()}.indmem.png"
-        title = f'NPI Pattern ({season.upper()})\n'
-    elif var in eof_vars:
-        plot_name = f"output/{var.lower()}_pattern_{season.lower()}.indmem.png"
-        title = f'{var} Pattern ({season.upper()})\n'
-    else:
-        plot_name = f"output/{vn}_{ptype}_{season.lower()}.indmem.png"
-        title = f'{vn.upper()} {ptype.capitalize()} ({season.upper()})\n'
-
-    if map_type == "global":
-        global_indmem_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
-    if map_type == "polar":
-        stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug)
-
-
-def indmemdiff_plot(finarrs, arr_diff, vn, var, season, ptype, plot_dict, map_type, debug=False):
-    """
-    d
-    """
-
-    #unit = finarrs[0].units
-    try:
-        run = f"{finarrs[0].run} - {finarrs[1].run}"
-    except:
-        print()
-    try:
-        run = f"{finarrs[0][vn].run} - {finarrs[1][vn].run}"
-    except:
-        print()
-    run = "HAHAHAHJJPSå"
-    print("vn:",vn,"\n")
-    # Set file name and figure title
-    if vn == "ts":
-        plot_name = f"output/sst_{ptype}_{season.lower()}.indmemdiff.png"
-        title = f'SST {ptype.capitalize()} Differences ({season.upper()})\n'
-    elif season == "NDJFM":
-        plot_name = f"output/npi_pattern_{season.lower()}.indmemdiff.png"
-        title = f'NPI Pattern Differences ({season.upper()})\n'
-    #elif var == "NAM" or var == "SAM":
-    elif var in eof_vars:
-        plot_name = f"output/{var.lower()}_pattern_{season.lower()}.indmemdiff.png"
-        title = f'{var} Pattern Differences ({season.upper()})\n'
-    else:
-        print("no way its here?")
-        plot_name = f"output/{vn}_{ptype}_{season.lower()}.indmemdiff.png"
-        title = f'{vn.upper()} {ptype.capitalize()} Differences ({season.upper()})\n'
-
-    if map_type == "global":
-        print(title,"\n",plot_name)
-        #global_diff_latlon_plot(vn, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
-    if map_type == "polar":
-        print(title,"\n",plot_name)
-        #polar_diff_plot(vn, var, run, arr_diff, ptype, plot_dict, title, plot_name, debug)
 
 
 
