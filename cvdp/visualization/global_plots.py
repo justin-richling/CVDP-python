@@ -384,9 +384,6 @@ def global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype):
 
         # Plot landmask (continents) if TS or SST
         if vn == "ts":
-            #if ptype == "spatialmean":
-            #    wrap_data = np.where(wrap_data>40, np.nan, wrap_data)
-
             # Land mask
             # ----------
             # Mask out land using masking data
@@ -510,17 +507,8 @@ def global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype):
     # Remove border of colorbar
     cb.outline.set_visible(False)
 
-    # Add climo years if test case
-    """if r == 0:
-        stuff = "$^{-1}$"
-        yr_range = (eyr-syr)+1
-        cb.ax.set_xlabel(f'{unit} {yr_range}yr{stuff}',fontsize=25)
-    else:
-        cb.ax.set_xlabel(unit, fontsize=18)"""
-
-    stuff = "$^{-1}$"
-    yr_range = (eyr-syr)+1
-    cb.ax.set_xlabel(f'{unit} {yr_range}yr{stuff}',fontsize=25)
+    # Add units
+    cb.ax.set_xlabel(unit, fontsize=18)
 
     # Set values to floats for decimals and int for integers for tick labels
     #bound_labels = [str(v) if v <= 1 else str(int(v)) for v in ticks]
