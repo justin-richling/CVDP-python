@@ -118,7 +118,11 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             print(f"[DEBUG] Panel {r} — Title: {run_title}, Years: {yrs_text}, Unit: {unit}")
 
         img = plot_field(axs[r], arr, levels, cmap, norm, vn, ptype)
-        axs[r].set_title(run_title, fontsize=18, color='#0c80ab' if r == 0 else None)
+        #axs[r].set_title(run_title, fontsize=18, color='#0c80ab' if r == 0 else None)
+        if r == 0:
+            axs[r].set_title(run_title, fontsize=18, color='#0c80ab')
+        else:
+            axs[r].set_title(run_title, fontsize=18)
         axs[r].text(-0.065, 0.98, yrs_text, transform=axs[r].transAxes, fontsize=11, va='top')
 
         add_colorbar(fig, axs[r], img, unit, ticks, cbarticks)
