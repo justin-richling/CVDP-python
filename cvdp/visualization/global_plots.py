@@ -308,7 +308,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
 
 
-def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
+def global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype):
 
     # Format spacing
     hspace = 0.5
@@ -334,7 +334,7 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
     # get units
     unit = arrs[0].units
 
-    proj = projection = ccrs.Robinson(central_longitude=210)
+    proj = ccrs.Robinson(central_longitude=210)
     #QUESTION: add variable figure height and/or width based on number of plots if running several cases?
     nrows = 2
     ncols = 1
@@ -351,7 +351,7 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
         # ----------------------------
 
         # Get array for this run
-        arr = arrs[r]
+        arr = arrs[r].sel(season=season)
 
         # Data years for this run
         syr = arr.yrs[0]
