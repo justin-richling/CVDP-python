@@ -319,7 +319,8 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
     plot_info = plot_dict
 
     # plot contour range
-    levels = plot_info["range"]
+    #levels = plot_info["range"]
+    levels = np.linspace(*plot_info["contour_levels_linspace"])
 
     # colorbar ticks
     ticks = plot_info["ticks"]
