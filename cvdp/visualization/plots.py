@@ -294,9 +294,6 @@ def stacked_global_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, p
     #FLAG: cleaned this up
     if vn == "ts":
         if ptype == "trends":
-            # Define the locations for custom set of labels
-            #cbarticks = [-6, -4, -2, -0.5, 0, 0.5, 2, 4, 6]
-
             # Define specific tick locations for the colorbar
             ticks = levels
             # Create a list of labels where only the selected labels are shown
@@ -512,8 +509,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # End data gather/clean
         #----------------------
 
-        #print("wrap_data.shape",wrap_data.shape)
-
         # Start plot exceptions
         #----------------------
         # TODO: clean this up further?
@@ -521,8 +516,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # Grab every other value for TS spatial mean
         # TODO: Fix this in the plot_dict!
         if (vn == "ts") and (ptype == "spatialmean") and (r in [0,1]):
-        #if (vn == "ts" or (vn == "psl")) and (ptype == "spatialmean") and (r in [0,1]):
-        #if (ptype == "spatialmean") and (r in [0,1]):
             ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
         if vn == "psl":
@@ -661,11 +654,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
     return fig
 
 
-
-
-
-
-
 def global_latlon_diff_plot(vn, run, arr, ptype, plot_dict, title, plot_name, debug=False):
     y_title = .715
 
@@ -717,17 +705,6 @@ def global_latlon_diff_plot(vn, run, arr, ptype, plot_dict, title, plot_name, de
         # Set up data for land mask
         lon_idx = landsies.dims.index('lon')
         wrap_data_land, wrap_lon_land = add_cyclic_point(landsies.values, coord=landsies.lon, axis=lon_idx)
-
-        # Wrap       
-        #if ptype == "spatialmean":
-        #    wrap_data = np.where(wrap_data<-6, -6, wrap_data)
-        
-        #wrap_data = wrap_data.data
-        # Set up normalization of data based off non-linear set of contour levels
-        norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
-
-        # Plot variable and add axis instance to list
-        #img = axs.contourf(wrap_lon, lat, wrap_data, cmap=amwg_cmap, norm=norm, levels=levels, transform=ccrs.PlateCarree())
 
         # Plot masked continents over TS plot to mimic SST's
         axs.contourf(wrap_lon_land,landsies.lat,wrap_data_land,
@@ -827,17 +804,6 @@ def global_latlon_diff_plot(vn, run, arr, ptype, plot_dict, title, plot_name, de
 
     #Set figure title
     plt.suptitle(title, fontsize=22, y=y_title)
-
-    # Save figure
-    #------------
-    plt.savefig(plot_name,bbox_inches="tight")
-
-    # If debugging, go ahead and show the plot
-    if debug:
-        plt.show()
-    else:
-        plt.close()
-
 
 
 #####################
