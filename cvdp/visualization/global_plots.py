@@ -354,8 +354,8 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
         arr = arrs[r]
 
         # Data years for this run
-        syr = arr.time[0].values
-        eyr = arr.time[-1].values
+        syr = arr.yrs[0]
+        eyr = arr.yrs[-1]
 
         # Run name
         run = f"{arr[r].run}"
