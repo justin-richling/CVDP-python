@@ -25,6 +25,9 @@ lsmask, ncl_masks = af.land_mask()
 def get_plot_config(r, arrs, arr_diff, season, plot_dict, vn):
     """Return data, title, levels, colormap, and other config for each subplot."""
     unit = arrs[0].units
+    ticks = None
+    cbarticks = None
+    norm = None
     if r == 3:
         arr = af.zeros_array(arrs[-1].shape[0], arrs[-1].shape[1])
         title = "Rank of Observations within Ensemble"
