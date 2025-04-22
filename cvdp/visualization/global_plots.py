@@ -92,6 +92,11 @@ def add_colorbar(fig, ax, img, unit, ticks, cbarticks):
     """Add a custom horizontal colorbar below the plot."""
     axins = inset_axes(ax, width="85%", height="8%", loc='lower center', borderpad=-3)
     cb = fig.colorbar(img, orientation='horizontal', cax=axins, ticks=ticks, extend='both')
+    # Fallback to defaults if needed
+    if ticks is None:
+        ticks = []
+    if cbarticks is None:
+        cbarticks = ticks
     tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     cb.set_ticklabels(tick_labels)
     cb.ax.set_xlabel(unit, fontsize=18)
