@@ -103,8 +103,8 @@ def graphics(plot_loc, **kwargs):
                         #plt.close(fig)
 
                     if plot_type == "indmem":
-                        #fig = global_indmem_latlon_plot(vn, finarrs, arrs, plot_dict, title, plot_name, ptype, season)
-                        fig = global_indmem_latlon_plot([sim_seas_avgs,ref_seas_avgs], vn, vtres, title, type)
+                        #global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype)
+                        fig = global_indmem_latlon_plot([sim_seas_avgs,ref_seas_avgs], vn, season, vtres, title, type)
                         #fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                         #plt.close(fig)
 
