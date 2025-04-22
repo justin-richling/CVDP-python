@@ -9,7 +9,7 @@ License: MIT
 import old_utils.analysis as an
 from diag import compute_seasonal_avgs
 
-#def AtmOcnMean(ref_dataset, sim_dataset):
+
 def mean_seasonal_calc(ref_dataset, sim_dataset):
 
     print("\nCalculating climatological seasonal means...")
@@ -31,17 +31,12 @@ def mean_seasonal_calc(ref_dataset, sim_dataset):
 
     # If the cases are different shapes, we need to interpolate one to the other first
     #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
-    #arr_prime = an.interp_diff(arr_anom1, arr_anom2)
     arr_prime = an.interp_diff(sim_seas_avgs, ref_seas_avgs)
 
-
-    #print("arr_prime type:",type(arr_prime),"\n")
     # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
     if arr_prime is None:
-        #arr_diff = arr_anom1 - arr_anom2
         arr_diff = sim_seas_avgs - ref_seas_avgs
     else:
-        #arr_diff = (arr_prime - arr_anom2)
         arr_diff = (arr_prime - ref_seas_avgs)
 
     return ref_seas_avgs, sim_seas_avgs, arr_diff
