@@ -556,7 +556,7 @@ def global_diff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     unit = plot_info["units"]
 
     # Set up figure and axes
-    proj = projection=ccrs.Robinson(central_longitude=210)
+    proj = ccrs.Robinson(central_longitude=210)
     fig_width = 15
     fig_height = 18
     fig, axs = plt.subplots(nrows=1,ncols=1,figsize=(fig_width,fig_height), facecolor='w', edgecolor='k',
@@ -572,8 +572,6 @@ def global_diff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
 
     # Variable exceptions:
     if vn == "ts":
-        # Land mask
-        #----------
         # Mask out land using masking data
         landsies = ncl_masks.LSMASK.where(ncl_masks.LSMASK==1)
 
@@ -585,7 +583,7 @@ def global_diff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         axs.contourf(wrap_lon_land,landsies.lat,wrap_data_land,
                             colors="w", zorder=300,
                             transform=ccrs.PlateCarree())
-        # Plot lakes
+
         axs.add_feature(cfeature.LAKES.with_scale('110m'), #alpha=0, #facecolor=cfeature.COLORS['water'],
                         edgecolor="#b5b5b5", facecolor="none", zorder=300)
 
@@ -597,25 +595,11 @@ def global_diff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
                                     'color': '#0c80ab',
                                     })
 
-    if vn == "prect":
-        print("prect plotting things...")
-
-    if vn == "trefht":
-        print("trefht plotting things...")
-
-    # Add coast lines and title
     axs.coastlines('50m',color="#b5b5b5")
     axs.set_title(run,loc='center',fontdict={'fontsize': 20,
                                 #'fontweight': 'bold',
                                 'color': '#0c80ab',
                                 })
-
-    # Add run years to top left of plot
-    #yrs_text = f'{syr}-{eyr}'
-    #props = dict(boxstyle='round', facecolor='grey', alpha=0.15)  # bbox features
-    #axs[r].text(0.0, 0.98, yrs_text, transform=axs[r].transAxes, fontsize=18, verticalalignment='top')#, bbox=props)
-
-
     # COLORBARS
     #----------------
     # Set up axis to insert into color bar
@@ -634,10 +618,6 @@ def global_diff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
             # Create a list of labels where only the selected labels are shown
             tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
         if ptype == "spatialmean":
-            # Define the locations for custom set of labels
-            #cbarticks = np.arange(-5,6,1)
-            #print("ts spatialmean cbarticks",cbarticks)
-
             # Define specific tick locations for the colorbar
             ticks = levels
             # Create a list of labels where only the selected labels are shown
