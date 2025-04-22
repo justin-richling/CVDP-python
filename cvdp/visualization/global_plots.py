@@ -323,7 +323,7 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
     levels = np.linspace(*plot_info["contour_levels_linspace"])
 
     # colorbar ticks
-    ticks = plot_info["ticks"]
+    ticks = np.arange(*plot_info["ticks_range"])
     cbarticks = plot_info.get("cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
