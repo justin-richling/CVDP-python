@@ -332,7 +332,7 @@ def global_indmem_latlon_plot(arrs, vn, plot_dict, title, ptype):
     cmap = plot_info["cmap"]
 
     # get units
-    unit = plot_info["units"]
+    unit = arrs[0].units
 
     proj = projection = ccrs.Robinson(central_longitude=210)
     #QUESTION: add variable figure height and/or width based on number of plots if running several cases?
