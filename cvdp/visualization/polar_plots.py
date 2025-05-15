@@ -45,11 +45,11 @@ def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug
 
     # Set up figure and axes
     if var in nh_vars:
-        proj = projection=ccrs.NorthPolarStereo(central_longitude=0)
+        proj = ccrs.NorthPolarStereo(central_longitude=0)
         extent = [-180, 180, 20, 90]
         space = 16.5
     if var in sh_vars:
-        proj = projection=ccrs.SouthPolarStereo(central_longitude=0)
+        proj = ccrs.SouthPolarStereo(central_longitude=0)
         extent = [-180, 180, -20, -90]
         space = -16.5
 
