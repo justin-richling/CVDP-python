@@ -95,6 +95,11 @@ def convert_to_cftime_no_leap(time_values):
                     dt.astype('datetime64[M]').item().month, 
                     dt.astype('datetime64[D]').item().day
                 ) for dt in time_values]
+    elif isinstance(time_values[0], np.int32):
+        return [
+        cftime.DatetimeNoLeap(year=int(t // 100), month=int(t % 100), day=15)
+        for t in time_values
+        ]
     
     else:
         raise TypeError("Unsupported time type")
@@ -159,10 +164,10 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
             print(f"    ** The variable {vari} is used for {cvdp_v} **\n")
             arr = ds.data_vars[vari]
     """
-
+    print("HERE IT COMES:",fil0)
     ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
     print("ADAM: ds",ds,"\n\n")
-    #print(ds['time'].values,type(ds['time'].values[0]),"\n")
+    print(ds['time'].values,type(ds['time'].values[0]),"\n")
     ds['time'] = convert_to_cftime_no_leap(ds['time'].values)
     sydata = ds['time'].values[0].year  # start year of data (specified in file name)
     smdata = ds['time'].values[0].month  # start month of data
