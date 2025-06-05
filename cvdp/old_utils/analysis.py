@@ -266,11 +266,10 @@ def get_eof(ds, season, latlon_dict, neof):
     # about that EOF signs are arbitrary and do not change the physical
     # interpretation.
     for i in range(neof):
-        if i == 1:
+        if i == 0:
             pcs[i, :] *= (-1)
             eofs[i, :, :] *= (-1)
-        
-
+            
     """
     eofs[1, :, :] = eofs[1, :, :] #* (-1)
 
