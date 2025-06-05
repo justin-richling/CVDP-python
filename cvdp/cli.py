@@ -59,17 +59,31 @@ def main():
 
     ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
 
+    #vn = "ts"
     vn = "psl"
     ref_0 = list(ref_datasets.keys())[0]
     sim_0 = list(sim_datasets.keys())[0]
-
-
+    """if not Path("sim_datasets.nc").is_file():
+        sim_datasets[sim_0][vn].to_netcdf("sim_datasets.nc")
+    else:
+        sim_dataset = xr.open_dataset("sim_datasets.nc")
+        sim_dataset = sim_datasets[sim_0][vn]
+    if not Path("ref_datasets.nc").is_file():
+        ref_datasets[ref_0][vn].to_netcdf("ref_datasets.nc")
+        ref_dataset = ref_datasets[ref_0][vn]
+    else:
+        ref_dataset = xr.open_dataset("ref_datasets.nc")"""
+    #print("ref_datasets[ref_0][vn]",ref_datasets[ref_0][vn],"\n\n")
     #from computation.AtmOcnMean import mean_seasonal_calc
-    ref_seas_avgs, sim_seas_avgs, arr_diff = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
-
+    ref_seas_avgs, sim_seas_avgs, seas_avgs_diff = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
+    ref_seas_trnds, sim_seas_trnds, seas_trnds_diff = trend_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
+    #ref_seas_trnds = ref_seas_trnds.isel(year=0)
+    #sim_seas_trnds = sim_seas_trnds.isel(year=0)
+    #seas_trnds_diff = seas_trnds_diff.isel(year=0)
     #from visualization.AtmOcnGR import graphics
-    kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
-              "diff_seas":arr_diff}
+    kwargs = {"ref_seas_avgs":ref_seas_avgs, "sim_seas_avgs":sim_seas_avgs, "seas_avgs_diff":seas_avgs_diff,
+              "ref_seas_trnds":ref_seas_trnds, "sim_seas_trnds":sim_seas_trnds, "seas_trnds_diff":seas_trnds_diff
+              }
     graphics(plot_loc, **kwargs)
 
 
