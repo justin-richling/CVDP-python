@@ -19,6 +19,35 @@ CLIMATOLOGY_SEASON_MONTHS = {
 }
 
 
+'''def compute_seasonal_avgs(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
+    """
+    Computes the sesonal averages for a given time series variable.
+    
+    :param var_data: Variable DataArray to compute the seasonal averages for.
+    :type var_data: xarray.DataArray
+    :param seasons: (Optional) Dictionary that maps the seasonal code (key) to its respective month integers (values)
+    :type seasons: dict
+    :return: Variable DataArray with the 'time' dimension reduced to seasons and their average values.
+    :rtype: xarray.DataArray
+    """
+    monthly_avgs = var_data.groupby("time.month").mean().rename(f"{var_data.name}_avg")
+    seasonal_avgs = []
+    for season_label in CLIMATOLOGY_SEASON_MONTHS:
+        season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
+        seasonal_avgs.append(monthly_avgs.sel(month=season_months).mean(dim="month"))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))
+
+
+def compute_seasonal_stds(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
+    monthly_avgs = var_data.groupby("time.month").mean().rename(f"{var_data.name}_std")
+    seasonal_avgs = []
+    for season_label in CLIMATOLOGY_SEASON_MONTHS:
+        season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
+        seasonal_avgs.append(monthly_avgs.sel(month=season_months).std(dim="month"))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))
+'''
+
+
 from geocat.comp import eofunc_eofs, eofunc_pcs, month_to_season
 import numpy as np
 
@@ -95,6 +124,13 @@ def get_eof(ds, season, latlon_dict, neof):
         if i == 1:
             pcs[i, :] *= (-1)
             eofs[i, :, :] *= (-1)
+        
+
+    """
+    eofs[1, :, :] = eofs[1, :, :] #* (-1)
+
+    pcs[1, :] = pcs[1, :] #* (-1)
+    """
 
     # Sum spatial weights over the area used.
     nLon = xw.sizes["lon"]
