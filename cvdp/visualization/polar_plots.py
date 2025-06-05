@@ -14,7 +14,7 @@ import old_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
 
-def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug=False):
+def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title, season):
     nh_vars = ["NAM"]
     sh_vars = ["SAM", "PSA1", "PSA2"]
 
@@ -22,26 +22,45 @@ def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug
 
     # Get variable plot info
     #-----------------------
-    plot_info = plot_dict[vn]
+    plot_info = plot_dict
 
-   # plot contour range
-    #levels = plot_info["range"]
-    levels = plot_info.get("diff_range",plot_info["range"])
+    # plot contour range
+    levels = None
+
+    arr = arr.sel(season=season)
+
+
+    if "contour_levels_linspace" in plot_info:
+        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+        levels = np.linspace(*plot_info["contour_levels_linspace"])
+    if "contour_levels_range" in plot_info:
+        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+        levels = np.arange(*plot_info["contour_levels_range"])
+    if "contour_levels_list" in plot_info:
+        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+        levels = np.arange(plot_info["contour_levels_list"])
+    print("type(levels)",type(levels))
+    if not isinstance(levels,np.ndarray):
+        diff_max = arr.max().item()
+        diff_min = arr.min().item()
+        levels = np.linspace(diff_min, diff_max, 20)
 
     # colorbar ticks
-    #ticks = plot_info["ticks"]
-    ticks = plot_info.get("diff_ticks",plot_info["ticks"])
+    ticks = plot_info.get("diff_range_list",levels)
+
 
     cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
-    #plot_info.get("diff_cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
 
     # color map
-    cmap = plot_info["cmap"]
+    cmap = plot_info.get("diff_cmap",plot_info["cmap"])
+    if not cmap in plt.colormaps():
+        #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+        cmap = get_NCL_colormap(cmap, extend='None')
 
     # get units
-    unit = plot_info["units"]
+    #unit = arr.units
 
     # Set up figure and axes
     if var in nh_vars:
@@ -63,7 +82,7 @@ def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug
     # Get wrapped data around zeroth longitude
     lat = arr.lat
     #lon_idx = arr.dims.index('lon')
-    dimension_list = list(arr.dims.keys())  # Convert dimensions to a list
+    dimension_list = list(arr.dims)  # Convert dimensions to a list
     lon_idx = dimension_list.index('lon') 
     print("lon_idx",lon_idx,"\n")
     wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
@@ -209,15 +228,7 @@ def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug
     #Set figure title
     plt.suptitle(title, fontsize=26, y=0.9)
 
-    # Save figure
-    #------------
-    plt.savefig(plot_name,bbox_inches="tight")
-
-    # If debugging, go ahead and show the plot
-    if debug:
-        plt.show()
-    else:
-        plt.close()
+    return fig
 
 
 
@@ -227,42 +238,63 @@ def polar_diff_plot(vn, var, run, arr, ptype, plot_dict, title, plot_name, debug
 
 
 
-def stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptype, season, debug=False):
+def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
     nrows = 2
     ncols = 1
 
     # Format spacing
     hspace = 0.6
-    y_title = .79
+    y_title = .97
 
     # Get variable plot info
-    plot_info = plot_dict[var]
+    plot_info = plot_dict
 
     # Plot contour range
-    levels = plot_info["range"]
+    levels = None
+    if "contour_levels_linspace" in plot_info:
+        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+        levels = np.linspace(*plot_info["contour_levels_linspace"])
+    if "contour_levels_range" in plot_info:
+        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+        levels = np.arange(*plot_info["contour_levels_range"])
+    if "contour_levels_list" in plot_info:
+        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+        levels = np.arange(plot_info["contour_levels_list"])
+    if not isinstance(levels,np.ndarray):
+        arr_max = arrs[0].max().item()
+        arr_min = arr[0].min().item()
+        levels = np.linspace(arr_min, arr_max, 20)
 
-    # Colorbar ticks
-    ticks = plot_info["ticks"]
+    # colorbar ticks
+    ticks = plot_info.get("diff_range_list",levels)
+
+
+    cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
+    if cbarticks is None:
+        cbarticks = ticks
 
     # Color map
-    cmap = plot_info["cmap"]
+    cmap = plot_info.get("diff_cmap",plot_info["cmap"])
+    if not cmap in plt.colormaps():
+        #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+        cmap = get_NCL_colormap(cmap, extend='None')
 
     # Units
-    unit = plot_info["units"]
+    unit = arrs[0].units
 
     # Define projection and extent
     if var == "NAM" or var == "PNO" or var == "PNA":
-        proj = projection=ccrs.NorthPolarStereo(central_longitude=0)
+        proj = ccrs.NorthPolarStereo(central_longitude=0)
         extent = [-180, 180, 20, 90]
         space = 17
     if var == "SAM" or var == "PSA1" or var == "PSA2":
-        proj = projection=ccrs.SouthPolarStereo(central_longitude=0)
+        proj =ccrs.SouthPolarStereo(central_longitude=0)
         extent = [-180, 180, -20, -90]
         space = -17
 
     # Set up plot
     fig_width = 6
-    fig_height = 22
+    fig_height = 12
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width, fig_height), facecolor='w', edgecolor='k',
                             sharex=True, sharey=True, subplot_kw={"projection": proj})
 
@@ -278,14 +310,16 @@ def stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptyp
         circle = mpath.Path(verts * radius + center)
         axs[i].set_boundary(circle, transform=axs[i].transAxes)
 
-        # Data years
-        syr = finarrs[r].time[0].dt.year.values
-        eyr = finarrs[r].time[-1].dt.year.values
+        arr = arrs[r].sel(season=season)
+
+        # Get start and end years for run
+        syr = arr.yrs[0]
+        eyr = arr.yrs[1]
+        yrs_text = f'{syr}-{eyr}'
 
         # Run name
-        run = finarrs[r][vn].run
+        run = arr.run_name
 
-        arr = arrs[r]
 
         lon_idx = arr.dims.index('lon')
         wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
@@ -316,21 +350,21 @@ def stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptyp
         plt.setp(axs[i].spines.values(), lw=.5, color='grey', alpha=0.7)
 
         axs[i].coastlines('50m', color="#b5b5b5", alpha=0.5)
-        axs[i].set_title(run, loc='center', fontdict={'fontsize': 16, 'color': '#0c80ab'}, y=1.07)
+        axs[i].set_title(run, loc='center', fontdict={'fontsize': 16, 'color': '#0c80ab'}, y=1.05)
 
         yrs_text = f'{syr}-{eyr}'
-        axs[i].text(0.0, 0.93, yrs_text, transform=axs[i].transAxes, fontsize=12, verticalalignment='top')
+        axs[i].text(0.0, 1.02, yrs_text, transform=axs[i].transAxes, fontsize=10, verticalalignment='top')
 
         madeup_percent = "23.6%"
         r_text = madeup_percent
-        axs[i].text(.85, 0.93, r_text, transform=axs[i].transAxes, fontsize=12, verticalalignment='top')
+        axs[i].text(.85, 1.02, r_text, transform=axs[i].transAxes, fontsize=10, verticalalignment='top')
 
         if r == 0:
             madeup_r = f"r={0.77}"
             r_text = madeup_r
-            axs[i].text(.85, 0.9, r_text, transform=axs[i].transAxes, fontsize=12, verticalalignment='top')
+            axs[i].text(.85, 0.95, r_text, transform=axs[i].transAxes, fontsize=10, verticalalignment='top')
 
-    fig.text(0.95, 0.77, "$\\copyright$ CVDP-LE", fontsize=10, color='#b5b5b5', weight='bold', alpha=0.75, ha='right', va='top')
+    fig.text(0.95, 0.925, "$\\copyright$ CVDP-LE", fontsize=10, color='#b5b5b5', weight='bold', alpha=0.75, ha='right', va='top')
 
     axins = inset_axes(axs[-1], width="120%", height="5%", loc='lower center', borderpad=-5)
     tick_font_size = 16
@@ -382,18 +416,13 @@ def stacked_polar_plot(vn, var, finarrs, arrs, plot_dict, title, plot_name, ptyp
     cb.outline.set_visible(False)
 
     plt.suptitle(title, fontsize=22, y=y_title)
-    plt.subplots_adjust(hspace=-0.475)
-    plt.savefig(plot_name, bbox_inches="tight")
-
-    # If debugging, go ahead and show the plot
-    if debug:
-        plt.show()
-    else:
-        plt.close()
+    
+    return fig
 
 
 
-def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_dict, title, plot_name, debug=False):
+
+def polar_ensemble_plot(arrs, arr_diff, vn, var, season, ptype, plot_dict, title, debug=False):
     """
     Args
     ----
@@ -411,23 +440,23 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
     sub_text_size = 11
 
     nh_vars = ["NAM"]
-    sh_vars = ["SAM", "PSA1", "PSA2"]
+    sh_vars = ["SAM"]#, "PSA1", "PSA2"]
     eof_vars = nh_vars+sh_vars
 
     # Get variable plot info
     #-----------------------
-    plot_info = plot_dict[vn]
+    plot_info = plot_dict
 
     # get units
-    unit = plot_info["units"]
+    unit = arrs[0].units
 
     # Set up figure and axes
     if var in nh_vars:
-        proj = projection=ccrs.NorthPolarStereo(central_longitude=0)
+        proj = ccrs.NorthPolarStereo(central_longitude=0)
         extent = [-180, 180, 20, 90]
         space = 14 #16.5
     if var in sh_vars:
-        proj = projection=ccrs.SouthPolarStereo(central_longitude=0)
+        proj = ccrs.SouthPolarStereo(central_longitude=0)
         extent = [-180, 180, -20, -90]
         space = -14 #-16.5
 
@@ -471,28 +500,59 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
         axs[r].coastlines('50m', color="#b5b5b5", alpha=0.5)
 
         if r == 2:
-            levels = plot_info.get("diff_range",plot_info["range"])
+            arr_diff = arr_diff.sel(season=season)
+            levels = None
+            #levels = np.arange(*levels)
+            if "diff_range_list" in plot_info:
+                levels = plot_info["diff_range_list"]
+            if not levels:
+                #diff = arrs[0]-arrs[1]
+                diff = arr_diff
+                diff_max = diff.max().item()
+                diff_min = diff.min().item()
+                levels = np.linspace(diff_min, diff_max, 20)
+            
 
+
+            #diff = arr_diff
+            #diff_max = diff.max().item()
+            #diff_min = diff.min().item()
+            #levels = np.linspace(-8, 8, 24)
+
+            print("polar ensemble r=2 (diff) levels:",levels,"\n\n")
             # colorbar ticks
-            ticks = plot_info.get("diff_ticks",plot_info["ticks"])
-
-            #cbarticks = plot_info.get("diff_cbarticks", None)
-            cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
+            #print('plot_info["diff_ticks_range"]',plot_info["diff_ticks_range"],"\n")
+            #ah = plot_info.get("diff_ticks_range",levels)
+            #print('plot_info.get("diff_ticks_range",levels)',ah,"\n")
+            #ticks = np.arange(*ah)
+            cbarticks = plot_info.get("diff_cbarticks_range", plot_info.get("cbarticks", None))
             if cbarticks is None:
                 cbarticks = ticks
 
             # color map
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
-
-            arr = arr_diff
-            run = f"{finarrs[0].run} - {finarrs[1].run}"
-            yrs_text = ''
+            if not cmap in plt.colormaps():
+                #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+                cmap = get_NCL_colormap(cmap, extend='None')
         if r in [0,1]:
-            # plot contour range
-            levels = plot_info["range"]
-        
+            # Plot contour range
+            levels = None
+            if "contour_levels_linspace" in plot_info:
+                print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+                levels = np.linspace(*plot_info["contour_levels_linspace"])
+            if "contour_levels_range" in plot_info:
+                print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+                levels = np.arange(*plot_info["contour_levels_range"])
+            if "contour_levels_list" in plot_info:
+                print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+                levels = np.arange(plot_info["contour_levels_list"])
+            if not isinstance(levels,np.ndarray):
+                arr_max = arr.max().item()
+                arr_min = arr.min().item()
+                levels = np.linspace(arr_min, arr_max, 20)
+            print("AHHHH levels",levels)
             # colorbar ticks
-            ticks = plot_info["ticks"]
+            ticks = np.arange(*plot_info["ticks_range"])
 
             cbarticks = plot_info.get("cbarticks", None)
             if cbarticks is None:
@@ -500,19 +560,9 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
 
             # color map
             cmap = plot_info["cmap"]
-
-            arr = arrs[r]
-
-            # Get run name
-            #TODO: run names need to be better to get
-            run = f"{finarrs[r].run}"
-
-            # Get start and end years for run
-            syr = finarrs[r].yrs[0]
-            eyr = finarrs[r].yrs[1]
-            yrs_text = f'{syr}-{eyr}'
-            if debug:
-                print(yrs_text,"\n")
+            if cmap not in plt.colormaps():
+                #print(f"Ref/Sim colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+                cmap = get_NCL_colormap(cmap, extend='None')
 
         # Start data gather/clean
         #------------------------
@@ -532,31 +582,30 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
                 # Set up normalization of data based off non-linear set of contour levels
                 norm = mpl.colors.BoundaryNorm(ticks, amwg_cmap.N)
         # End if
-        '''
+
         # Difference plot
         if r == 2:
-            arr = arr_diff
-            run = f"{finarrs[0].run} - {finarrs[1].run}"
+            arr = arr_diff.sel(season=season)
+            run = f"{arrs[0].run_name} - {arrs[1].run_name}"
             yrs_text = ''
         # End if
-        '''
-        '''
+
         # Case plots
         if r < 2:
-            arr = arrs[r]
+            arr = arrs[r].sel(season=season)
 
             # Get run name
             #TODO: run names need to be better to get
-            run = f"{finarrs[r].run}"
+            run = arr.run_name
+            #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
-            syr = finarrs[r].yrs[0]
-            eyr = finarrs[r].yrs[1]
+            syr = arr.yrs[0]
+            eyr = arr.yrs[1]
             yrs_text = f'{syr}-{eyr}'
             if debug:
                 print(yrs_text,"\n")
         # End if
-        '''
 
         # Get wrapped data around zeroth longitude
         lat = arr.lat
@@ -567,7 +616,6 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
 
         # Variable exceptions:
         if vn == "ts":
-
             landsies = ncl_masks.LSMASK.where(ncl_masks.LSMASK==1)
             lon_idx = landsies.dims.index('lon')
 
@@ -593,10 +641,10 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
         # Grab every other value for TS spatial mean
         # TODO: Fix this in the plot_dict!
         if (vn == "ts") and (ptype == "spatialmean") and (r in [0,1]):
-            ticks = plot_info["ticks"][::2]
+            #ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
         if vn == "psl":
-            ticks = plot_info["ticks"][::2]
+            #ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
 
         # Create a dictionary with arguments for contourf
@@ -654,7 +702,7 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
                     fontsize=sub_text_size, verticalalignment='top')#, bbox=props)
 
         # Set up inserted colorbar axis
-        axins = inset_axes(axs[r], width="85%", height="8%",
+        axins = inset_axes(axs[r], width="85%", height="4%",
                             loc='lower center', borderpad=-5)
 
         # COLORBARS
@@ -685,9 +733,7 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
                 else:
                     cbarticks = ticks
                     tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
-                #print("tick_labels ensemble",r,ptype,tick_labels,"\n")
             else:
-                #cbarticks = ticks
                 tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
             #End if
         else:
@@ -733,12 +779,4 @@ def polar_ensemble_plot(finarrs, arrs, arr_diff, vn, var, season, ptype, plot_di
     # Clean up the spacing a bit
     plt.subplots_adjust(wspace=wspace)
 
-    # Save figure
-    #------------
-    plt.savefig(plot_name,bbox_inches="tight")
-
-    # If debugging, go ahead and show the plot
-    if debug:
-        plt.show()
-    else:
-        plt.close()
+    return fig
