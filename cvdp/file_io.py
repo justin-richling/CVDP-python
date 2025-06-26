@@ -7,23 +7,13 @@ IO library for CVDP workflow:
     - Parse file structure to find netCDF datasets and read from disk
     - Check format input data, raise exceptions and/or make modifications if necessary
 """
-
-#!/usr/bin/env python
-"""
-io.py
-
-IO library for CVDP workflow:
-    - Read user configuration
-    - Parse file structure to find netCDF datasets and read from disk
-    - Check format input data, raise exceptions and/or make modifications if necessary
-"""
 import xarray
 import cftime
 from glob import glob
 from pathlib import Path
 import yaml
 import numpy as np
-import utils.file_creation as fc
+import old_utils.file_creation as fc
 
 vname = {"sst":'ts',"TS":'ts',"ts":'ts',"t_surf":'ts',"skt":'ts',
              "TREFHT":'trefht',"tas":'trefht',"temp":'trefht',"air":'trefht',"temperature_anomaly":'trefht',"temperature":'trefht',"t2m":'trefht',"t_ref":'trefht',"T2":'trefht',"tempanomaly":'trefht',
@@ -33,11 +23,16 @@ vname = {"sst":'ts',"TS":'ts',"ts":'ts',"t_surf":'ts',"skt":'ts',
 
 
 def read_datasets(paths: str, vn: str, yrs: list, members: str=None) -> xarray.DataArray:
+    """
+    Read datasets and create monthly data 
+    """
     paths = [path for path in paths if ".nc" in path]
     if members is not None:
+        print("Looks like an ensemble?")
         grouped_datasets = []
         for member in members:
             #grouped_datasets.append(xarray.open_mfdataset([path for path in paths if member in path]))
+            # da will be a monthly time dimension array
             da,err = fc.data_read_in_3D([path for path in paths if member in path],yrs[0],yrs[1],vn)
             if not isinstance(da, xarray.DataArray):
                 print("Borken")
@@ -46,7 +41,6 @@ def read_datasets(paths: str, vn: str, yrs: list, members: str=None) -> xarray.D
         #ds = xarray.concat(grouped_datasets, dim=xarray.DataArray(members, dims="member"))
     else:
         #ds = xarray.open_mfdataset(paths)
-        print("here, right?")
         print("vn BEFORE going into read_3D...",vn,type(vn))
         da,err = fc.data_read_in_3D(paths,yrs[0],yrs[1],vn)
         if not isinstance(da, xarray.DataArray):
@@ -58,8 +52,6 @@ def get_input_data(config_path: str) -> dict:
     with open(config_path) as stream:
         config = yaml.safe_load(stream)
 
-    #ref_datasets = {}
-    #sim_datasets = {}
     ref_dataarray = {}
     sim_dataarray = {}
 
@@ -73,9 +65,9 @@ def get_input_data(config_path: str) -> dict:
         cpathS = paths[0]
         cpathE = paths[-1]
         sydata = int(cpathS[len(cpathS)-16:len(cpathS)-12])  # start year of data (specified in file name)
-        #smdata = int(cpathS[len(cpathS)-12:len(cpathS)-10])  # start month of data
+        smdata = int(cpathS[len(cpathS)-12:len(cpathS)-10])  # start month of data
         eydata = int(cpathE[len(cpathE)-9:len(cpathE)-5])    # end year of data
-        #emdata = int(cpathE[len(cpathE)-5:len(cpathE)-3])    # end month of data
+        emdata = int(cpathE[len(cpathE)-5:len(cpathE)-3])    # end month of data
 
         if "start_yr" in ds_info:
             syr = ds_info["start_yr"]
@@ -88,9 +80,14 @@ def get_input_data(config_path: str) -> dict:
 
         #print('ds_info["members"]',type(ds_info["members"]),ds_info["members"])
         mems = ds_info.get("members",None)
-        print('ds_info["variable"]',ds_info["variable"])
+        print('ds_info["variable"]',ds_info["variable"],"\n")
         var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
-        print("ds_name",ds_name)
+        print("Data set model run name (ds_name)",ds_name,"\n")
+        var_data_array.attrs["run_name"] = ds_name
+        # Add desired start and end years to metadata
+        season_yrs = np.unique(var_data_array["time.year"])
+        var_data_array.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
+        #print("var_data_array",var_data_array,"\n",type(var_data_array),"\n\n\n")
 
         
         vn = ds_info["variable"]
@@ -110,39 +107,6 @@ def get_input_data(config_path: str) -> dict:
             #Path(save_loc).unlink(missing_ok=True)
             var_data_array.to_netcdf(file_name)"""
 
-        print("AHGGHDHD",type(var_data_array["time"].values[0]))  # Check time type
-
-        #print("AHHHHH",var_data_array,"\n")
-        print("data_set.units",var_data_array.units)
-        """
-        try:
-            calendar = var_data_array.time.values[0].calendar
-        except:
-            try:
-                #calendar = data_set.time.calendar
-                calendar = var_data_array.time.calendar
-            except:
-                calendar = 'standard'
-        #calendar = data_set.time.calendar
-
-        if "start_yr" in ds_info:
-            #print("start_yr AFTER",start_time)
-            #start_time = cftime.datetime(int(ds_info["start_yr"]), 1, 1, calendar=calendar)
-            start_time = np.datetime64(f"{int(ds_info['start_yr'])}-01-01")
-            print("start_yr AFTER",start_time)
-        else:
-            start_yr = var_data_array.time.values[0].year
-            start_time = cftime.datetime(start_yr, 1, 1, calendar=calendar)
-        if "end_yr" in ds_info:
-            #end_time = cftime.datetime(int(ds_info["end_yr"]), 1, 1, calendar=calendar)
-            end_time = np.datetime64(f"{int(ds_info['end_yr'])}-01-01")
-        else:
-            end_yr = var_data_array.time.values[-1].year
-            end_time = cftime.datetime(end_yr, 1, 1, calendar=calendar)
-        print(start_time, end_time)
-        var_data_array = var_data_array.sel(time=slice(start_time, end_time))
-        print("data_set.time",var_data_array.time,"\n")
-        """
         cvdp_var = vname[vn]
         if ds_info["reference"]:
             ref_dataarray[ds_name] = {}
@@ -162,15 +126,10 @@ def get_input_data(config_path: str) -> dict:
 
 
 
-'''
-import xarray
-import cftime
-from glob import glob
-import yaml
-import numpy as np
 
 
-def read_datasets(paths: str, members: str=None):
+
+'''def read_datasets(paths: str, members: str=None):
     paths = [path for path in paths if ".nc" in path]
     if members is not None:
         grouped_datasets = []
@@ -222,6 +181,4 @@ def get_input_data(config_path: str) -> dict:
     #
     #
     
-    return (ref_datasets, sim_datasets)
-'''
-
+    return (ref_datasets, sim_datasets)'''
