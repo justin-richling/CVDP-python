@@ -16,8 +16,8 @@ from cvdp.scripts.atm_ocn_mean_stddev_calc import calcAtmOcnMeanStd
 from cvdp.scripts.atm_mean_stddev_gr import calcAtmOcnMeanStdGR
 """
 #from cvdp.visualization.AtmOcnGR import *
-from computation.AtmOcnMean import *
-from visualization.AtmOcnGR import *
+from diag.AtmOcnMean import *
+from vis.AtmOcnGR import *
 from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 from vis import *
 
@@ -54,7 +54,7 @@ def main():
             #var_data_array.to_netcdf(save_loc)
             return None"""
 
-    from file_io import get_input_data
+    from io import get_input_data
 
     ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
 
