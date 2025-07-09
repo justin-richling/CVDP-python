@@ -6,7 +6,7 @@ Command Line Interface (CLI) for CVDP.
 
 Parses user input from command line and passes arguments to automation in cvdp.py
 """
-import xarray as xr
+
 import argparse
 from importlib.metadata import version as getVersion
 
@@ -15,14 +15,14 @@ from importlib.metadata import version as getVersion
 from cvdp.scripts.atm_ocn_mean_stddev_calc import calcAtmOcnMeanStd
 from cvdp.scripts.atm_mean_stddev_gr import calcAtmOcnMeanStdGR
 """
-#from cvdp.visualization.AtmOcnGR import *
-#from diag.AtmOcnMean import *
-#from vis.AtmOcnGR import *
-#from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 
-from cvdp.diag.AtmOcnMean import *
-from cvdp.vis.AtmOcnGR import *
-from cvdp.definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
+from diag.AtmOcnMean import *
+from vis.AtmOcnGR import *
+from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
+
+#from cvdp.diag.AtmOcnMean import *
+#from cvdp.vis.AtmOcnGR import *
+#from cvdp.definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 #from vis import *
 
 def main():
@@ -63,24 +63,24 @@ def main():
 
     ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
 
-    vn = "psl"
     ref_0 = list(ref_datasets.keys())[0]
     sim_0 = list(sim_datasets.keys())[0]
 
 
-    #from computation.AtmOcnMean import mean_seasonal_calc
-    ref_seas_avgs, sim_seas_avgs, arr_diff = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
-    arr_prime = an.interp_diff(sim_seas_avgs, ref_seas_avgs)
+    vns = ["psl"]
+    for vn in vns:
+        ref_seas_avgs, sim_seas_avgs, arr_diff = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn])
+        arr_prime = an.interp_diff(sim_seas_avgs, ref_seas_avgs)
 
-    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
-    if arr_prime is None:
-        arr_diff = sim_seas_avgs - ref_seas_avgs
-    else:
-        arr_diff = (arr_prime - ref_seas_avgs)
-    #from visualization.AtmOcnGR import graphics
-    kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
-              "diff_seas":arr_diff}
-    graphics(plot_loc, **kwargs)
+        # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+        if arr_prime is None:
+            arr_diff = sim_seas_avgs - ref_seas_avgs
+        else:
+            arr_diff = (arr_prime - ref_seas_avgs)
+        #from visualization.AtmOcnGR import graphics
+        kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
+                "diff_seas":arr_diff}
+        graphics(plot_loc, **kwargs)
 
 
 if __name__ == '__main__':
