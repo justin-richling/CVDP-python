@@ -12,6 +12,8 @@ import vis as vis
 import matplotlib.pyplot as plt
 import utils as helper_utils
 
+print("helper_utils????",dir(helper_utils),"\n\n")
+
 season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
 var_seasons = {
     "psl": {"global": season_list, "polar": season_list + ["NDJFM"]},
