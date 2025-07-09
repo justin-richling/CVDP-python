@@ -97,8 +97,9 @@ def graphics(plot_loc, **kwargs):
     seas_avgs_diff = kwargs["diff_seas"]
     print("\n\nseas_avgs_diff",seas_avgs_diff,"\n\n")
     res = helper_utils.get_variable_defaults()
-
-    for vn in vns:
+    vn = kwargs["vn"]
+    #for vn in vns:
+    if 1==1:
         unit = ref_seas_avgs.units
         for type in ptypes:
             for map_type in map_types:
