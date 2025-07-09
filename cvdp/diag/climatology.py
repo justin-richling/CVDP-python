@@ -224,7 +224,14 @@ def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
     arr3, arr5, anom3, anom5 = dask.persist(arr3, arr5, anom3, anom5)
 
     # ---------- 3.  Helpers ----------
-    season_dict = {"DJF": 11, "MAM": 2, "JJA": 5, "SON": 8, "NDJFM": 10}  # adjust to taste
+    season_dict = {"NDJFM":0,
+               "DJF":0,
+               "JFM":1,
+               "MAM":3,
+               "JJA":6,
+               "JAS":7,
+               "SON":9
+    }
     def slice_season(da, key):
         """Return centred 3‑month (or 5‑month for NDJFM) series for the desired season."""
         return da.isel(time=slice(season_dict[key], None, 12))
