@@ -7,16 +7,10 @@ License: MIT
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
-import cartopy.crs as ccrs
-import matplotlib as mpl
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from cartopy.util import add_cyclic_point
-import cartopy.feature as cfeature
 
 from vis import *
-from vis.vis_utils import *
-import cvdp_utils.avg_functions as af
+from visualization.vis_utils import *
+import old_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
 def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False):

@@ -7,16 +7,10 @@ License: MIT
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
-import cartopy.crs as ccrs
-import matplotlib as mpl
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from cartopy.util import add_cyclic_point
-import cartopy.feature as cfeature
 
 from vis import *
-from vis.vis_utils import *
-import cvdp_utils.avg_functions as af
+from visualization.vis_utils import *
+import old_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
 def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False):
@@ -62,16 +56,14 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
             levels = plot_info.get("diff_range",None)
             if not levels:
-                diff = arr_diff
+                diff = arrs[0]-arrs[1]
                 diff_max = diff.max().item()
                 diff_min = diff.min().item()
                 levels = np.linspace(diff_min, diff_max, 20)
-                levels = np.linspace(-9,9,19)
             else:
                 levels = np.arange(*levels)
 
             # colorbar ticks
-            print("YAHOO",plot_info.get("diff_ticks_range",levels))
             ticks = np.arange(*plot_info.get("diff_ticks_range",levels))
             cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
             if cbarticks is None:
@@ -82,25 +74,9 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             if not cmap in plt.colormaps():
                 #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
                 cmap = get_NCL_colormap(cmap, extend='None')
-            #levels = np.linspace(-1,1,20)
         if r in [0,1]:
             # plot contour range
-            # Plot contour range
-            levels = None
-            if "contour_levels_linspace" in plot_info:
-                print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
-                levels = np.linspace(*plot_info["contour_levels_linspace"])
-            if "contour_levels_range" in plot_info:
-                print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
-                levels = np.arange(*plot_info["contour_levels_range"])
-            if "contour_levels_list" in plot_info:
-                print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
-                levels = np.arange(plot_info["contour_levels_list"])
-            if not isinstance(levels,np.ndarray):
-                arr_max = arrs[0].max().item()
-                arr_min = arr[0].min().item()
-                levels = np.linspace(arr_min, arr_max, 20)
-            #levels = np.linspace(-1,1,20)
+            levels = np.linspace(*plot_info["contour_levels_linspace"])
         
             # colorbar ticks
             ticks = np.arange(*plot_info["ticks_range"])
@@ -139,8 +115,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # Difference plot
         if r == 2:
             arr = arr_diff.sel(season=season)
-            #arr = arr.isel(year=0)
-            #print("AHHHHH",arr,"\n\n")
             run = f"{arrs[0].run_name} - {arrs[1].run_name}"
             yrs_text = ''
         # End if
@@ -148,8 +122,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # Case plots
         if r < 2:
             arr = arrs[r].sel(season=season)
-            #arr = arr.isel(year=0)
-            #print("AHHHHH",arr,"\n\n")
 
             # Get run name
             #TODO: run names need to be better to get
@@ -163,7 +135,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
             if debug:
                 print(yrs_text,"\n")
         # End if
-
 
         # Get wrapped data around zeroth longitude
         lat = arr.lat
@@ -198,7 +169,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         if (vn == "ts") and (ptype == "spatialmean") and (r in [0,1]):
         #if (vn == "ts" or (vn == "psl")) and (ptype == "spatialmean") and (r in [0,1]):
         #if (ptype == "spatialmean") and (r in [0,1]):
-            #ticks = plot_info["ticks"][::2]
+            ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
         if vn == "psl":
             #ticks = plot_info["ticks"][::2]
@@ -310,9 +281,9 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
         # Format colorbar
         #----------------
         # Set the ticks on the colorbar
-        ##cb.set_ticks(ticks)
+        cb.set_ticks(ticks)
         # 
-        ##cb.set_ticklabels(tick_labels)
+        cb.set_ticklabels(tick_labels)
         
         # Set tick label size and remove the tick lines (optional)
         cb.ax.tick_params(labelsize=12, size=0)
@@ -341,8 +312,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
     return fig
 
 
-# def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
-def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
+
+def global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype):
 
     # Format spacing
     hspace = 0.5
@@ -352,21 +323,9 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
     # -----------------------
     plot_info = plot_dict
 
-    # Plot contour range
-    levels = None
-    if "contour_levels_linspace" in plot_info:
-        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
-        levels = np.linspace(*plot_info["contour_levels_linspace"])
-    if "contour_levels_range" in plot_info:
-        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
-        levels = np.arange(*plot_info["contour_levels_range"])
-    if "contour_levels_list" in plot_info:
-        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
-        levels = np.arange(plot_info["contour_levels_list"])
-    if not isinstance(levels,np.ndarray):
-        arr_max = arrs[0].max().item()
-        arr_min = arr[0].min().item()
-        levels = np.linspace(arr_min, arr_max, 20)
+    # plot contour range
+    #levels = plot_info["range"]
+    levels = np.linspace(*plot_info["contour_levels_linspace"])
 
     # colorbar ticks
     ticks = np.arange(*plot_info["ticks_range"])
@@ -399,7 +358,6 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
         # ----------------------------
 
         # Get array for this run
-        print("\n\n\nGLOBAL LATLON ARR",arrs[r],"\n\n\n")
         arr = arrs[r].sel(season=season)
 
         # Data years for this run
@@ -570,41 +528,21 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
 
     return fig
 
-# def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title, season):
-def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title,season):
+
+def global_diff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     y_title = .715
 
     # Get variable plot info
     #-----------------------
-    plot_info = plot_dict
+    plot_info = plot_dict[vn]
 
     # plot contour range
-    levels = None
-
-
-    arr = arr.sel(season=season)
-
-    if "contour_levels_linspace" in plot_info:
-        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
-        levels = np.linspace(*plot_info["contour_levels_linspace"])
-    if "contour_levels_range" in plot_info:
-        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
-        levels = np.arange(*plot_info["contour_levels_range"])
-    if "contour_levels_list" in plot_info:
-        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
-        levels = np.arange(plot_info["contour_levels_list"])
-    print("type(levels)",type(levels))
-    if not isinstance(levels,np.ndarray):
-        diff_max = arr.max().item()
-        diff_min = arr.min().item()
-        levels = np.linspace(diff_min, diff_max, 20)
-
-    # colorbar ticks
-    ticks = plot_info.get("diff_range_list",levels)
+    #levels = plot_info["range"]
+    levels = plot_info.get("diff_range",plot_info["range"])
 
     # colorbar ticks
     #ticks = plot_info["ticks"]
-    #ticks = plot_info.get("diff_ticks",plot_info["ticks"])
+    ticks = plot_info.get("diff_ticks",plot_info["ticks"])
 
     cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
     #plot_info.get("diff_cbarticks", None)
@@ -613,11 +551,9 @@ def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title,se
 
     # color map
     cmap = plot_info["cmap"]
-    if cmap not in plt.colormaps():
-        cmap = get_NCL_colormap(cmap, extend='None')
 
     # get units
-    #unit = plot_info["units"]
+    unit = plot_info["units"]
 
     # Set up figure and axes
     proj = ccrs.Robinson(central_longitude=210)
@@ -654,16 +590,16 @@ def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title,se
     wrap_data = clean_data(vn, wrap_data, ptype, diff=True)
     
     img = axs.contourf(wrap_lon, lat, wrap_data, cmap=cmap, levels=levels, transform=ccrs.PlateCarree())
+    axs.set_title(run,loc='center',fontdict={'fontsize': 20,
+                                    #'fontweight': 'bold',
+                                    'color': '#0c80ab',
+                                    })
 
-    axs.coastlines('50m',color="#b5b5b5", alpha=0.5)
+    axs.coastlines('50m',color="#b5b5b5")
     axs.set_title(run,loc='center',fontdict={'fontsize': 20,
                                 #'fontweight': 'bold',
                                 'color': '#0c80ab',
                                 })
-    
-    #axs.coastlines('50m', color="#b5b5b5", alpha=0.5)
-    #axs.set_title(run, loc='center', fontdict={'fontsize': 20, 'color': '#0c80ab'}, y=1.07)
-
     # COLORBARS
     #----------------
     # Set up axis to insert into color bar
