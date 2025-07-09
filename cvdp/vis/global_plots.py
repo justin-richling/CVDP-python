@@ -141,7 +141,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, un
             arr = arr_diff#.sel(season=season)
             #arr = arr.isel(year=0)
             #print("AHHHHH",arr,"\n\n")
-            run = f"{arrs[0].run_name} - {arrs[1].run_name}"
+            run = f"{arrs[0].run} - {arrs[1].run}"
             yrs_text = ''
         # End if
 
@@ -153,7 +153,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, un
 
             # Get run name
             #TODO: run names need to be better to get
-            run = arr.run_name
+            run = arr.run
             #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
@@ -407,7 +407,7 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season, un
         eyr = arr.yrs[-1]
 
         # Run name
-        run = f"{arr[r].run_name}"
+        run = f"{arr[r].run}"
 
         # For having 180 as the cental longitude (Pacific centric view), sometimes the data and longitude
         # have to be "wrapped" around this lingitude. Is this an xarray problem?
