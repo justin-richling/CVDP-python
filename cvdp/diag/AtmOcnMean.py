@@ -10,17 +10,17 @@ import cvdp_utils.analysis as an
 from diag import compute_seasonal_avgs
 
 
-def mean_seasonal_calc(ref_dataset, sim_dataset):
+def mean_seasonal_calc(ref_dataset, sim_dataset, var_name):
 
     print("\nCalculating climatological seasonal means...")
-    ref_seas_avgs = compute_seasonal_avgs(ref_dataset)
+    ref_seas_avgs = compute_seasonal_avgs(ref_dataset, var_name)
     if "member" in ref_seas_avgs.coords:
         attrs = ref_seas_avgs.attrs  # save before doing groupby/mean
         members = ref_seas_avgs.member
         ref_seas_avgs = ref_seas_avgs.mean(dim="member")
         ref_seas_avgs.attrs = attrs
         ref_seas_avgs.attrs["members"] = members
-    sim_seas_avgs = compute_seasonal_avgs(sim_dataset)
+    sim_seas_avgs = compute_seasonal_avgs(sim_dataset, var_name)
     if "member" in sim_seas_avgs.coords:
         attrs = sim_seas_avgs.attrs  # save before doing groupby/mean
         members = sim_seas_avgs.member
