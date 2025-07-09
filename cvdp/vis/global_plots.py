@@ -342,7 +342,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
 
 
 # def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
-def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season, unit):
+def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
     # Format spacing
     hspace = 0.5
@@ -380,7 +380,7 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season, un
         cmap = get_NCL_colormap(cmap, extend='None')
 
     # get units
-    #unit = arrs[0].units
+    unit = arrs[0].units.values
 
     proj = ccrs.Robinson(central_longitude=210)
     #QUESTION: add variable figure height and/or width based on number of plots if running several cases?
@@ -400,14 +400,14 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season, un
 
         # Get array for this run
         print("\n\n\nGLOBAL LATLON ARR",arrs[r],"\n\n\n")
-        arr = arrs[r].sel(season=season)
+        arr = arrs[r]#.sel(season=season)
 
         # Data years for this run
-        syr = arr.yrs[0]
-        eyr = arr.yrs[-1]
+        syr = arr.syr.values
+        eyr = arr.eyr.values
 
         # Run name
-        run = f"{arr[r].run}"
+        run = f"{arr[r].run.values}"
 
         # For having 180 as the cental longitude (Pacific centric view), sometimes the data and longitude
         # have to be "wrapped" around this lingitude. Is this an xarray problem?
@@ -571,7 +571,7 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season, un
     return fig
 
 # def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title, season):
-def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title, season):
+def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     y_title = .715
 
     # Get variable plot info
@@ -581,8 +581,9 @@ def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title, s
     # plot contour range
     levels = None
 
+    unit = arr.units.values
 
-    arr = arr.sel(season=season)
+    #arr = arr.sel(season=season)
 
     if "contour_levels_linspace" in plot_info:
         print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])

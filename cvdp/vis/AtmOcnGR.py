@@ -117,6 +117,22 @@ def graphics(plot_loc, **kwargs):
                                     seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
                                     fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)
-
+                        if plot_type == "indmem":
+                            if map_type == "global":
+                                if type == "spatialmean":
+                                    sim_seas_avg = sim_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    ref_seas_avg = ref_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
+                                    #global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype)
+                                    #fig = global_indmem_latlon_plot([sim_seas_avgs, ref_seas_avgs], vn, season, vtres, title, type)
+                                    fig = global_indmem_latlon_plot(vn, [sim_seas_avg, ref_seas_avg], vtres, title, plot_type)
+                        if plot_type == "indmemdiff":
+                            if map_type == "global":
+                                if type == "spatialmean":
+                                    seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
+                                    #global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype)
+                                    fig = global_indmemdiff_latlon_plot(vn, seas_avg_diff, vtres, title, plot_type)
                         fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                         plt.close(fig)
