@@ -10,7 +10,8 @@ import numpy as np
 import vis as vis
 #from visualization.global_plots import *
 import matplotlib.pyplot as plt
-import cvdp_utils as helper_utils
+#import cvdp_utils as helper_utils
+import cvdp_utils.utils as helper_utils
 
 print("helper_utils????",dir(helper_utils),"\n\n")
 
@@ -94,7 +95,7 @@ def graphics(plot_loc, **kwargs):
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     seas_avgs_diff = kwargs["diff_seas"]
-    res = helper_utils.utils.get_variable_defaults()
+    res = helper_utils.get_variable_defaults()
 
     for vn in vns:
         for type in ptypes:
