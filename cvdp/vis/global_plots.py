@@ -305,7 +305,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
         # Set up colorbar
         #----------------
         cb = fig.colorbar(img[r], orientation='horizontal',
-                        cax=axins, ticks=ticks, extend='both')
+                        #cax=axins, ticks=ticks, extend='both')
+                        cax=axins, ticks=tick_labels, extend='both')
 
         # Format colorbar
         #----------------
