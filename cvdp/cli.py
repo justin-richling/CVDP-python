@@ -79,7 +79,8 @@ def main():
             arr_diff = (arr_prime - ref_seas_avgs)
         #from visualization.AtmOcnGR import graphics"""
         kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
-                "diff_seas":arr_diff}
+                "diff_seas":arr_diff,
+                "unit": ref_seas_avgs.units}
         graphics(plot_loc, **kwargs)
 
 
