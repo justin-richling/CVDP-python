@@ -10,7 +10,7 @@ import numpy as np
 import vis as vis
 #from visualization.global_plots import *
 import matplotlib.pyplot as plt
-import utils as utils
+import utils as helper_utils
 
 season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
 var_seasons = {
@@ -92,7 +92,7 @@ def graphics(plot_loc, **kwargs):
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     seas_avgs_diff = kwargs["diff_seas"]
-    res = utils.utils.get_variable_defaults()
+    res = helper_utils.utils.get_variable_defaults()
 
     for vn in vns:
         for type in ptypes:
