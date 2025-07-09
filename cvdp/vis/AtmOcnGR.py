@@ -7,12 +7,11 @@ License: MIT
 """
 
 import numpy as np
-#from vis.global_plots import *
-from cvdp.vis.global_plots import *
-#from visualization.global_plots import *
+from vis.global_plots import *
+#from cvdp.vis.global_plots import *
 import matplotlib.pyplot as plt
-#import cvdp_utils as helper_utils
 import cvdp_utils.utils as helper_utils
+#import cvdp.cvdp_utils.utils as helper_utils
 
 print("helper_utils????",dir(helper_utils),"\n\n")
 
@@ -107,8 +106,6 @@ def graphics(plot_loc, **kwargs):
 
                 for season in seasons:
                     for plot_type in ["summary", "indmem","indmemdiff"]:
-                        #plot_name, title = get_plot_name_and_title(vn, type, season, plot_type)
-
                         if plot_type == "summary":
                             if map_type == "global":
                                 if type == "spatialmean":
