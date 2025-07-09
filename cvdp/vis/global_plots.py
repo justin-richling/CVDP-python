@@ -19,7 +19,7 @@ from vis.vis_utils import *
 import cvdp_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
-def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, unit, debug=False):
+def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=False):
     """
     Args
     ----
@@ -42,7 +42,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, un
 
     # get units
     #unit = plot_info["units"]
-    #unit = arrs[0].units
+    unit = arrs[0].units
 
     # Set up plot
     #------------

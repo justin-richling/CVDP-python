@@ -116,7 +116,7 @@ def graphics(plot_loc, **kwargs):
                                     ref_seas_avg = ref_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
-                                    fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, season, type, vtres, title, unit)
+                                    fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)
 
                         fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                         plt.close(fig)

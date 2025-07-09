@@ -169,9 +169,14 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     #print(trnd_dict)
 
     ds = xr.Dataset(trnd_dict)
-    ds.attrs['units']=units
-    ds.attrs['run']=run_name
-    ds.attrs['yrs']=[season_yrs[0],season_yrs[-1]]
+    #ds.attrs['units']=units
+    #ds.attrs['run']=run_name
+    #ds.attrs['yrs']=[int(season_yrs[0]),int(season_yrs[-1])]
+
+    ds = ds.assign_coords(run=run_name)
+    ds = ds.assign_coords(run=units)
+    ds = ds.assign_coords(run=[int(season_yrs[0]),int(season_yrs[-1])])
+
 
 
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
