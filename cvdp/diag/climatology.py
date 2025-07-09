@@ -187,7 +187,7 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
 
 
-def compute_seasonal_stds(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
+"""def compute_seasonal_stds(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
     monthly_avgs = var_data.groupby("time.month").mean().rename(f"{var_data.name}_std")
     seasonal_avgs = []
     for season_label in CLIMATOLOGY_SEASON_MONTHS:
@@ -203,4 +203,4 @@ def compute_seasonal_trends(var_data: xarray.DataArray, seasons: dict=CLIMATOLOG
     for season_label in CLIMATOLOGY_SEASON_MONTHS:
         season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
         seasonal_avgs.append(monthly_trend_avgs.sel(month=season_months).mean(dim="month"))
-    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))"""
