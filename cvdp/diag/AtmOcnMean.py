@@ -6,7 +6,7 @@ CVDP functions for calculating means, standard deviations, and trends.
 License: MIT
 """
 
-import utils.analysis as an
+import cvdp_utils.analysis as an
 from diag import compute_seasonal_avgs
 
 
