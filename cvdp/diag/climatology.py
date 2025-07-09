@@ -76,7 +76,7 @@ season_dict = {"NDJFM":0,
 }
 
 #def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
-def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
+'''def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
 
     # remove annual trend
@@ -185,7 +185,96 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
 
     print("seasonal climo dataset:",ds,"\n\n")
-    return ds
+    return ds'''
+
+
+
+
+
+
+
+
+import xarray as xr
+import numpy as np
+import dask
+from pathlib import Path
+
+def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
+    """
+    Faster replacement for compute_seasonal_avgs().
+    Assumes `af.weighted_temporal_mean` and `af.make_seasonal_da`
+    behave exactly as in your original code.
+    """
+
+    season_yrs = np.unique(arr["time.year"])
+
+    # ---------- 0.  Chunk smartly ----------
+    if not arr.chunks:
+        arr = arr.chunk({'time': -1})   # keep a single chunk in time, chunk space elsewhere if needed
+
+    # ---------- 1.  Monthly climatology & anomalies ----------
+    clim = arr.groupby('time.month').mean('time')
+    anom = arr.groupby('time.month') - clim
+
+    # ---------- 2.  Pre‑compute rolling means & persist ----------
+    arr3        = arr .rolling(time=3, center=True, min_periods=3).mean()
+    arr5        = arr .rolling(time=5, center=True, min_periods=5).mean()
+    anom3       = anom.rolling(time=3, center=True, min_periods=3).mean()
+    anom5       = anom.rolling(time=5, center=True, min_periods=5).mean()
+    arr3, arr5, anom3, anom5 = dask.persist(arr3, arr5, anom3, anom5)
+
+    # ---------- 3.  Helpers ----------
+    season_dict = {"DJF": 11, "MAM": 2, "JJA": 5, "SON": 8, "NDJFM": 10}  # adjust to taste
+    def slice_season(da, key):
+        """Return centred 3‑month (or 5‑month for NDJFM) series for the desired season."""
+        return da.isel(time=slice(season_dict[key], None, 12))
+
+    units     = arr.attrs.get("units", "")
+    run_name  = arr.attrs.get("run_name", "")
+    years     = np.unique(arr["time.year"])
+    yrs_attr  = [int(years[0]), int(years[-1])]
+
+    # ---------- 4.  Build trend & spatial‑mean pieces ----------
+    trnd_dict = {}
+
+    # --- annual means (full & anomaly) ---
+    for ptype, da in (("spatialmean", arr), ("trends", anom)):
+        ann = af.weighted_temporal_mean(da).rename(f"{var_name}_ann")
+        ann.attrs = {"units": units, "long_name": f"{var_name} (annual)", 
+                     "run": run_name, "yrs": yrs_attr}
+        ann["time"] = np.arange(yrs_attr[0], yrs_attr[1] + 1)
+        trnd_dict[f"{var_name}_{ptype}_ann"] = ann
+
+    # --- seasonal pieces ---
+    for season in season_dict:
+        # choose 3‑ vs 5‑month source once
+        src_full  = arr5  if season == "NDJFM" and var_name == "psl" else arr3
+        src_anom  = anom5 if season == "NDJFM" and var_name == "psl" else anom3
+
+        for ptype, da in (("spatialmean", src_full), ("trends", src_anom)):
+            da_s = slice_season(da, season)
+            ds   = af.make_seasonal_da(var_name, run_name, da_s, units,
+                                       season, yrs_attr, ptype)
+            # drop the helper coord only on anomaly products
+            if ptype == "trends":
+                ds = ds.drop_vars("month")
+            trnd_dict[f"{var_name}_{ptype}_{season.lower()}"] = ds
+
+    # ---------- 5.  Combine & (optionally) compute ----------
+    #ds_out = xr.Dataset(trnd_dict,
+    #                    attrs={"units": units, "run": run_name, "yrs": yrs_attr})
+    ds_out = xr.Dataset(trnd_dict)
+    
+    ds_out = ds_out.assign_coords(run=run_name)
+    ds_out = ds_out.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    ds_out = ds_out.assign_coords(syr=syr)
+    ds_out = ds_out.assign_coords(eyr=eyr)
+
+    # return lazily; let caller decide when to compute / write
+    return ds_out
+
 
 
 
