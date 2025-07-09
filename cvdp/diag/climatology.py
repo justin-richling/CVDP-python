@@ -175,7 +175,10 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
     ds = ds.assign_coords(run=run_name)
     ds = ds.assign_coords(units=units)
-    ds = ds.assign_coords(yrs=(int(season_yrs[0]),int(season_yrs[-1])))
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    ds = ds.assign_coords(syr=syr)
+    ds = ds.assign_coords(eyr=eyr)
 
 
 
