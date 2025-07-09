@@ -100,7 +100,7 @@ def graphics(plot_loc, **kwargs):
     vn = kwargs["vn"]
     #for vn in vns:
     if 1==1:
-        unit = ref_seas_avgs.units
+        #unit = ref_seas_avgs.units
         for type in ptypes:
             for map_type in map_types:
                 vres = res[vn]
