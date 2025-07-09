@@ -7,7 +7,7 @@ License: MIT
 """
 
 import numpy as np
-import vis as vis
+from vis import *
 #from visualization.global_plots import *
 import matplotlib.pyplot as plt
 #import cvdp_utils as helper_utils
@@ -112,7 +112,7 @@ def graphics(plot_loc, **kwargs):
                             if map_type == "global":
                                 if type == "spatialmean":
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
-                                    fig = vis.global_ensemble_plot([sim_seas_avgs, ref_seas_avgs], seas_avgs_diff, vn, season, type, vtres, title)
+                                    fig = global_plots.global_ensemble_plot([sim_seas_avgs, ref_seas_avgs], seas_avgs_diff, vn, season, type, vtres, title)
 
                         fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                         plt.close(fig)
