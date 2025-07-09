@@ -27,7 +27,7 @@ nh_vars = ["NAM"]
 sh_vars = ["SAM", "PSA1", "PSA2"]
 eof_vars = nh_vars + sh_vars
 
-ptypes = ["spatialmean"]
+ptypes = ["spatialmean", "trends"]
 vns = ["psl"]
 map_types = ["global"]
 
@@ -117,6 +117,16 @@ def graphics(plot_loc, **kwargs):
                                     seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
                                     fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)
+                                if type == "trends":
+                                    sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    if vn == "psl":
+                                        if season == "NDJFM":
+                                            var = "NPI"
+                                        else:
+                                            var = vn
+                                        plot_name, title = get_plot_name_and_title(vn, var, type, season, plot_type, map_type)
+                                        fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)
                         """if plot_type == "indmem":
                             if map_type == "global":
                                 if type == "spatialmean":
