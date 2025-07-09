@@ -138,7 +138,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, un
 
         # Difference plot
         if r == 2:
-            arr = arr_diff.sel(season=season)
+            arr = arr_diff#.sel(season=season)
             #arr = arr.isel(year=0)
             #print("AHHHHH",arr,"\n\n")
             run = f"{arrs[0].run_name} - {arrs[1].run_name}"
@@ -147,7 +147,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, un
 
         # Case plots
         if r < 2:
-            arr = arrs[r].sel(season=season)
+            arr = arrs[r]#.sel(season=season)
             #arr = arr.isel(year=0)
             #print("AHHHHH",arr,"\n\n")
 
