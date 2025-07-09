@@ -42,7 +42,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
 
     # get units
     #unit = plot_info["units"]
-    unit = arrs[0].units
+    unit = arrs[0].units.values
 
     # Set up plot
     #------------
@@ -141,7 +141,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             arr = arr_diff#.sel(season=season)
             #arr = arr.isel(year=0)
             #print("AHHHHH",arr,"\n\n")
-            run = f"{arrs[0].run} - {arrs[1].run}"
+            run = f"{arrs[0].run.values} - {arrs[1].run.values}"
             yrs_text = ''
         # End if
 
@@ -157,8 +157,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
-            syr = arr.syr
-            eyr = arr.eyr
+            syr = arr.syr.values
+            eyr = arr.eyr.values
             yrs_text = f'{syr}-{eyr}'
             if debug:
                 print(yrs_text,"\n")
