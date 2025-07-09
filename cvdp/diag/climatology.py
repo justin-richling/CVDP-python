@@ -58,6 +58,7 @@ def compute_seasonal_avgs(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_
     # optional: name and attrs
     seasonal_clim.name = f"{var_data.name}_seasonal_clim_avg"
     seasonal_clim.attrs = attrs
+    print("seasonal_clim:",seasonal_clim,"\n\n")
 
     return seasonal_clim
 
