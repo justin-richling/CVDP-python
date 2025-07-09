@@ -60,7 +60,7 @@ def main():
 
     #from io import get_input_data
     from file_io import get_input_data
-
+    print("PARENT_DIR",PARENT_DIR)
     ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
 
     ref_0 = list(ref_datasets.keys())[0]
