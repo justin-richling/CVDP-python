@@ -202,7 +202,7 @@ from pathlib import Path
 
 
 
-def compute_seasonal_avgs_safe(arr: xr.DataArray, var_name: str) -> xr.Dataset:
+def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
     """
     Memory-safe, lazy, and optimized version of seasonal average calculator.
     No intermediate data is persisted in RAM.
