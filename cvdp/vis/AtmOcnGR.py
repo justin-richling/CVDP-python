@@ -95,6 +95,7 @@ def graphics(plot_loc, **kwargs):
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     seas_avgs_diff = kwargs["diff_seas"]
+    print("\n\nseas_avgs_diff",seas_avgs_diff,"\n\n")
     res = helper_utils.get_variable_defaults()
 
     for vn in vns:
@@ -109,8 +110,11 @@ def graphics(plot_loc, **kwargs):
                         if plot_type == "summary":
                             if map_type == "global":
                                 if type == "spatialmean":
+                                    sim_seas_avg = sim_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    ref_seas_avg = ref_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
-                                    fig = global_ensemble_plot([sim_seas_avgs, ref_seas_avgs], seas_avgs_diff, vn, season, type, vtres, title)
+                                    fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avgs_diff, vn, season, type, vtres, title)
 
                         fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                         plt.close(fig)
