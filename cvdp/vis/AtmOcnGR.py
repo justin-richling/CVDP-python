@@ -7,7 +7,8 @@ License: MIT
 """
 
 import numpy as np
-from vis.global_plots import *
+#from vis.global_plots import *
+from cvdp.vis.global_plots import *
 #from visualization.global_plots import *
 import matplotlib.pyplot as plt
 #import cvdp_utils as helper_utils
