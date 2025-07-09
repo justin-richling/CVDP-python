@@ -106,7 +106,7 @@ def graphics(plot_loc, **kwargs):
 
                 for season in seasons:
                     for plot_type in ["summary", "indmem","indmemdiff"]:
-                        plot_name, title = get_plot_name_and_title(vn, type, season, plot_type)
+                        #plot_name, title = get_plot_name_and_title(vn, type, season, plot_type)
 
                         if plot_type == "summary":
                             if map_type == "global":
