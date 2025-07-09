@@ -75,7 +75,32 @@ season_dict = {"NDJFM":0,
                "SON":9
 }
 
-def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
+#def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
+def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
+
+
+    # remove annual trend
+    #--------------------
+    farr_clim = arr.groupby('time.month').mean(dim='time')   # calculate climatology
+    #farr_clim.attrs.update(farr.attrs)
+
+    farr_anom = arr.groupby('time.month') - farr_clim   # form anomalies
+    print("farr_anom:",farr_anom,"\n")
+    farr_anom.attrs.update(arr.attrs)
+    #farr_anom.attrs['run'] = run_name
+
+    # Add desired start and end years to metadata
+    season_yrs = np.unique(arr["time.year"])
+    farr_anom.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
+
+    # Rename variable to CVDP variable name
+    farr_anom = farr_anom.rename(var_name)
+    #print("fno_anom_loc is where farr_anom goes!",fno_anom_loc)
+    #Path(fno_anom_loc).unlink(missing_ok=True)
+    #farr_anom.to_netcdf(fno_anom_loc)
+
+
+
     units = arr.units
     season_yrs = np.unique(arr["time.year"])
     # Spatial Mean
@@ -84,6 +109,7 @@ def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
     ptype = "spatialmean"
     arr3 = arr.rolling(time=3, center=True).mean()
     arr3 = arr3.ffill(dim='time').bfill(dim='time').compute()
+    run_name = arr.run_name
 
     arrANN = af.weighted_temporal_mean(arr)#.mean(dim='time')
     lintrndANN = arrANN.rename(var_name+'_ann')
@@ -105,7 +131,7 @@ def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
         lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
         trnd_dict[f'{var_name}_{ptype}_ndjfm'] = lintrnd_da
 
-    # Anomolies
+    """# Anomolies
     #----------
     #trnd_dict = {}
     ptype = "trends"
@@ -138,6 +164,7 @@ def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
         #lintrnd_da = lin_regress(lintrnd_da)
         lintrnd_da = lintrnd_da.drop_vars('month')
         trnd_dict[f'{var_name}_trends_ndjfm'] = lintrnd_da
+    """
 
     #print(trnd_dict)
 
@@ -149,8 +176,8 @@ def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
 
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
 
-    print("seasonal climo dataset:",seasonal_dslim,"\n\n")
-    return ds#, ds_anom
+    print("seasonal climo dataset:",ds,"\n\n")
+    return ds
 
 
 
