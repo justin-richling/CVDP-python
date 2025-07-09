@@ -58,8 +58,8 @@ def main():
             #var_data_array.to_netcdf(save_loc)
             return None"""
 
-    from io import get_input_data
-    #from file_io import get_input_data
+    #from io import get_input_data
+    from file_io import get_input_data
 
     ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
 
