@@ -19,7 +19,7 @@ from vis.vis_utils import *
 import cvdp_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
-def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, debug=False):
+def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, unit, debug=False):
     """
     Args
     ----
@@ -42,7 +42,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
     # get units
     #unit = plot_info["units"]
-    unit = arrs[0].units
+    #unit = arrs[0].units
 
     # Set up plot
     #------------
@@ -342,7 +342,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, season, ptype, plot_dict, title, de
 
 
 # def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
-def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
+def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season, unit):
 
     # Format spacing
     hspace = 0.5
@@ -380,7 +380,7 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
         cmap = get_NCL_colormap(cmap, extend='None')
 
     # get units
-    unit = arrs[0].units
+    #unit = arrs[0].units
 
     proj = ccrs.Robinson(central_longitude=210)
     #QUESTION: add variable figure height and/or width based on number of plots if running several cases?
@@ -571,7 +571,7 @@ def global_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
     return fig
 
 # def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title, season):
-def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title,season):
+def global_indmemdiff_latlon_plot(vn, run, unit, arr, ptype, plot_dict, title, season):
     y_title = .715
 
     # Get variable plot info
