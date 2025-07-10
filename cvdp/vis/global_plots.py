@@ -544,10 +544,10 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     # Format colorbar
     #----------------
     # Set the ticks on the colorbar
-    cb.set_ticks(ticks)
+    #cb.set_ticks(ticks)
         
     # Set tick label
-    cb.set_ticklabels(tick_labels)
+    #cb.set_ticklabels(tick_labels)
 
     # Set title of colorbar to units
     cb.ax.set_xlabel(unit,fontsize=18)
