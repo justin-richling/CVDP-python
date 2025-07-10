@@ -13,7 +13,7 @@ from vis.global_plots import (
     global_indmem_latlon_plot,
     global_indmemdiff_latlon_plot
 )
-
+import cvdp_utils.avg_functions as af
 import cvdp_utils.utils as helper_utils
 import cvdp_utils.analysis as an
 #import cvdp.cvdp_utils.utils as helper_utils
