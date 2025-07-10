@@ -385,7 +385,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     unit = arrs[0].units.values
 
     #proj = ccrs.Robinson(central_longitude=210)
-    proj = ccrs.Robinson(central_longitude=210)
+    proj = WinkelTripel(central_longitude=210)
     #QUESTION: add variable figure height and/or width based on number of plots if running several cases?
     nrows = 2
     ncols = 1
@@ -624,7 +624,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #unit = plot_info["units"]
 
     # Set up figure and axes
-    proj = ccrs.Robinson(central_longitude=210)
+    #proj = ccrs.Robinson(central_longitude=210)
+    proj = WinkelTripel(central_longitude=210)
     fig_width = 15
     fig_height = 18
     fig, axs = plt.subplots(nrows=1,ncols=1,figsize=(fig_width,fig_height), facecolor='w', edgecolor='k',
