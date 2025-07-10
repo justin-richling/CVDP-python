@@ -96,7 +96,7 @@ def graphics(plot_loc, **kwargs):
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
     #seas_avgs_diff = kwargs["diff_seas"]
-    print("\n\nseas_avgs_diff",seas_avgs_diff,"\n\n")
+    #print("\n\nseas_avgs_diff",seas_avgs_diff,"\n\n")
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
     #for vn in vns:
