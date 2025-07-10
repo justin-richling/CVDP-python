@@ -76,7 +76,7 @@ season_dict = {"NDJFM":0,
 }
 
 #def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
-'''def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
+def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
 
     # remove annual trend
@@ -185,7 +185,7 @@ season_dict = {"NDJFM":0,
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
 
     print("seasonal climo dataset:",ds,"\n\n")
-    return ds'''
+    return ds
 
 
 
@@ -202,7 +202,7 @@ from pathlib import Path
 
 
 
-def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
+'''def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
     """
     Memory-safe, lazy, and optimized version of seasonal average calculator.
     No intermediate data is persisted in RAM.
@@ -272,7 +272,7 @@ def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
     syr = int(season_yrs[0])
     ds_out = ds_out.assign_coords(syr=syr)
     ds_out = ds_out.assign_coords(eyr=eyr)
-    return ds_out
+    return ds_out'''
 
 
 
