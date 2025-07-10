@@ -53,7 +53,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
     proj = WinkelTripel(central_longitude=210)
     #proj = ccrs.LambertCylindrical(central_longitude=210)
     fig_width = 15+(2.5*ncols)
-    fig_height = 15
+    fig_height = 18
     fig, axs = plt.subplots(nrows=nrows,ncols=ncols,figsize=(fig_width,fig_height),
                             facecolor='w', edgecolor='k', sharex=True, sharey=True,
                             subplot_kw={"projection": proj})
@@ -391,7 +391,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     nrows = 2
     ncols = 1
     fig_width = 15
-    fig_height = 21
+    fig_height = 24
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width, fig_height),
                             facecolor="w", edgecolor="k", sharex=True, sharey=True,
                             subplot_kw={"projection": proj})
@@ -628,7 +628,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #proj = ccrs.Robinson(central_longitude=210)
     proj = WinkelTripel(central_longitude=210)
     fig_width = 15
-    fig_height = 18
+    fig_height = 21
     fig, axs = plt.subplots(nrows=1,ncols=1,figsize=(fig_width,fig_height), facecolor='w', edgecolor='k',
                             sharex=True, sharey=True, subplot_kw={"projection": proj})
 
