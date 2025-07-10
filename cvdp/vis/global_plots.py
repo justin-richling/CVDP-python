@@ -49,7 +49,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
     nrows = 1
     ncols = 4
 
-    proj = ccrs.Robinson(central_longitude=210)
+    #proj = ccrs.Robinson(central_longitude=210)
+    proj = WinkelTripel(central_longitude=210)
     fig_width = 15+(2.5*ncols)
     fig_height = 15
     fig, axs = plt.subplots(nrows=nrows,ncols=ncols,figsize=(fig_width,fig_height),
@@ -383,6 +384,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     # get units
     unit = arrs[0].units.values
 
+    #proj = ccrs.Robinson(central_longitude=210)
     proj = ccrs.Robinson(central_longitude=210)
     #QUESTION: add variable figure height and/or width based on number of plots if running several cases?
     nrows = 2
