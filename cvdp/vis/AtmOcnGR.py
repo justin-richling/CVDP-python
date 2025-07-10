@@ -95,7 +95,7 @@ def graphics(plot_loc, **kwargs):
     print("\nPlotting climatological seasonal means...")
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
-    seas_avgs_diff = kwargs["diff_seas"]
+    #seas_avgs_diff = kwargs["diff_seas"]
     print("\n\nseas_avgs_diff",seas_avgs_diff,"\n\n")
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
@@ -113,12 +113,21 @@ def graphics(plot_loc, **kwargs):
                     for plot_type in ["summary", "indmem","indmemdiff"]:
                         if plot_type == "summary":
                             if map_type == "global":
-                                """if type == "spatialmean":
+                                if type == "spatialmean":
                                     sim_seas_avg = sim_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     ref_seas_avg = ref_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
-                                    seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    # If the cases are different shapes, we need to interpolate one to the other first
+                                    #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
+                                    arr_prime = an.interp_diff(sim_seas_avg, ref_seas_avg)
+
+                                    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+                                    if arr_prime is None:
+                                        seas_avg_diff = sim_seas_avg - ref_seas_avg
+                                    else:
+                                        seas_avg_diff = (arr_prime - ref_seas_avg)
+                                    #seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
-                                    fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)"""
+                                    fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)
                                 if type == "trends":
                                     sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
                                     ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
@@ -139,24 +148,82 @@ def graphics(plot_loc, **kwargs):
                                             var = vn
                                         plot_name, title = get_plot_name_and_title(vn, var, type, season, plot_type, map_type)
                                         fig = global_ensemble_plot([sim_seas_avg, ref_seas_avg], seas_avg_diff, vn, type, vtres, title)
-                        """if plot_type == "indmem":
+                        if plot_type == "indmem":
                             if map_type == "global":
                                 if type == "spatialmean":
                                     sim_seas_avg = sim_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
                                     ref_seas_avg = ref_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
-                                    seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    #seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    arr_prime = an.interp_diff(sim_seas_avg, ref_seas_avg)
+
+                                    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+                                    if arr_prime is None:
+                                        seas_avg_diff = sim_seas_avg - ref_seas_avg
+                                    else:
+                                        seas_avg_diff = (arr_prime - ref_seas_avg)
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
                                     #global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype)
-                                    #fig = global_indmem_latlon_plot([sim_seas_avgs, ref_seas_avgs], vn, season, vtres, title, type)
+                                    fig = global_indmem_latlon_plot(vn, [sim_seas_avg, ref_seas_avg], vtres, title, plot_type)
+                                if type == "trends":
+                                    sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    # If the cases are different shapes, we need to interpolate one to the other first
+                                    #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
+                                    arr_prime = an.interp_diff(sim_seas_avg, ref_seas_avg)
+
+                                    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+                                    if arr_prime is None:
+                                        seas_avg_diff = sim_seas_avg - ref_seas_avg
+                                    else:
+                                        seas_avg_diff = (arr_prime - ref_seas_avg)
+
+                                    if vn == "psl":
+                                        if season == "NDJFM":
+                                            var = "NPI"
+                                        else:
+                                            var = vn
+                                    plot_name, title = get_plot_name_and_title(vn, var, type, season, plot_type, map_type)
+                                    #global_indmem_latlon_plot(arrs, vn, season, plot_dict, title, ptype)
                                     fig = global_indmem_latlon_plot(vn, [sim_seas_avg, ref_seas_avg], vtres, title, plot_type)
                         if plot_type == "indmemdiff":
                             if map_type == "global":
                                 if type == "spatialmean":
-                                    seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    sim_seas_avg = sim_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    ref_seas_avg = ref_seas_avgs[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    #seas_avg_diff = seas_avgs_diff[f"{vn}_{type}_{season.lower()}"].mean(dim="time")
+                                    arr_prime = an.interp_diff(sim_seas_avg, ref_seas_avg)
+
+                                    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+                                    if arr_prime is None:
+                                        seas_avg_diff = sim_seas_avg - ref_seas_avg
+                                    else:
+                                        seas_avg_diff = (arr_prime - ref_seas_avg)
                                     plot_name, title = get_plot_name_and_title(vn, None, type, season, plot_type, map_type)
                                     #global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title)
                                     run = f"{sim_seas_avg.run.values} - {ref_seas_avg.run.values}"
-                                    fig = global_indmemdiff_latlon_plot(vn, run, seas_avg_diff, plot_type, vtres, title)"""
+                                    fig = global_indmemdiff_latlon_plot(vn, run, seas_avg_diff, plot_type, vtres, title)
+                                if type == "trends":
+                                    sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    # If the cases are different shapes, we need to interpolate one to the other first
+                                    #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
+                                    arr_prime = an.interp_diff(sim_seas_avg, ref_seas_avg)
+
+                                    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+                                    if arr_prime is None:
+                                        seas_avg_diff = sim_seas_avg - ref_seas_avg
+                                    else:
+                                        seas_avg_diff = (arr_prime - ref_seas_avg)
+
+                                    if vn == "psl":
+                                        if season == "NDJFM":
+                                            var = "NPI"
+                                        else:
+                                            var = vn
+                                    plot_name, title = get_plot_name_and_title(vn, var, type, season, plot_type, map_type)
+                                    #global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title)
+                                    run = f"{sim_seas_avg.run.values} - {ref_seas_avg.run.values}"
+                                    fig = global_indmemdiff_latlon_plot(vn, run, seas_avg_diff, plot_type, vtres, title)
                         if fig is not None:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                             plt.close(fig)
