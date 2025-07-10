@@ -11,6 +11,7 @@ from vis.global_plots import *
 #from cvdp.vis.global_plots import *
 import matplotlib.pyplot as plt
 import cvdp_utils.utils as helper_utils
+import cvdp_utils.analysis as an
 #import cvdp.cvdp_utils.utils as helper_utils
 
 print("helper_utils????",dir(helper_utils),"\n\n")
@@ -120,6 +121,16 @@ def graphics(plot_loc, **kwargs):
                                 if type == "trends":
                                     sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
                                     ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+                                    # If the cases are different shapes, we need to interpolate one to the other first
+                                    #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
+                                    arr_prime = an.interp_diff(sim_seas_avg, ref_seas_avg)
+
+                                    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+                                    if arr_prime is None:
+                                        seas_avg_diff = sim_seas_avg - ref_seas_avg
+                                    else:
+                                        seas_avg_diff = (arr_prime - ref_seas_avg)
+
                                     if vn == "psl":
                                         if season == "NDJFM":
                                             var = "NPI"
