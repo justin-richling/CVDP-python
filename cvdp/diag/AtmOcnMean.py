@@ -39,6 +39,35 @@ def mean_seasonal_calc(ref_dataset, sim_dataset, var_name):
         arr_diff = (arr_prime - ref_seas_avgs)
 
 
+
+
+    """print("\nCalculating climatological seasonal trends...")
+    ref_seas_trends = compute_seasonal_trends(ref_dataset, var_name)
+    if "member" in ref_seas_trends.coords:
+        attrs = ref_seas_trends.attrs  # save before doing groupby/mean
+        members = ref_seas_trends.member
+        ref_seas_trends = ref_seas_trends.mean(dim="member")
+        ref_seas_trends.attrs = attrs
+        ref_seas_trends.attrs["members"] = members
+    sim_seas_trends = compute_seasonal_trends(sim_dataset, var_name)
+    if "member" in sim_seas_trends.coords:
+        attrs = sim_seas_trends.attrs  # save before doing groupby/mean
+        members = sim_seas_trends.member
+        sim_seas_trends = sim_seas_trends.mean(dim="member")
+        sim_seas_trends.attrs = attrs
+        sim_seas_trends.attrs["members"] = members
+
+    # If the cases are different shapes, we need to interpolate one to the other first
+    #NOTE: the value that comes out of interp_diff is either None, or interpolated difference array
+    arr_prime = an.interp_diff(sim_seas_trends, ref_seas_trends)
+
+    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+    if arr_prime is None:
+        arr_diff = sim_seas_trends - ref_seas_trends
+    else:
+        arr_diff = (arr_prime - ref_seas_trends)"""
+
+
     #sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
     #ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
 
