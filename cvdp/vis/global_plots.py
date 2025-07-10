@@ -50,8 +50,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
     ncols = 4
 
     #proj = ccrs.Robinson(central_longitude=210)
-    #proj = WinkelTripel(central_longitude=210)
-    proj = ccrs.LambertCylindrical(central_longitude=210)
+    proj = WinkelTripel(central_longitude=210)
+    #proj = ccrs.LambertCylindrical(central_longitude=210)
     fig_width = 15+(2.5*ncols)
     fig_height = 15
     fig, axs = plt.subplots(nrows=nrows,ncols=ncols,figsize=(fig_width,fig_height),
