@@ -103,6 +103,7 @@ def graphics(plot_loc, **kwargs):
     if 1==1:
         #unit = ref_seas_avgs.units
         for type in ptypes:
+            fig = None
             for map_type in map_types:
                 vres = res[vn]
                 vtres = vres[type]
@@ -156,5 +157,6 @@ def graphics(plot_loc, **kwargs):
                                     #global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title)
                                     run = f"{sim_seas_avg.run.values} - {ref_seas_avg.run.values}"
                                     fig = global_indmemdiff_latlon_plot(vn, run, seas_avg_diff, plot_type, vtres, title)"""
-                        fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                        plt.close(fig)
+                        if fig is not None:
+                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                            plt.close(fig)
