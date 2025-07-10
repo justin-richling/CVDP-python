@@ -13,9 +13,10 @@ from vis.global_plots import (
     global_indmem_latlon_plot,
     global_indmemdiff_latlon_plot
 )
+
 import cvdp_utils.utils as helper_utils
 import cvdp_utils.analysis as an
-import cvdp_utils.analysis_functions as af
+#import cvdp.cvdp_utils.utils as helper_utils
 
 season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
 var_seasons = {
