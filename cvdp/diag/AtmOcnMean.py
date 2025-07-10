@@ -38,4 +38,8 @@ def mean_seasonal_calc(ref_dataset, sim_dataset, var_name):
     else:
         arr_diff = (arr_prime - ref_seas_avgs)
 
+
+    #sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+    #ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
+
     return ref_seas_avgs, sim_seas_avgs, arr_diff

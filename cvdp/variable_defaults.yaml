@@ -15,10 +15,10 @@ pr:
     cmap: "ncl_default"
     contour_levels_list: [0.5,1,2,3,4,5,6,7,8,9,10,12,14,16,18]
   spatialstddev:
-    cmap: "BlueDarkOrange18"
+    cmap: "ncl_default"
     contour_levels_list: [0.2,0.4,0.6,1,1.5,2,2.5,3.5]
   trends:
-    cmap: "BlueDarkOrange18"
+    cmap: "ncl_default"
     contour_levels_linspace: [0.4, 3.2, 8]
 
 
@@ -31,10 +31,10 @@ psl:
     diff_levels_range: [-11,12,1]
     diff_ticks_range: [-10,11,1]
   spatialstddev:
-    cmap: "BlueDarkOrange18"
+    cmap: "ncl_default"
     contour_levels_list: [0.4,1.2,2,2.8,3.6,4.4,5.2,6,6.8,7.6]
   trends:
-    cmap: "BlueDarkOrange18"
+    cmap: "ncl_default"
     contour_levels_linspace: [-9,9,19]
     ticks_range: [-10,11,1]
     cbarticks_range: [0,37,2]
@@ -47,7 +47,7 @@ ts:
     cmap: "ncl_default"
     contour_levels_linspace: [0, 36, 19]
   spatialstddev:
-    cmap: "BlueDarkOrange18"
+    cmap: "ncl_default"
     contour_levels_linspace: [0.200000, 2.00000, 10]
   trends:
     cmap: "ncl_default"
@@ -61,7 +61,7 @@ tas:
     contour_levels_linspace: [-40, 40, 41]
     every_other_label: True
   spatialstddev:
-    cmap: "BlueDarkOrange18"
+    cmap: "ncl_default"
     contour_levels_linspace: [0.4, 3.2, 8]
   trends:
     cmap: "ncl_default"
