@@ -150,7 +150,13 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
 
     arr_prime = an.interp_diff(sim, ref)
-    diff = arr_prime if arr_prime is not None else (sim - ref)
+    #diff = arr_prime if arr_prime is not None else (sim - ref)
+
+    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+    if arr_prime is None:
+        diff = sim - ref
+    else:
+        diff = (arr_prime - ref)
 
     print("DIFF PLOT BOI",diff,"\n\n")
 
