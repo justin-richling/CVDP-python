@@ -148,7 +148,9 @@ def compute_trend(data):
 def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=None):
     sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
     ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
-    diff = an.interp_diff(sim, ref) or (sim - ref)
+
+    arr_prime = an.interp_diff(sim, ref)
+    diff = arr_prime if arr_prime is not None else (sim - ref)
 
     results = []
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
@@ -164,6 +166,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         if fig:
             results.append((fig, plot_name))
     return results
+
 
 
 
