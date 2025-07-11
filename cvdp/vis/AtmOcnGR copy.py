@@ -14,7 +14,7 @@ import cvdp_utils.utils as helper_utils
 import cvdp_utils.analysis as an
 #import cvdp.cvdp_utils.utils as helper_utils
 
-print("helper_utils????",dir(helper_utils),"\n\n")
+#print("helper_utils????",dir(helper_utils),"\n\n")
 
 season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
 var_seasons = {

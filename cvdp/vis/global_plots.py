@@ -151,7 +151,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
         if r < 2:
             arr = arrs[r]#.sel(season=season)
             #arr = arr.isel(year=0)
-            print("AHHHHH",arr,"\n\n")
+            #print("AHHHHH",arr,"\n\n")
 
             # Get run name
             #TODO: run names need to be better to get
@@ -403,7 +403,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
         # ----------------------------
 
         # Get array for this run
-        print("\n\n\nGLOBAL LATLON ARR",arrs[r],"\n\n\n")
+        #print("\n\n\nGLOBAL LATLON ARR",arrs[r],"\n\n\n")
         arr = arrs[r]#.sel(season=season)
 
         # Data years for this run

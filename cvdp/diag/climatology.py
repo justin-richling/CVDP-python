@@ -85,7 +85,7 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     #farr_clim.attrs.update(farr.attrs)
 
     farr_anom = arr.groupby('time.month') - farr_clim   # form anomalies
-    print("farr_anom:",farr_anom,"\n")
+    #print("farr_anom:",farr_anom,"\n")
     farr_anom.attrs.update(arr.attrs)
     #farr_anom.attrs['run'] = run_name
 
@@ -183,7 +183,7 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
 
-    print("seasonal climo dataset:",ds,"\n\n")
+    #print("seasonal climo dataset:",ds,"\n\n")
     return ds
 
 
