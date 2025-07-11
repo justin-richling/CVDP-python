@@ -152,6 +152,8 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     arr_prime = an.interp_diff(sim, ref)
     diff = arr_prime if arr_prime is not None else (sim - ref)
 
+    print("DIFF PLOT BOI",diff,"\n\n")
+
     results = []
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         if plot_type == "summary":
