@@ -70,12 +70,19 @@ def get_plot_name_and_title(vn, var, type, season, plot_type, map_type):
                 "indmemdiff": f"SST {type.capitalize()} Differences ({season_upper})\n",
             }
         if vn == "psl":
-            plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
+            for eof_var in eof_vars:
+                plot_name = f"{eof_var.lower()}_pattern_{season_lower}.{plot_type}.png"
+                title_map = {
+                    "summary": f"Ensemble Summary: {eof_var} Pattern ({season_upper})\n",
+                    "indmem": f"{eof_var} Pattern ({season_upper})\n",
+                    "indmemdiff": f"{eof_var} Pattern Differences ({season_upper})\n",
+                }
+            """plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
             title_map = {
                 "summary": f"Ensemble Summary: {var} Pattern ({season_upper})\n",
                 "indmem": f"{var} Pattern ({season_upper})\n",
                 "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
-            }
+            }"""
         else:
             plot_name = f"{vn}_{type}_{season_lower}.{plot_type}.png"
             title_map = {
