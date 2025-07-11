@@ -37,7 +37,7 @@ map_types = ["global"]
 plot_types = ["summary", "indmem", "indmemdiff"]
 
 
-def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
+'''def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
     season_upper = season.upper()
     season_lower = season.lower()
 
@@ -77,7 +77,63 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         "indmemdiff": f"{var or title_var} {ptype.capitalize()} Differences ({season_upper})\n",
     }.get(plot_type, "Unknown Title")
 
-    return plot_name, title
+    return plot_name, title'''
+
+
+def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
+    """
+    Returns one or more (plot_name, title) tuples depending on vn/map_type.
+    """
+    season_upper = season.upper()
+    season_lower = season.lower()
+
+    base_var = "sst" if vn == "ts" else vn
+    title_var = "SST" if vn == "ts" else vn.upper()
+
+    results = []
+
+    if map_type == "global":
+        if ptype == "trends" and vn == "psl" and season == "NDJFM":
+            plot_name = f"npi_pattern_{season_lower}.{plot_type}.png"
+            title = {
+                "summary": f"Ensemble Summary: NPI Pattern ({season_upper})",
+                "indmem": f"NPI Pattern ({season_upper})\n",
+                "indmemdiff": f"NPI Pattern Differences ({season_upper})\n",
+            }[plot_type]
+            results.append((plot_name, title))
+        else:
+            suffix = f"{ptype}_{season_lower}.{plot_type}.png"
+            plot_name = f"{base_var}_{suffix}" if ptype != "trends" else f"{base_var}_pattern_{season_lower}.{plot_type}.png"
+            title = {
+                "summary": f"Ensemble Summary: {title_var} {ptype.capitalize()} ({season_upper})",
+                "indmem": f"{title_var} {ptype.capitalize()} ({season_upper})\n",
+                "indmemdiff": f"{title_var} {ptype.capitalize()} Differences ({season_upper})\n",
+            }[plot_type]
+            results.append((plot_name, title))
+
+    elif map_type == "polar" and vn == "psl":
+        # Return one entry per EOF mode
+        eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
+        for eof_var in eof_vars:
+            plot_name = f"{eof_var.lower()}_pattern_{season_lower}.{plot_type}.png"
+            title = {
+                "summary": f"Ensemble Summary: {eof_var} Pattern ({season_upper})",
+                "indmem": f"{eof_var} Pattern ({season_upper})\n",
+                "indmemdiff": f"{eof_var} Pattern Differences ({season_upper})\n",
+            }[plot_type]
+            results.append((plot_name, title))
+    else:
+        plot_name = f"{base_var}_pattern_{season_lower}.{plot_type}.png"
+        title = {
+            "summary": f"Ensemble Summary: {title_var} {ptype.capitalize()} ({season_upper})",
+            "indmem": f"{title_var} {ptype.capitalize()} ({season_upper})\n",
+            "indmemdiff": f"{title_var} {ptype.capitalize()} Differences ({season_upper})\n",
+        }[plot_type]
+        results.append((plot_name, title))
+
+    return results
+
+
 
 
 def compute_mean_diff(sim, ref):
@@ -89,25 +145,26 @@ def compute_trend(data):
     return af.lin_regress(data)[0]  # returns the trend array
 
 
-def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data):
-    sim = sim_data.mean(dim="time") if ptype == "spatialmean" else compute_trend(sim_data)
-    ref = ref_data.mean(dim="time") if ptype == "spatialmean" else compute_trend(ref_data)
-    diff = compute_mean_diff(sim, ref)
+def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=None):
+    sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
+    ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
+    diff = an.interp_diff(sim, ref) or (sim - ref)
 
-    var = "NPI" if vn == "psl" and season == "NDJFM" else vn
-    plot_name, title = get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type)
+    results = []
+    for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
+        if plot_type == "summary":
+            fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
+        elif plot_type == "indmem":
+            fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
+        elif plot_type == "indmemdiff":
+            run = f"{sim.run.values} - {ref.run.values}"
+            fig = global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
+        else:
+            fig = None
+        if fig:
+            results.append((fig, plot_name))
+    return results
 
-    if plot_type == "summary":
-        fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
-    elif plot_type == "indmem":
-        fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
-    elif plot_type == "indmemdiff":
-        run = f"{sim.run.values} - {ref.run.values}"
-        fig = global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
-    else:
-        fig = None
-
-    return fig, plot_name
 
 
 def graphics(plot_loc, **kwargs):
@@ -129,8 +186,12 @@ def graphics(plot_loc, **kwargs):
                     sim_data = sim_seas_avgs[key]
                     ref_data = ref_seas_avgs[key]
 
-                    fig, plot_name = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
+                    # Use EOF vars for polar PSL
+                    eof_vars = ["NAM", "SAM", "PSA1", "PSA2"] if vn == "psl" and map_type == "polar" else [None]
 
-                    if fig:
-                        fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                        plt.close(fig)
+                    for var in eof_vars:
+                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+
+                        for fig, plot_name in results:
+                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                            plt.close(fig)
