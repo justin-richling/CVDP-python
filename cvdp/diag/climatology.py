@@ -95,14 +95,14 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
     # Rename variable to CVDP variable name
     farr_anom = farr_anom.rename(var_name)
-    fno_anom = arr.run.values+'.cvdp_data.'+var_name+'.trends_monthly.'+arr.syr.values+'-'+arr.eyr.values+'.nc'
-    fno_anom = fno_anom.replace(' ','_')
-    fno_anom = Path(f"{fno_anom}")
+    #fno_anom = arr.run.values+'.cvdp_data.'+var_name+'.trends_monthly.'+arr.syr.values+'-'+arr.eyr.values+'.nc'
+    #fno_anom = fno_anom.replace(' ','_')
+    #fno_anom = Path(f"{fno_anom}")
     #fno_anom_loc = save_path / fno_anom
-    fno_anom_loc = fno_anom
+    #fno_anom_loc = fno_anom
     #print("fno_anom_loc is where farr_anom goes!",fno_anom_loc)
-    Path(fno_anom_loc).unlink(missing_ok=True)
-    farr_anom.to_netcdf(fno_anom_loc)
+    #Path(fno_anom_loc).unlink(missing_ok=True)
+    #farr_anom.to_netcdf(fno_anom_loc)
 
 
 
