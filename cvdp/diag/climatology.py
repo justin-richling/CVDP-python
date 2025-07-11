@@ -115,21 +115,21 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     lintrndANN = arrANN.rename(var_name+'_ann')
     lintrndANN.attrs = {'units':units,'long_name':var_name+' (annual)','run':run_name,
                              'yrs':[season_yrs[0],season_yrs[-1]]}
-    timefix = np.arange(season_yrs[0],season_yrs[-1]+1,1)
-    lintrndANN["time"] = timefix
+
+    lintrndANN["time"] = np.arange(season_yrs[0],season_yrs[-1]+1,1)
     trnd_dict[f'{var_name}_{ptype}_ann'] = lintrndANN
 
     for s in season_dict:
         lintrnd_da = arr3.isel( time=slice(season_dict[s], None, 12) )
         lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
         trnd_dict[f'{var_name}_{ptype}_{s.lower()}'] = lintrnd_da
-    if var_name == "psl":
+    """if var_name == "psl":
         s = 'NDJFM'
         arr5 = arr.rolling(time=5, center=True).mean()
         arr5 = arr5.ffill(dim='time').bfill(dim='time').compute()
         lintrnd_da = arr5.isel( time=slice(season_dict[s], None, 12) )
         lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
-        trnd_dict[f'{var_name}_{ptype}_ndjfm'] = lintrnd_da
+        trnd_dict[f'{var_name}_{ptype}_ndjfm'] = lintrnd_da"""
 
     # Anomolies
     #----------
@@ -144,8 +144,8 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     lintrndANN_anom.attrs = {'units':units,'long_name':var_name+' (annual)','run':run_name,
                              'yrs':[season_yrs[0],season_yrs[-1]]}
     #lintrndANN = lin_regress(lintrndANN)
-    timefix = np.arange(season_yrs[0],season_yrs[-1]+1,1)
-    lintrndANN_anom["time"] = timefix
+
+    lintrndANN_anom["time"] = np.arange(season_yrs[0],season_yrs[-1]+1,1)
     trnd_dict[f'{var_name}_{ptype}_ann'] = lintrndANN_anom
 
     for s in season_dict:
@@ -161,9 +161,8 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
         lintrnd_da = arr5.isel( time=slice(season_dict[s], None, 12) )
 
         lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
-        #lintrnd_da = lin_regress(lintrnd_da)
         lintrnd_da = lintrnd_da.drop_vars('month')
-        trnd_dict[f'{var_name}_trends_ndjfm'] = lintrnd_da
+        trnd_dict[f'{var_name}_{ptype}_ndjfm'] = lintrnd_da
     
 
     #print(trnd_dict)
