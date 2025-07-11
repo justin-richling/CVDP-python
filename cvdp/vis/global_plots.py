@@ -621,11 +621,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     if cmap not in plt.colormaps():
         cmap = get_NCL_colormap(cmap, extend='None')
 
-    # get units
-    #unit = plot_info["units"]
-
     # Set up figure and axes
-    #proj = ccrs.Robinson(central_longitude=210)
     proj = WinkelTripel(central_longitude=210)
     fig_width = 15
     fig_height = 21
@@ -666,9 +662,6 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
                                 #'fontweight': 'bold',
                                 'color': '#0c80ab',
                                 })
-    
-    #axs.coastlines('50m', color="#b5b5b5", alpha=0.5)
-    #axs.set_title(run, loc='center', fontdict={'fontsize': 20, 'color': '#0c80ab'}, y=1.07)
 
     # COLORBARS
     #----------------
