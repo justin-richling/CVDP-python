@@ -26,6 +26,11 @@ var_seasons = {
     "prect": season_list,
 }
 
+# EOF variables
+nh_vars = ["NAM"]
+sh_vars = ["SAM", "PSA1", "PSA2"]
+eof_vars = nh_vars + sh_vars
+
 ptypes = ["spatialmean", "trends"]
 vns = ["psl"]
 map_types = ["global"]
@@ -47,7 +52,22 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
             suffix = f"{ptype}_{season_lower}.{plot_type}.png"
             plot_name = f"{base_var}_{suffix}" if ptype != "trends" else f"{base_var}_pattern_{season_lower}.{plot_type}.png"
     elif map_type == "polar":
-        plot_name = f"{base_var}_pattern_{season_lower}.{plot_type}.png"
+        if vn == "psl":
+            for eof_var in eof_vars:
+                plot_name = f"{eof_var.lower()}_pattern_{season_lower}.{plot_type}.png"
+                title = {
+                    "summary": f"Ensemble Summary: {eof_var} Pattern ({season_upper})\n",
+                    "indmem": f"{eof_var} Pattern ({season_upper})\n",
+                    "indmemdiff": f"{eof_var} Pattern Differences ({season_upper})\n",
+                }
+            """plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
+            title_map = {
+                "summary": f"Ensemble Summary: {var} Pattern ({season_upper})\n",
+                "indmem": f"{var} Pattern ({season_upper})\n",
+                "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
+            }"""
+        else:
+            plot_name = f"{base_var}_pattern_{season_lower}.{plot_type}.png"
     else:
         plot_name = "unknown.png"
 
