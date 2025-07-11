@@ -33,7 +33,7 @@ eof_vars = nh_vars + sh_vars
 
 ptypes = ["spatialmean", "trends"]
 vns = ["psl"]
-map_types = ["global"]
+map_types = ["global", "polar"]
 plot_types = ["summary", "indmem", "indmemdiff"]
 
 
