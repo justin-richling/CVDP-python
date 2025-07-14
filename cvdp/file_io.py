@@ -27,6 +27,7 @@ def read_datasets(paths: str, vn: str, yrs: list, members: str=None) -> xarray.D
     Read datasets and create monthly data 
     """
     paths = [path for path in paths if ".nc" in path]
+    print("THE PATHS FOR THE DATASETS",paths,"\n")
     if members is not None:
         grouped_datasets = []
         for member in members:
