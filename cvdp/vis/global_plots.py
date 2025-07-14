@@ -605,7 +605,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         levels = np.linspace(diff_min, diff_max, 20)
 
     # colorbar ticks
-    ticks = plot_info.get("diff_range_list",levels)
+    #ticks = plot_info.get("diff_range_list",levels)
+    ticks = levels
 
     # colorbar ticks
     #ticks = plot_info["ticks"]
