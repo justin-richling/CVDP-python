@@ -617,8 +617,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #plot_info.get("diff_cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
-    print("cbarticks diff plot",ptype,cbarticks,"\n")
-    print("ticks diff plot",ptype,ticks,"\n")
+    print("GLOBAL: cbarticks diff plot",ptype,cbarticks,"\n")
+    print("GLOBAL: ticks diff plot",ptype,ticks,"\n")
 
     # color map
     cmap = plot_info["cmap"]
@@ -636,7 +636,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     lat = arr.lat
     lon_idx = arr.dims.index('lon')
     if "NPI" in title:
-        print("NP ARR",arr,"\n\n")
+        print("NPI ARR",arr,"\n\n")
     wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
 
     # End data gather/clean
@@ -696,7 +696,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #End if
-    print("tick_labels diff plot",ptype,tick_labels,"\n")
+    print("GLOBAL: tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------
