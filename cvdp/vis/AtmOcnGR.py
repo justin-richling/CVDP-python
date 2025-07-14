@@ -11,7 +11,10 @@ import matplotlib.pyplot as plt
 from vis.global_plots import (
     global_ensemble_plot,
     global_indmem_latlon_plot,
-    global_indmemdiff_latlon_plot
+    global_indmemdiff_latlon_plot,
+    polar_ensemble_plot,
+    polar_indmem_latlon_plot,
+    polar_indmemdiff_latlon_plot
 )
 import cvdp_utils.avg_functions as af
 import cvdp_utils.utils as helper_utils
@@ -30,6 +33,8 @@ var_seasons = {
 nh_vars = ["NAM"]
 sh_vars = ["SAM", "PSA1", "PSA2"]
 eof_vars = nh_vars + sh_vars
+
+eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
 
 ptypes = ["spatialmean", "trends"]
 vns = ["psl"]
@@ -163,12 +168,24 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     results = []
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         if plot_type == "summary":
-            fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
+            if map_type == "polar":
+                #polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=False)
+                polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
+            if map_type == "global":
+                fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
         elif plot_type == "indmem":
-            fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
+            if map_type == "polar":
+                #polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype)
+                fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
+            if map_type == "global":
+                fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
         elif plot_type == "indmemdiff":
             run = f"{sim.run.values} - {ref.run.values}"
-            fig = global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
+            if map_type == "polar":
+                # polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title)
+                fig = polar_indmemdiff_latlon_plot(vn, var, run, diff, ptype, vtres, title)
+            if map_type == "global":
+                fig = global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
         else:
             fig = None
         if fig:
@@ -199,21 +216,28 @@ def graphics(plot_loc, **kwargs):
 
                     # Use EOF vars for polar PSL
                     if vn == "psl" and map_type == "polar":
-                        eof_vars = ["NAM", "SAM", "PSA1", "PSA2"] if vn == "psl" and map_type == "polar" else [None]
-
                         for var in eof_vars:
                             results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
 
                             for fig, plot_name in results:
                                 fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                                 plt.close(fig)
-
                     else:
                         results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
 
                         for fig, plot_name in results:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                             plt.close(fig)
+                """
+                if type == "trends":
+                                    if vn == "psl":
+                                        if season == "NDJFM":
+                                            var = "NPI"
+                                        else:
+                                            var = vn
+                                        plot_name, title = get_plot_name_and_title(vn, var, type, season, plot_type, map_type)
+                """
+                
                 """else:
                     results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
 

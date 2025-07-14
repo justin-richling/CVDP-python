@@ -20,7 +20,7 @@ import cvdp_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
 
-def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title, season):
+def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     nh_vars = ["NAM"]
     sh_vars = ["SAM", "PSA1", "PSA2"]
 
@@ -244,7 +244,7 @@ def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, titl
 
 
 
-def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
+def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     nrows = 2
     ncols = 1
 
@@ -428,7 +428,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype, season):
 
 
 
-def polar_ensemble_plot(arrs, arr_diff, vn, var, season, ptype, plot_dict, title, debug=False):
+def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=False):
     """
     Args
     ----
