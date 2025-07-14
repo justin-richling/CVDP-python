@@ -25,6 +25,7 @@ import cvdp_utils.analysis as an
 #import cvdp.cvdp_utils.utils as helper_utils
 
 season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
+season_list = ["DJF"]
 var_seasons = {
     "psl": {"global": season_list + ["NDJFM"], "polar": season_list},
     "ts": season_list,
@@ -172,6 +173,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
 
     results = []
     #fig = None
+    print("HANDLE PLOTS:",vn, var, ptype, season, plot_type, map_type,"\n")
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         print("plot_name",plot_name)
         """if plot_type == "summary":
