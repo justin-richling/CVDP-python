@@ -52,6 +52,7 @@ def get_input_data(config_path: str) -> dict:
 
     for ds_name in config["Data"]:
         ds_info = config["Data"][ds_name]
+        vn = ds_info["variable"]
 
         if "start_yr" in ds_info:
             syr = ds_info["start_yr"]
@@ -94,8 +95,7 @@ def get_input_data(config_path: str) -> dict:
             # Add desired start and end years to metadata
             season_yrs = np.unique(var_data_array["time.year"])
             var_data_array.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
-            
-            vn = ds_info["variable"]
+
             var_data_array.to_netcdf(file_name)
 
         cvdp_var = vname[vn]
