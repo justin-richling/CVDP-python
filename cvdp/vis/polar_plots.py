@@ -202,6 +202,9 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #End if
 
+    print("tick_labels diff plot",ptype,tick_labels,"\n")
+    print("ticks diff plot",ptype,ticks,"\n")
+
     # Set up colorbar
     #----------------
     cb = fig.colorbar(img, orientation='horizontal',
