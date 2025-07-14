@@ -166,10 +166,11 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     else:
         diff = (arr_prime - ref)
 
-    print("DIFF PLOT BOI",diff,"\n\n")
+    #print("DIFF PLOT BOI",diff,"\n\n")
 
     results = []
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
+        print("plot_name",plot_name)
         if plot_type == "summary":
             if map_type == "polar":
                 #polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=False)
