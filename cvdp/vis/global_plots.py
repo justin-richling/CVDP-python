@@ -73,7 +73,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
                 levels = np.arange(*levels)
 
             # colorbar ticks
-            print("YAHOO",plot_info.get("diff_ticks_range",levels))
+            #print("YAHOO",plot_info.get("diff_ticks_range",levels))
             ticks = np.arange(*plot_info.get("diff_ticks_range",levels))
             cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
             if cbarticks is None:
@@ -90,13 +90,13 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             # Plot contour range
             levels = None
             if "contour_levels_linspace" in plot_info:
-                print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+                #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
                 levels = np.linspace(*plot_info["contour_levels_linspace"])
             if "contour_levels_range" in plot_info:
-                print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+                #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
                 levels = np.arange(*plot_info["contour_levels_range"])
             if "contour_levels_list" in plot_info:
-                print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+                #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
                 levels = np.arange(plot_info["contour_levels_list"])
             if not isinstance(levels,np.ndarray):
                 arr_max = arrs[0].max().item()
@@ -162,8 +162,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             syr = arr.syr.values
             eyr = arr.eyr.values
             yrs_text = f'{syr}-{eyr}'
-            if debug:
-                print(yrs_text,"\n")
+            #if debug:
+            #    print(yrs_text,"\n")
         # End if
 
 
@@ -358,13 +358,13 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     # Plot contour range
     levels = None
     if "contour_levels_linspace" in plot_info:
-        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+        #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
         levels = np.linspace(*plot_info["contour_levels_linspace"])
     if "contour_levels_range" in plot_info:
-        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+        #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
         levels = np.arange(*plot_info["contour_levels_range"])
     if "contour_levels_list" in plot_info:
-        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+        #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
         levels = np.arange(plot_info["contour_levels_list"])
     if not isinstance(levels,np.ndarray):
         arr_max = arrs[0].max().item()
@@ -590,15 +590,15 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #arr = arr.sel(season=season)
 
     if "diff_levels_linspace" in plot_info:
-        print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
+        #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
         levels = np.linspace(*plot_info["diff_levels_linspace"])
     if "diff_levels_range" in plot_info:
-        print('plot_info["diff_levels_range"]',plot_info["diff_levels_range"])
+        #print('plot_info["diff_levels_range"]',plot_info["diff_levels_range"])
         levels = np.arange(*plot_info["diff_levels_range"])
     if "diff_levels_list" in plot_info:
-        print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
+        #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
         levels = np.arange(plot_info["diff_levels_list"])
-    print("type(levels)",type(levels))
+    #print("type(levels)",type(levels))
     if not isinstance(levels,np.ndarray):
         diff_max = arr.max().item()
         diff_min = arr.min().item()
@@ -668,7 +668,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     # Set up axis to insert into color bar
     axins = inset_axes(axs, width="100%", height="5%",
                        loc='lower center', borderpad=-5)
-    print("cbarticks diff plot",ptype,cbarticks,"\n")
+    #print("cbarticks diff plot",ptype,cbarticks,"\n")
 
     if vn == "ts":
         if ptype == "trends":
@@ -690,7 +690,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #End if
-    print("tick_labels diff plot",ptype,tick_labels,"\n")
+    #print("tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------
