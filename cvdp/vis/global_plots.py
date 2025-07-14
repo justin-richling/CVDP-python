@@ -695,6 +695,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         #cbarticks = ticks
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
+        tick_labels = []
         for loc in ticks:
             if str(int(loc)) in cbarticks:
                 tick_loc = str(int(loc))
