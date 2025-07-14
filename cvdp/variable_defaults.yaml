@@ -38,7 +38,7 @@ psl:
     contour_levels_linspace: [-9,9,19]
     ticks_range: [-10,11,1]
     cbarticks_range: [0,37,2]
-    diff_ticks_range: [0,37,4] #[-8, 9, 1]
+    diff_ticks_range: [-8, 9, 1]
   
 
 SAM: 
@@ -52,7 +52,7 @@ SAM:
     contour_levels_linspace: [-9,9,19]
     ticks_range: [-10,11,1]
     cbarticks_range: [0,37,2]
-    diff_ticks_range: [0,37,4] #[-8, 9, 1]
+    diff_ticks_range: [-8, 9, 1]
 
 
 NPI: 
@@ -66,7 +66,7 @@ NPI:
     contour_levels_linspace: [-9,9,19]
     ticks_range: [-10,11,1]
     cbarticks_range: [0,37,2]
-    diff_ticks_range: [0,37,4] #[-8, 9, 1]
+    diff_ticks_range: [-8, 9, 1]
 
 NAM: 
   trends:
