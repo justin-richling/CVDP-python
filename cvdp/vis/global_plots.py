@@ -698,7 +698,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         #cbarticks = ticks
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
-        tick_labels = []
+        """tick_labels = []
         for loc in ticks:
             if str(int(loc)) in cbarticks:
                 tick_loc = str(int(loc))
@@ -706,7 +706,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
             else:
                 #tick_labels.append('')
                 tick_loc = ''
-            tick_labels.append(tick_loc)
+            tick_labels.append(tick_loc)"""
     #End if
     print("\tGLOBAL: tick_labels diff plot",ptype,tick_labels,"\n")
 
@@ -725,7 +725,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     cb.set_ticks(ticks)
         
     # 
-    #cb.set_ticklabels(tick_labels)
+    cb.set_ticklabels(tick_labels)
 
     # Set title of colorbar to units
     cb.ax.set_xlabel(unit,fontsize=18)
