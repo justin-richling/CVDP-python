@@ -11,7 +11,10 @@ import matplotlib.pyplot as plt
 from vis.global_plots import (
     global_ensemble_plot,
     global_indmem_latlon_plot,
-    global_indmemdiff_latlon_plot,
+    global_indmemdiff_latlon_plot
+)
+
+from vis.polar_plots import (
     polar_ensemble_plot,
     polar_indmem_latlon_plot,
     polar_indmemdiff_latlon_plot
