@@ -233,7 +233,7 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     cb.set_ticks(ticks)
         
     # 
-    #cb.set_ticklabels(tick_labels)
+    cb.set_ticklabels(tick_labels)
 
     # Set title of colorbar to units
     cb.ax.set_xlabel(unit,fontsize=18)
