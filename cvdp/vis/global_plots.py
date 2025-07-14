@@ -617,8 +617,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #plot_info.get("diff_cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
-    print("GLOBAL: cbarticks diff plot",ptype,cbarticks,"\n")
-    print("GLOBAL: ticks diff plot",ptype,ticks,"\n")
+    print("\tGLOBAL: cbarticks diff plot",ptype,cbarticks)
+    print("\tGLOBAL: ticks diff plot",ptype,ticks)
 
     # color map
     cmap = plot_info["cmap"]
@@ -696,7 +696,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #End if
-    print("GLOBAL: tick_labels diff plot",ptype,tick_labels,"\n")
+    print("\tGLOBAL: tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------

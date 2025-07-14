@@ -62,8 +62,8 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     #plot_info.get("diff_cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
-    print("POLAR: cbarticks diff plot",ptype,cbarticks,"\n")
-    print("POLAR: ticks diff plot",ptype,ticks,"\n")
+    print("\tPOLAR: cbarticks diff plot",ptype,cbarticks)
+    print("\tPOLAR: ticks diff plot",ptype,ticks)
 
     # color map
     cmap = plot_info.get("diff_cmap",plot_info["cmap"])
@@ -207,7 +207,7 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #End if
 
-    print("POLAR: tick_labels diff plot",ptype,tick_labels,"\n")
+    print("\tPOLAR: tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------
