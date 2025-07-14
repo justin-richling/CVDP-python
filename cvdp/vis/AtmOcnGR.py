@@ -176,7 +176,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     print("\nHANDLE PLOTS:",vn, var, ptype, season, plot_type, map_type,"\n")
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         print("\tplot_name",plot_name)
-        """if plot_type == "summary":
+        if plot_type == "summary":
             if map_type == "polar":
                 #polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=False)
                 polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
@@ -187,9 +187,9 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
                 #polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype)
                 fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
             if map_type == "global":
-                fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)"""
-        #elif plot_type == "indmemdiff":
-        if plot_type == "indmemdiff":
+                fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type
+        elif plot_type == "indmemdiff":
+        #if plot_type == "indmemdiff":
             run = f"{sim.run.values} - {ref.run.values}"
             if map_type == "polar":
                 # polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title)
