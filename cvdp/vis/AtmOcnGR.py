@@ -209,13 +209,13 @@ def graphics(plot_loc, **kwargs):
                                 plt.close(fig)
 
                     else:
-                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
 
                         for fig, plot_name in results:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                             plt.close(fig)
                 else:
-                    results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+                    results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
 
                     for fig, plot_name in results:
                         fig.savefig(plot_loc / plot_name, bbox_inches="tight")
