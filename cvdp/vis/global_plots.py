@@ -631,6 +631,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     # Get wrapped data around zeroth longitude
     lat = arr.lat
     lon_idx = arr.dims.index('lon')
+    if "NPI" in title:
+        print("NP ARR",arr,"\n\n")
     wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
 
     # End data gather/clean
