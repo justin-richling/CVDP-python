@@ -41,6 +41,34 @@ psl:
     diff_ticks_range: [-8, 9, 1]
   
 
+SAM: 
+  trends:
+    contour_levels_linspace: [-8, 8, 17]
+    ticks_range: [-7,8,1] #np.arange(-7,8,1),
+    cmap: "ncl_default"
+    diff_cbarticks_range: [-8, -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8]
+    diff_range_list: [-8, -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8]
+
+NAM: 
+  trends:
+    contour_levels_linspace: [-8, 8, 17]
+    ticks_range: [-7,8,1] #np.arange(-7,8,1),
+    cmap: "ncl_default"
+
+PSA1: 
+  trends:
+    contour_levels_linspace: [-8, 8, 17]
+    ticks_range: [-7,8,1] #np.arange(-7,8,1),
+    cmap: "ncl_default"
+    diff_cbarticks_range: [-8, -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8]
+    diff_range_list: [-8, -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8]
+
+PSA2: 
+  trends:
+    contour_levels_linspace: [-8, 8, 17]
+    ticks_range: [-7,8,1] #np.arange(-7,8,1),
+    cmap: "ncl_default"
+
 
 ts:
   spatialmean:
