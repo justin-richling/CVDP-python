@@ -198,11 +198,25 @@ def graphics(plot_loc, **kwargs):
                     ref_data = ref_seas_avgs[key]
 
                     # Use EOF vars for polar PSL
-                    eof_vars = ["NAM", "SAM", "PSA1", "PSA2"] if vn == "psl" and map_type == "polar" else [None]
+                    if vn == "psl" and map_type == "polar":
+                        eof_vars = ["NAM", "SAM", "PSA1", "PSA2"] if vn == "psl" and map_type == "polar" else [None]
 
-                    for var in eof_vars:
+                        for var in eof_vars:
+                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+
+                            for fig, plot_name in results:
+                                fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                                plt.close(fig)
+
+                    else:
                         results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
 
                         for fig, plot_name in results:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                             plt.close(fig)
+                else:
+                    results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+
+                    for fig, plot_name in results:
+                        fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                        plt.close(fig)
