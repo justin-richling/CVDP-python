@@ -205,6 +205,15 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         #cbarticks = ticks
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
+        tick_labels = []
+        for loc in ticks:
+            if str(int(loc)) in cbarticks:
+                tick_loc = str(int(loc))
+                #tick_labels.append(str(int(loc)))
+            else:
+                #tick_labels.append('')
+                tick_loc = ''
+            tick_labels.append(tick_loc)
     #End if
 
     print("\tPOLAR: tick_labels diff plot",ptype,tick_labels,"\n")
