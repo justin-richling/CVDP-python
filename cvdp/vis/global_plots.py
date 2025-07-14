@@ -612,7 +612,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #ticks = plot_info["ticks"]
     #ticks = plot_info.get("diff_ticks",plot_info["ticks"])
 
-    cbarticks = plot_info.get("diff_ticks_range", plot_info.get("cbarticks", None))
+    cbarticks = plot_info.get("diff_cbarticks_range", levels)
     if cbarticks:
         cbarticks = np.arange(*cbarticks)
     #plot_info.get("diff_cbarticks", None)
