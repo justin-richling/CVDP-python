@@ -169,6 +169,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     #print("DIFF PLOT BOI",diff,"\n\n")
 
     results = []
+    fig = None
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         print("plot_name",plot_name)
         if plot_type == "summary":
