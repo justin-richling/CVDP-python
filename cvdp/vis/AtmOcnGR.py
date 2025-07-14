@@ -187,7 +187,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
                 #polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype)
                 fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
             if map_type == "global":
-                fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type
+                fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
         elif plot_type == "indmemdiff":
         #if plot_type == "indmemdiff":
             run = f"{sim.run.values} - {ref.run.values}"
