@@ -611,7 +611,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     #ticks = plot_info["ticks"]
     #ticks = plot_info.get("diff_ticks",plot_info["ticks"])
 
-    cbarticks = plot_info.get("diff_ticks_range", plot_info.get("cbarticks", None))
+    cbarticks = plot_info.get(np.arange("diff_ticks_range"), plot_info.get("cbarticks", None))
     #plot_info.get("diff_cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
@@ -692,7 +692,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
         #print("cbarticks",cbarticks)
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #End if
-    #print("tick_labels diff plot",ptype,tick_labels,"\n")
+    print("tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------
