@@ -71,9 +71,10 @@ def get_input_data(config_path: str) -> dict:
             print(f"\tINFO: Directory not found, making new netcdf save location")
             save_loc.mkdir(parents=True)
         clobber = False
-        if file_name.is_file() and not clobber:
-            var_data_array = xarray.open_mfdataset(file_name,coords="minimal", compat="override", decode_times=True)
-
+        #if file_name.is_file() and not clobber:
+        #    var_data_array = xarray.open_mfdataset(file_name,coords="minimal", compat="override", decode_times=True)
+        if 1==2:
+            print("OK THIS IS WIERD!")
         else:
             if type(ds_info["paths"]) is str:
                 paths = glob(ds_info["paths"])
