@@ -56,7 +56,10 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     ticks = plot_info.get("diff_range_list",levels)
 
 
-    cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
+    cbarticks = plot_info.get("diff_ticks_range", plot_info.get("cbarticks", None))
+    if cbarticks:
+        cbarticks = np.arange(*cbarticks)
+    #plot_info.get("diff_cbarticks", None)
     if cbarticks is None:
         cbarticks = ticks
 
