@@ -13,6 +13,7 @@ import matplotlib as mpl
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from cartopy.util import add_cyclic_point
 import cartopy.feature as cfeature
+import matplotlib.path as mpath
 
 from vis import *
 from vis.vis_utils import *
