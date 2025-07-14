@@ -122,12 +122,13 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
     elif map_type == "polar" and vn == "psl":
         # Return one entry per EOF mode
         eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
-        for eof_var in eof_vars:
-            plot_name = f"{eof_var.lower()}_pattern_{season_lower}.{plot_type}.png"
+        #for eof_var in eof_vars:
+        if var in eof_vars:
+            plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
             title = {
-                "summary": f"Ensemble Summary: {eof_var} Pattern ({season_upper})",
-                "indmem": f"{eof_var} Pattern ({season_upper})\n",
-                "indmemdiff": f"{eof_var} Pattern Differences ({season_upper})\n",
+                "summary": f"Ensemble Summary: {var} Pattern ({season_upper})",
+                "indmem": f"{var} Pattern ({season_upper})\n",
+                "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
             }[plot_type]
             results.append((plot_name, title))
     else:
