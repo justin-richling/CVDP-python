@@ -112,10 +112,9 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     '''
 
     err = False
-    tfiles = fil0
     try:
-        cpathS = tfiles[0]
-        cpathE = tfiles[-1]
+        cpathS = fil0[0]
+        cpathE = fil0[-1]
     except IndexError:
         print("something went wrong grabbing these files, moving on...\n")
         err = True
@@ -137,28 +136,6 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     if vari in vname:
         cvdp_v = vname[vari]
     print(f" File Var: {vari}\n")
-    """if (vari == "sst") or (vari == "SST"):
-        ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
-        if vari in ds:
-            #print(f"This variable {v} is used for {fil0}\n")
-            print(f"    ** The variable '{vari}' is used for CVDP variable: {cvdp_v} **\n")
-            arr = ds.data_vars[vari]
-
-    # Isolate TS (ts) to apply land mask to simulate SST's
-    elif (vari == "ts") or (vari == "TS"):
-        # For TS, we need to drop land values to mimic SST's
-        ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
-        if vari in ds:
-            #print(f"This variable {v} is used for {fil0}\n")
-            print(f"    ** The variable {vari} is used for {cvdp_v} **\n")
-            arr = ds.data_vars[vari]
-    else:
-        ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
-        if vari in ds:
-            #print(f"This variable {v} is used for {fil0}\n")
-            print(f"    ** The variable {vari} is used for {cvdp_v} **\n")
-            arr = ds.data_vars[vari]
-    """
 
     ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
     print("ADAM: ds",ds,"\n\n")
