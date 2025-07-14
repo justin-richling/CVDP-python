@@ -38,15 +38,15 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
 
 
     if "contour_levels_linspace" in plot_info:
-        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+        #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
         levels = np.linspace(*plot_info["contour_levels_linspace"])
     if "contour_levels_range" in plot_info:
-        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+        #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
         levels = np.arange(*plot_info["contour_levels_range"])
     if "contour_levels_list" in plot_info:
-        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+        #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
         levels = np.arange(plot_info["contour_levels_list"])
-    print("type(levels)",type(levels))
+    #print("type(levels)",type(levels))
     if not isinstance(levels,np.ndarray):
         diff_max = arr.max().item()
         diff_min = arr.min().item()
@@ -91,7 +91,7 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     #lon_idx = arr.dims.index('lon')
     dimension_list = list(arr.dims)  # Convert dimensions to a list
     lon_idx = dimension_list.index('lon') 
-    print("lon_idx",lon_idx,"\n")
+    #print("lon_idx",lon_idx,"\n")
     wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
 
 
@@ -259,13 +259,13 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     # Plot contour range
     levels = None
     if "contour_levels_linspace" in plot_info:
-        print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+        #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
         levels = np.linspace(*plot_info["contour_levels_linspace"])
     if "contour_levels_range" in plot_info:
-        print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+        #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
         levels = np.arange(*plot_info["contour_levels_range"])
     if "contour_levels_list" in plot_info:
-        print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+        #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
         levels = np.arange(plot_info["contour_levels_list"])
     if not isinstance(levels,np.ndarray):
         arr_max = arrs[0].max().item()
@@ -526,7 +526,7 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             #diff_min = diff.min().item()
             #levels = np.linspace(-8, 8, 24)
 
-            print("polar ensemble r=2 (diff) levels:",levels,"\n\n")
+            #print("polar ensemble r=2 (diff) levels:",levels,"\n\n")
             # colorbar ticks
             #print('plot_info["diff_ticks_range"]',plot_info["diff_ticks_range"],"\n")
             #ah = plot_info.get("diff_ticks_range",levels)
@@ -545,13 +545,13 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             # Plot contour range
             levels = None
             if "contour_levels_linspace" in plot_info:
-                print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+                #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
                 levels = np.linspace(*plot_info["contour_levels_linspace"])
             if "contour_levels_range" in plot_info:
-                print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+                #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
                 levels = np.arange(*plot_info["contour_levels_range"])
             if "contour_levels_list" in plot_info:
-                print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
+                #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
                 levels = np.arange(plot_info["contour_levels_list"])
             if not isinstance(levels,np.ndarray):
                 arr_max = arr.max().item()
@@ -610,8 +610,8 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             syr = arr.syr.values
             eyr = arr.eyr.values
             yrs_text = f'{syr}-{eyr}'
-            if debug:
-                print(yrs_text,"\n")
+            #if debug:
+            #    print(yrs_text,"\n")
         # End if
 
         # Get wrapped data around zeroth longitude
