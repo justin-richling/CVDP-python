@@ -51,7 +51,8 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         diff_max = arr.max().item()
         diff_min = arr.min().item()
         levels = np.linspace(diff_min, diff_max, 20)
-
+    print(arr.max().item())
+    print(arr.min().item())
     # colorbar ticks
     ticks = plot_info.get("diff_ticks_range",levels)
     if isinstance(ticks,list):
