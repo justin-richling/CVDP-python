@@ -535,7 +535,7 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
         if r == 2:
             arr_diff = arr_diff#.sel(season=season)
             levels = None
-            #levels = np.arange(*levels)
+            """#levels = np.arange(*levels)
             if "diff_range_list" in plot_info:
                 levels = plot_info["diff_range_list"]
             if not levels:
@@ -560,7 +560,29 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             #ticks = np.arange(*ah)
             cbarticks = plot_info.get("diff_cbarticks_range", plot_info.get("cbarticks", None))
             if cbarticks is None:
-                cbarticks = ticks
+                cbarticks = ticks"""
+
+            if "diff_levels_linspace" in plot_info:
+                #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
+                levels = np.linspace(*plot_info["diff_levels_linspace"])
+            if "diff_levels_range" in plot_info:
+                #print('plot_info["diff_levels_range"]',plot_info["diff_levels_range"])
+                levels = np.arange(*plot_info["diff_levels_range"])
+            if "diff_levels_list" in plot_info:
+                #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
+                levels = np.arange(plot_info["diff_levels_list"])
+            #print("type(levels)",type(levels))
+            if not isinstance(levels,np.ndarray):
+                diff_max = arr.max().item()
+                diff_min = arr.min().item()
+                levels = np.linspace(diff_min, diff_max, 20)
+            print(arr.max().item())
+            print(arr.min().item())
+            # colorbar ticks
+            ticks = plot_info.get("diff_ticks_range",levels)
+            if isinstance(ticks,list):
+                ticks = np.arange(*ticks)
+            cbarticks = plot_info.get("diff_cbar_labels", levels)
 
             # color map
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
