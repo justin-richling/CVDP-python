@@ -121,7 +121,7 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
             }[plot_type]
             results.append((plot_name, title))
 
-    elif map_type == "polar" and vn == "psl":
+    elif ptype == "trends" and map_type == "polar" and vn == "psl":
         # Return one entry per EOF mode
         eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
         #for eof_var in eof_vars:
