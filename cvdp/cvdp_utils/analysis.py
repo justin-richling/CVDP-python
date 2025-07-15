@@ -211,8 +211,6 @@ def get_eof(ds, season, latlon_dict, neof):
 
     latS = latlon_dict['s']
     latN = latlon_dict['n']
-    lonE = latlon_dict['e']
-    lonW = latlon_dict['w']
 
     #neof = 3  # number of EOFs
 

@@ -212,7 +212,8 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         diff = (arr_prime - arrs[1])
 
     if var in eof_vars:
-        for arr_ndjfm in [sim_seas_ts, ref_seas_ts]:
+        eof_arrs = []
+        for arr_eof in [sim_data, ref_data]:
             # Set EOF number for variable
             if var == "NAM" or var == "SAM":
                 num = 0
@@ -221,7 +222,15 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
             if var == "PSA2":
                 num = 2
             
-            eofs, pcs, SLP = an.get_eof(arr, season, latlon_dict, eof_nums)
+            latlon_dict = {}
+            if var in nh_vars:
+                latlon_dict['n'] = 90
+                latlon_dict['s'] = 20
+
+            if var in sh_vars:
+                latlon_dict['n'] = -20
+                latlon_dict['s'] = -90
+            eofs, pcs, SLP = an.get_eof(arr_eof, season, latlon_dict, eof_nums=3)
             pcs_num = pcs.sel(pc=num)
             pcs_norm_num = (pcs_num - pcs_num.mean(dim='time'))/pcs_num.std(dim='time')
             if ((var == "SAM") and (i == 0)) or ((var == "PSA2") and (i != 0)):
@@ -232,7 +241,18 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
             #        pcs_norm_num = pcs_norm_num * -1
 
             pattern = xs.linslope(pcs_norm_num, SLP, dim='time')
+            eof_arrs.append(pattern)
 
+        arr_anom1 = eof_arrs[0]
+        sim = arr_anom1
+        arr_anom2 = eof_arrs[1]
+        ref = arr_anom2
+        arr_prime = an.interp_diff(arr_anom1, arr_anom2)
+
+        if arr_prime is None:
+            arr_prime = arr_anom1 - arr_anom2
+
+        diff = (arr_prime - arr_anom2)
 
     results = []
     #fig = None
