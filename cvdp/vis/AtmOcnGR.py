@@ -48,7 +48,7 @@ eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
 ptypes = ["trends"]
 vns = ["psl"]
 map_types = ["global", "polar", "timeseries"]
-#map_types = ["global"]
+map_types = ["timeseries"]
 plot_types = ["summary", "indmem", "indmemdiff"]
 #plot_types = ["indmemdiff"]
 
@@ -310,7 +310,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
                 fig = polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
             if map_type == "global":
                 fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
-            if map_type == "timeseries" and var in eof_arrs:
+            if map_type == "timeseries" and var in eof_vars:
                 fig = timeseries_plot(var,  ahh[0], ahh[1])
         elif plot_type == "indmem":
             if map_type == "polar":
@@ -318,7 +318,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
                 fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
             if map_type == "global":
                 fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
-            if map_type == "timeseries" and var in eof_arrs:
+            if map_type == "timeseries" and var in eof_vars:
                 fig = timeseries_plot(var,  ahh[0], ahh[1])
         elif plot_type == "indmemdiff":
         #if plot_type == "indmemdiff":
