@@ -185,12 +185,25 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
 
             # Get run name
             #TODO: run names need to be better to get
-            run = arr.run.values
+            #run = arr.run.values
+            if isinstance(arr.run, str):
+                run = arr.run
+            else:
+                run = arr.run.values
             #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
             syr = arr.syr.values
             eyr = arr.eyr.values
+            if isinstance(arr.syr, str):
+                run = arr.syr
+            else:
+                syr = arr.syr.values
+            if isinstance(arr.eyr, str):
+                run = arr.eyr
+            else:
+                eyr = arr.eyr.values
+    
             yrs_text = f'{syr}-{eyr}'
             #if debug:
             #    print(yrs_text,"\n")
