@@ -26,406 +26,145 @@ from vis.timeseries_plot import timeseries_plot
 import cvdp_utils.avg_functions as af
 import cvdp_utils.utils as helper_utils
 import cvdp_utils.analysis as an
-#import cvdp.cvdp_utils.utils as helper_utils
 
-season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
-season_list = ["DJF"]
-var_seasons = {
-    "psl": {"global": season_list + ["NDJFM"], "polar": season_list, "timeseries": season_list},
-    "ts": season_list,
-    "trefht": season_list,
-    "prect": season_list,
+SEASON_LIST = ["DJF"]
+VAR_SEASONS = {
+    "psl": {"global": SEASON_LIST + ["NDJFM"], "polar": SEASON_LIST, "timeseries": SEASON_LIST},
+    "ts": SEASON_LIST,
+    "trefht": SEASON_LIST,
+    "prect": SEASON_LIST,
 }
 
-# EOF variables
-nh_vars = ["NAM"]
-sh_vars = ["SAM", "PSA1", "PSA2"]
-eof_vars = nh_vars + sh_vars
+EOF_VARS = ["NAM", "SAM", "PSA1", "PSA2"]
+NH_VARS = ["NAM"]
+SH_VARS = ["SAM", "PSA1", "PSA2"]
 
-eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
-
-#ptypes = ["spatialmean", "trends"]
-ptypes = ["trends"]
-vns = ["psl"]
-map_types = ["global", "polar", "timeseries"]
-#map_types = ["timeseries"]
-plot_types = ["summary", "indmem", "indmemdiff"]
-#plot_types = ["indmemdiff"]
+PTYPES = ["trends"]
+MAP_TYPES = ["global", "polar", "timeseries"]
+PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 
 
-'''def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
-    season_upper = season.upper()
+def get_plot_title(var, plot_type, ptype, season):
+    base = f"{var} {ptype.capitalize()} ({season})"
+    titles = {
+        "summary": f"Ensemble Summary: {base}",
+        "indmem": f"{base}\n",
+        "indmemdiff": f"{base} Differences\n",
+    }
+    return titles.get(plot_type, "Unknown Title")
+
+
+def get_plot_name(vn, var, ptype, season, plot_type, map_type):
     season_lower = season.lower()
-
-    base_var = "sst" if vn == "ts" else vn
-    title_var = "SST" if vn == "ts" else vn.upper()
-
-    if map_type == "global":
-        if ptype == "trends" and vn == "psl" and season == "NDJFM":
-            plot_name = f"npi_pattern_{season_lower}.{plot_type}.png"
-            var = "NPI"
-        else:
-            suffix = f"{ptype}_{season_lower}.{plot_type}.png"
-            plot_name = f"{base_var}_{suffix}" if ptype != "trends" else f"{base_var}_pattern_{season_lower}.{plot_type}.png"
-    elif map_type == "polar":
-        if vn == "psl":
-            for eof_var in eof_vars:
-                plot_name = f"{eof_var.lower()}_pattern_{season_lower}.{plot_type}.png"
-                title = {
-                    "summary": f"Ensemble Summary: {eof_var} Pattern ({season_upper})\n",
-                    "indmem": f"{eof_var} Pattern ({season_upper})\n",
-                    "indmemdiff": f"{eof_var} Pattern Differences ({season_upper})\n",
-                }
-            """plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
-            title_map = {
-                "summary": f"Ensemble Summary: {var} Pattern ({season_upper})\n",
-                "indmem": f"{var} Pattern ({season_upper})\n",
-                "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
-            }"""
-        else:
-            plot_name = f"{base_var}_pattern_{season_lower}.{plot_type}.png"
+    if var == "NPI":
+        return f"npi_pattern_{season_lower}.{plot_type}.png"
+    elif map_type == "timeseries":
+        return f"{var.lower()}_timeseries_{season_lower}.{plot_type}.png"
     else:
-        plot_name = "unknown.png"
-
-    title = {
-        "summary": f"Ensemble Summary: {var or title_var} {ptype.capitalize()} ({season_upper})",
-        "indmem": f"{var or title_var} {ptype.capitalize()} ({season_upper})\n",
-        "indmemdiff": f"{var or title_var} {ptype.capitalize()} Differences ({season_upper})\n",
-    }.get(plot_type, "Unknown Title")
-
-    return plot_name, title'''
-
-
-def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
-    """
-    Returns one or more (plot_name, title) tuples depending on vn/map_type.
-    """
-    season_upper = season.upper()
-    season_lower = season.lower()
-
-    base_var = "sst" if vn == "ts" else vn
-    title_var = "SST" if vn == "ts" else vn.upper()
-
-    results = []
-
-    if map_type == "global":
-        #if ptype == "trends" and vn == "psl" and season == "NDJFM":
-        if var == "NPI":
-            plot_name = f"npi_pattern_{season_lower}.{plot_type}.png"
-            title = {
-                "summary": f"Ensemble Summary: NPI Pattern ({season_upper})",
-                "indmem": f"NPI Pattern ({season_upper})\n",
-                "indmemdiff": f"NPI Pattern Differences ({season_upper})\n",
-            }[plot_type]
-            results.append((plot_name, title))
-        #elif season != "NDJFM":
-        else:
-            suffix = f"{ptype}_{season_lower}.{plot_type}.png"
-            plot_name = f"{base_var}_{suffix}" if ptype != "trends" else f"{base_var}_pattern_{season_lower}.{plot_type}.png"
-            title = {
-                "summary": f"Ensemble Summary: {title_var} {ptype.capitalize()} ({season_upper})",
-                "indmem": f"{title_var} {ptype.capitalize()} ({season_upper})\n",
-                "indmemdiff": f"{title_var} {ptype.capitalize()} Differences ({season_upper})\n",
-            }[plot_type]
-            results.append((plot_name, title))
-
-    elif ptype == "trends" and map_type == "polar" and vn == "psl":
-        # Return one entry per EOF mode
-        eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
-        #for eof_var in eof_vars:
-        if var in eof_vars:
-            plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
-            title = {
-                "summary": f"Ensemble Summary: {var} Pattern ({season_upper})",
-                "indmem": f"{var} Pattern ({season_upper})\n",
-                "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
-            }[plot_type]
-            results.append((plot_name, title))
-    elif ptype == "trends" and map_type == "timeseries" and vn == "psl" and (plot_type == "summary" or plot_type == "indmem"):
-        # Return one entry per EOF mode
-        eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
-        #for eof_var in eof_vars:
-        if var in eof_vars:
-            plot_name = f"{var.lower()}_timeseries_{season_lower}.{plot_type}.png"
-            title = {
-                "summary": f"Ensemble Summary: {var} Timeseries ({season_upper})",
-                "indmem": f"{var} Timeseries ({season_upper})\n",
-                #"indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
-            }[plot_type]
-            results.append((plot_name, title))
-    elif ptype == "spatialmean" and map_type == "polar" and vn == "psl":
-        a = 5
-    else:
-        plot_name = f"{base_var}_pattern_{season_lower}.{plot_type}.png"
-        title = {
-            "summary": f"Ensemble Summary: {title_var} {ptype.capitalize()} ({season_upper})",
-            "indmem": f"{title_var} {ptype.capitalize()} ({season_upper})\n",
-            "indmemdiff": f"{title_var} {ptype.capitalize()} Differences ({season_upper})\n",
-        }[plot_type]
-        results.append((plot_name, title))
-
-    return results
-
-
-
-
-def compute_mean_diff(sim, ref):
-    arr_prime = an.interp_diff(sim, ref)
-    #return sim - ref if arr_prime is None else arr_prime - ref
-    return sim - ref if arr_prime is None else sim - arr_prime
+        suffix = f"pattern_{season_lower}" if ptype == "trends" else f"{ptype}_{season_lower}"
+        return f"{vn}_{suffix}.{plot_type}.png"
 
 
 def compute_trend(data):
-    return af.lin_regress(data)[0]  # returns the trend array
+    return af.lin_regress(data)[0]
 
 
-def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, ref_data=None, var=None,
-                sim_seas_ts=None, ref_seas_ts=None,
-                ref_season_anom_avgs=None, sim_season_anom_avgs=None):
-    print("\nHANDLE PLOTS:",vn, var, ptype, season, plot_type, map_type,"\n")
-    #print("\t ** nhandle_plot VAR name",var,"**")
-    
-    """sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
-    ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
-
-    arr_prime = an.interp_diff(sim, ref)
-    #diff = arr_prime if arr_prime is not None else (sim - ref)
-
-    # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
-    if arr_prime is None:
-        diff = sim - ref
-    else:
-        #diff = (arr_prime - ref)
-        diff = (sim - arr_prime)"""
-
-    #print("DIFF PLOT BOI",diff,"\n\n")
-    #if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
-    if var == "NPI":
-
-        arrs = []
-        for arr_ndjfm in [sim_seas_ts, ref_seas_ts]:
-            #print("arr_ndjfm",arr_ndjfm,"\n\n")
-            attrs = arr_ndjfm.attrs
-            npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
-
-            npi_ndjfm = npi_ndjfm.weighted(np.cos(np.radians(npi_ndjfm.lat))).mean(dim=('lat','lon'))
-
-            npi_ndjfm_standarized = (npi_ndjfm - npi_ndjfm.mean(dim='time'))/npi_ndjfm.std(dim='time')
-            npi = xs.linslope(npi_ndjfm_standarized, arr_ndjfm, dim='time')
-            npi.attrs = attrs
-            arrs.append(npi)
-
-        arr_anom1 = arrs[0]
-        sim = arr_anom1
-        arr_anom2 = arrs[1]
-        ref = arr_anom2
-
-        """
-        arr_prime = an.interp_diff(sim, ref)
-        #diff = arr_prime if arr_prime is not None else (sim - ref)
-
-        # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
-        if arr_prime is None:
-            diff = sim - ref
-        else:
-            #diff = (arr_prime - ref)
-            diff = (sim - arr_prime)
-        """
-
-        arr_prime = an.interp_diff(arr_anom1, arr_anom2)
-
-        if arr_prime is None:
-            arr_prime = sim - ref
-        else:
-            diff = (sim - arr_prime)
-
-        #diff = (arr_prime - arrs[1])
+def compute_diff(sim, ref):
+    interp = an.interp_diff(sim, ref)
+    return sim - ref if interp is None else sim - interp
 
 
-    elif var in eof_vars:
-        eof_arrs = []
-        ahh = []
-        for i,arr_eof in enumerate([sim_season_anom_avgs, ref_season_anom_avgs]):
-            # Set EOF number for variable
-            if var == "NAM" or var == "SAM":
-                num = 0
-            if var == "PSA1":
-                num = 1
-            if var == "PSA2":
-                num = 2
-            
-            latlon_dict = {}
-            if var in nh_vars:
-                latlon_dict['n'] = 90
-                latlon_dict['s'] = 20
+def compute_npi(sim_ts, ref_ts):
+    def _standardize(arr):
+        return (arr - arr.mean("time")) / arr.std("time")
 
-            if var in sh_vars:
-                latlon_dict['n'] = -20
-                latlon_dict['s'] = -90
-            eofs, pcs, SLP = an.get_eof(arr_eof, season, latlon_dict, neof=3)
-            pcs_num = pcs.sel(pc=num)
-            pcs_norm_num = (pcs_num - pcs_num.mean(dim='time'))/pcs_num.std(dim='time')
-            if ((var == "SAM") and (i == 0)) or ((var == "PSA2") and (i != 0)):
-                pcs_norm_num = pcs_norm_num * -1
+    def _npi(arr):
+        sliced = arr.sel(lat=slice(30, 65), lon=slice(160, 220))
+        weighted = sliced.weighted(np.cos(np.radians(sliced.lat))).mean(["lat", "lon"])
+        return _standardize(weighted)
 
-            #if num != 0:
-            #    if i == 0:
-            #        pcs_norm_num = pcs_norm_num * -1
-
-            pattern = xs.linslope(pcs_norm_num, SLP, dim='time')
-            eof_arrs.append(pattern)
-            ahh.append(pcs_norm_num)
-
-        arr_anom1 = eof_arrs[0]
-        sim = arr_anom1
-        arr_anom2 = eof_arrs[1]
-        ref = arr_anom2
-        arr_prime = an.interp_diff(arr_anom1, arr_anom2)
-
-        if arr_prime is None:
-            arr_prime = sim - ref
-
-        diff = (sim - arr_prime)
-    else:
-        sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
-        ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
-
-        arr_prime = an.interp_diff(sim, ref)
-        #diff = arr_prime if arr_prime is not None else (sim - ref)
-
-        # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
-        if arr_prime is None:
-            diff = sim - ref
-        else:
-            #diff = (arr_prime - ref)
-            diff = (sim - arr_prime)
-    results = []
-    fig = None
-
-    for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
-        print("\tplot_name",plot_name)
-        if plot_type == "summary":
-            if map_type == "polar":
-                #polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=False)
-                fig = polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
-            if map_type == "global":
-                fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
-            if map_type == "timeseries" and var in eof_vars:
-                fig = timeseries_plot(var,  ahh[0], ahh[1])
-        elif plot_type == "indmem":
-            if map_type == "polar":
-                #polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype)
-                fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
-            if map_type == "global":
-                fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
-            if map_type == "timeseries" and var in eof_vars:
-                fig = timeseries_plot(var,  ahh[0], ahh[1])
-        elif plot_type == "indmemdiff":
-        #if plot_type == "indmemdiff":
-            run = f"{sim.run.values} - {ref.run.values}"
-            if map_type == "polar":
-                # polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title)
-                fig = polar_indmemdiff_latlon_plot(vn, var, run, diff, ptype, vtres, title)
-            if map_type == "global":
-                fig = global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
-        else:
-            fig = None
-        if fig:
-            results.append((fig, plot_name))
-    return results
+    sim_npi = xs.linslope(_npi(sim_ts), sim_ts, dim="time")
+    ref_npi = xs.linslope(_npi(ref_ts), ref_ts, dim="time")
+    return sim_npi, ref_npi, compute_diff(sim_npi, ref_npi)
 
 
+def compute_eof(var, sim_anom, ref_anom, season):
+    num = EOF_VARS.index(var)
+    bounds = {'n': 90, 's': 20} if var in NH_VARS else {'n': -20, 's': -90}
+
+    def _eof(arr, invert=False):
+        eofs, pcs, slp = an.get_eof(arr, season, bounds, neof=3)
+        pcs_std = (pcs.sel(pc=num) - pcs.sel(pc=num).mean("time")) / pcs.sel(pc=num).std("time")
+        return xs.linslope(-pcs_std if invert else pcs_std, slp, dim="time"), pcs_std
+
+    sim_pattern, sim_pc = _eof(sim_anom, var == "SAM")
+    ref_pattern, ref_pc = _eof(ref_anom, var == "PSA2")
+    return sim_pattern, ref_pattern, compute_diff(sim_pattern, ref_pattern), sim_pc, ref_pc
+
+
+def plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vtres, title, pcs=None):
+    if plot_type == "summary":
+        if map_type == "polar":
+            return polar_ensemble_plot([sim, ref], diff, vn, var, "trends", vtres, title)
+        if map_type == "global":
+            return global_ensemble_plot([sim, ref], diff, vn, "trends", vtres, title)
+        if map_type == "timeseries" and pcs:
+            return timeseries_plot(var, pcs[0], pcs[1])
+    elif plot_type == "indmem":
+        if map_type == "polar":
+            return polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, "trends")
+        if map_type == "global":
+            return global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
+        if map_type == "timeseries" and pcs:
+            return timeseries_plot(var, pcs[0], pcs[1])
+    elif plot_type == "indmemdiff":
+        run = f"{sim.run.values} - {ref.run.values}"
+        if map_type == "polar":
+            return polar_indmemdiff_latlon_plot(vn, var, run, diff, "trends", vtres, title)
+        if map_type == "global":
+            return global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
+    return None
 
 
 def graphics(plot_loc, **kwargs):
-    print("\nPlotting climatological seasonal means...")
-    ref_seas_avgs = kwargs["ref_seas"]
-    sim_seas_avgs = kwargs["sim_seas"]
-
-    ref_seas_ts = kwargs["ref_seas_ts"]
-    sim_seas_ts = kwargs["sim_seas_ts"]
-
-    ref_seas_anom_avgs = kwargs["ref_season_anom_avgs"]
-    sim_seas_anom_avgs = kwargs["sim_season_anom_avgs"]
-
-    #ref_eof_ts = kwargs["ref_eof_ts"]
-    #sim_eof_ts = kwargs["sim_eof_ts"]
-
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
 
-    for ptype in ptypes:
-        for map_type in map_types:
-            vres = res[vn]
-            vtres = vres[ptype]
-            seasons = var_seasons[vn][map_type] if isinstance(var_seasons[vn], dict) else var_seasons[vn]
+    for ptype in PTYPES:
+        for map_type in MAP_TYPES:
+            vres = res[vn][ptype]
+            seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
 
             for season in seasons:
-                for plot_type in plot_types:
+                for plot_type in PLOT_TYPES:
                     key = f"{vn}_{ptype}_{season.lower()}"
-                    sim_data = sim_seas_avgs[key]
-                    ref_data = ref_seas_avgs[key]
+                    sim_data = kwargs["sim_seas"][key]
+                    ref_data = kwargs["ref_seas"][key]
+                    figs = []
 
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
-                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
+                        sim_npi, ref_npi, diff_npi = compute_npi(kwargs["sim_seas_ts"][key], kwargs["ref_seas_ts"][key])
+                        title = get_plot_title("NPI", plot_type, ptype, season)
+                        name = get_plot_name(vn, "NPI", ptype, season, plot_type, map_type)
+                        fig = plot_dispatch(plot_type, map_type, vn, "NPI", sim_npi, ref_npi, diff_npi, vres, title)
+                        if fig: figs.append((fig, name))
 
-                        for fig, plot_name in results:
-                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                            plt.close(fig)
-
-                        var = "NPI"
-                        vres = res[var]
-                        vtres = vres[ptype]
-                        sim_ts_data = sim_seas_ts[key]
-                        ref_ts_data = ref_seas_ts[key]
-                        #print("ref_ts_data",ref_ts_data,"\n\n")
-                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var, sim_seas_ts=sim_ts_data, ref_seas_ts=ref_ts_data)
-
-                        for fig, plot_name in results:
-                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                            plt.close(fig)
-
-
-                    # Use EOF vars for polar PSL
-                    elif ptype == "trends" and vn == "psl" and map_type == "polar":
-                        for var in eof_vars:
-                            vres = res[var]
-                            vtres = vres[ptype]
-                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var,
-                                                  ref_season_anom_avgs=ref_seas_anom_avgs, sim_season_anom_avgs=sim_seas_anom_avgs)
-
-                            for fig, plot_name in results:
-                                fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                                plt.close(fig)
-                    # Time series plots?
-                    elif ptype == "trends" and vn == "psl" and map_type == "timeseries":
-                        for var in eof_vars:
-                            vres = res[var]
-                            vtres = vres[ptype]
-                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, ref_season_anom_avgs=ref_seas_anom_avgs, sim_season_anom_avgs=sim_seas_anom_avgs, var=var)
-                            for fig, plot_name in results:
-                                fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                                plt.close(fig)
-                            
+                    elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
+                        for var in EOF_VARS:
+                            sim, ref, diff, sim_pc, ref_pc = compute_eof(var, kwargs["sim_season_anom_avgs"], kwargs["ref_season_anom_avgs"], season)
+                            title = get_plot_title(var, plot_type, ptype, season)
+                            name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
+                            fig = plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
+                            if fig: figs.append((fig, name))
                     else:
-                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
+                        sim = compute_trend(sim_data) if ptype == "trends" else sim_data.mean("time")
+                        ref = compute_trend(ref_data) if ptype == "trends" else ref_data.mean("time")
+                        diff = compute_diff(sim, ref)
+                        title = get_plot_title(vn.upper(), plot_type, ptype, season)
+                        name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
+                        fig = plot_dispatch(plot_type, map_type, vn, vn, sim, ref, diff, vres, title)
+                        if fig: figs.append((fig, name))
 
-                        for fig, plot_name in results:
-                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                            plt.close(fig)
-                """
-                if type == "trends":
-                                    if vn == "psl":
-                                        if season == "NDJFM":
-                                            var = "NPI"
-                                        else:
-                                            var = vn
-                                        plot_name, title = get_plot_name_and_title(vn, var, type, season, plot_type, map_type)
-                """
-                
-                """else:
-                    results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
-
-                    for fig, plot_name in results:
-                        fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                        plt.close(fig)"""
+                    for fig, name in figs:
+                        fig.savefig(plot_loc / name, bbox_inches="tight")
+                        plt.close(fig)
