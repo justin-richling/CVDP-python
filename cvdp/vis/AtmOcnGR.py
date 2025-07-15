@@ -151,7 +151,8 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
 
 def compute_mean_diff(sim, ref):
     arr_prime = an.interp_diff(sim, ref)
-    return sim - ref if arr_prime is None else arr_prime - ref
+    #return sim - ref if arr_prime is None else arr_prime - ref
+    return sim - ref if arr_prime is None else sim - arr_prime
 
 
 def compute_trend(data):
