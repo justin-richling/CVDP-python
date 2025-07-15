@@ -192,6 +192,8 @@ def interp_diff(arr_anom1, arr_anom2):
         regridder = xe.Regridder(arr_anom2, ds_out, "bilinear", periodic=True)
         arr_prime = regridder(arr_anom2, keep_attrs=True)
 
+        print("\n\narr_prime",arr_prime,"\n\n")
+
     # Return the new interpolated obs array
     return arr_prime
 
