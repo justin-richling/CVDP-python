@@ -193,8 +193,8 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             #run = f"{finarrs[r].run}"
 
             # Get start and end years for run
-            syr = arr.syr.values
-            eyr = arr.eyr.values
+            #syr = arr.syr.values
+            #eyr = arr.eyr.values
             if isinstance(arr.syr, str):
                 run = arr.syr
             else:
