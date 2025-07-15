@@ -119,7 +119,7 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
             }[plot_type]
             results.append((plot_name, title))
         #elif season != "NDJFM":
-        """else:
+        else:
             suffix = f"{ptype}_{season_lower}.{plot_type}.png"
             plot_name = f"{base_var}_{suffix}" if ptype != "trends" else f"{base_var}_pattern_{season_lower}.{plot_type}.png"
             title = {
@@ -127,7 +127,7 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
                 "indmem": f"{title_var} {ptype.capitalize()} ({season_upper})\n",
                 "indmemdiff": f"{title_var} {ptype.capitalize()} Differences ({season_upper})\n",
             }[plot_type]
-            results.append((plot_name, title))"""
+            results.append((plot_name, title))
 
     elif ptype == "trends" and map_type == "polar" and vn == "psl":
         # Return one entry per EOF mode
