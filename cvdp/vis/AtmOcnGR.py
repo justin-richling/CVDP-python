@@ -190,7 +190,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
 
         arrs = []
         for arr_ndjfm in [sim_seas_ts, ref_seas_ts]:
-            print("arr_ndjfm",arr_ndjfm,"\n\n")
+            #print("arr_ndjfm",arr_ndjfm,"\n\n")
             attrs = arr_ndjfm.attrs
             npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
 
@@ -358,7 +358,7 @@ def graphics(plot_loc, **kwargs):
                         vtres = vres[ptype]
                         sim_ts_data = sim_seas_ts[key]
                         ref_ts_data = ref_seas_ts[key]
-                        print("ref_ts_data",ref_ts_data,"\n\n")
+                        #print("ref_ts_data",ref_ts_data,"\n\n")
                         results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var, sim_seas_ts=sim_ts_data, ref_seas_ts=ref_ts_data)
 
                         for fig, plot_name in results:
