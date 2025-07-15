@@ -183,8 +183,8 @@ def interp_diff(arr_anom1, arr_anom2):
 
         ds_out = xr.Dataset(
             {
-                "lat": (["lat"], test_lons.values, {"units": "degrees_north"}),
-                "lon": (["lon"], test_lats.values, {"units": "degrees_east"}),
+                "lat": (["lat"], test_lats.values, {"units": "degrees_north"}),
+                "lon": (["lon"], test_lons.values, {"units": "degrees_east"}),
             }
         )
 
