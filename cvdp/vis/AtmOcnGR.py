@@ -49,8 +49,8 @@ ptypes = ["trends"]
 vns = ["psl"]
 map_types = ["global", "polar", "timeseries"]
 #map_types = ["global"]
-plot_types = ["summary", "indmem", "indmemdiff"]
-#plot_types = ["indmemdiff"]
+#plot_types = ["summary", "indmem", "indmemdiff"]
+plot_types = ["indmemdiff"]
 
 
 '''def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
@@ -375,7 +375,7 @@ def graphics(plot_loc, **kwargs):
 
 
                     # Use EOF vars for polar PSL
-                    if ptype == "trends" and vn == "psl" and map_type == "polar":
+                    elif ptype == "trends" and vn == "psl" and map_type == "polar":
                         for var in eof_vars:
                             vres = res[var]
                             vtres = vres[ptype]
@@ -386,11 +386,11 @@ def graphics(plot_loc, **kwargs):
                                 fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                                 plt.close(fig)
                     # Time series plots?
-                    if ptype == "trends" and vn == "psl" and map_type == "timeseries":
+                    elif ptype == "trends" and vn == "psl" and map_type == "timeseries":
                         for var in eof_vars:
                             vres = res[var]
                             vtres = vres[ptype]
-                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, ref_season_anom_avgs=ref_seas_anom_avgs, sim_season_anom_avgs=sim_seas_anom_avgs, var=var)
                             for fig, plot_name in results:
                                 fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                                 plt.close(fig)
