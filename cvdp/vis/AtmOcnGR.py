@@ -227,7 +227,7 @@ def graphics(plot_loc, **kwargs):
                     ref_data = ref_seas_avgs[key]
 
                     # Use EOF vars for polar PSL
-                    if vn == "psl" and map_type == "polar":
+                    if ptype == "trends" and vn == "psl" and map_type == "polar":
                         for var in eof_vars:
                             vres = res[var]
                             vtres = vres[ptype]
