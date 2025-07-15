@@ -328,6 +328,9 @@ def graphics(plot_loc, **kwargs):
 
     ref_seas_ts = kwargs["ref_seas_ts"]
     sim_seas_ts = kwargs["sim_seas_ts"]
+
+    ref_seas_anom_avgs = kwargs["ref_season_anom_avgs"]
+    sim_seas_anom_avgs = kwargs["sim_season_anom_avgs"]
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
 
@@ -368,7 +371,8 @@ def graphics(plot_loc, **kwargs):
                         for var in eof_vars:
                             vres = res[var]
                             vtres = vres[ptype]
-                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var,
+                                                  ref_season_anom_avgs=ref_seas_anom_avgs, sim_season_anom_avgs=sim_seas_anom_avgs)
 
                             for fig, plot_name in results:
                                 fig.savefig(plot_loc / plot_name, bbox_inches="tight")
