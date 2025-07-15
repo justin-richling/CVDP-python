@@ -323,6 +323,12 @@ def graphics(plot_loc, **kwargs):
                         for fig, plot_name in results:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                             plt.close(fig)
+                    else:
+                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+
+                        for fig, plot_name in results:
+                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                            plt.close(fig)
 
                     # Use EOF vars for polar PSL
                     if ptype == "trends" and vn == "psl" and map_type == "polar":
