@@ -78,6 +78,8 @@ season_dict = {"NDJFM":0,
 #def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
 def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
+    units = arr.units
+    season_yrs = np.unique(arr["time.year"])
 
     # remove annual trend
     #--------------------
@@ -115,10 +117,6 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     ts_ds = ts_ds.assign_coords(syr=syr)
     ts_ds = ts_ds.assign_coords(eyr=eyr)
 
-
-
-    units = arr.units
-    season_yrs = np.unique(arr["time.year"])
     # Spatial Mean
     #-------------
     trnd_dict = {}
