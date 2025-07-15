@@ -203,12 +203,28 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         sim = arr_anom1
         arr_anom2 = arrs[1]
         ref = arr_anom2
+
+        """
+        arr_prime = an.interp_diff(sim, ref)
+        #diff = arr_prime if arr_prime is not None else (sim - ref)
+
+        # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+        if arr_prime is None:
+            diff = sim - ref
+        else:
+            #diff = (arr_prime - ref)
+            diff = (sim - arr_prime)
+        """
+
         arr_prime = an.interp_diff(arr_anom1, arr_anom2)
 
         if arr_prime is None:
-            arr_prime = arr_anom1 - arr_anom2
+            arr_prime = sim - ref
+        else:
+            diff = (sim - arr_prime)
 
-        diff = (arr_prime - arrs[1])
+        #diff = (arr_prime - arrs[1])
+
 
     elif var in eof_vars:
         eof_arrs = []
@@ -249,7 +265,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         arr_prime = an.interp_diff(arr_anom1, arr_anom2)
 
         if arr_prime is None:
-            arr_prime = arr_anom1 - arr_anom2
+            arr_prime = sim - ref
 
         diff = (arr_prime - arr_anom2)
     else:
