@@ -213,7 +213,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
 
     if var in eof_vars:
         eof_arrs = []
-        for arr_eof in [sim_data, ref_data]:
+        for i,arr_eof in enumerate([sim_data, ref_data]):
             # Set EOF number for variable
             if var == "NAM" or var == "SAM":
                 num = 0
