@@ -21,6 +21,8 @@ from vis.polar_plots import (
     polar_indmem_latlon_plot,
     polar_indmemdiff_latlon_plot
 )
+
+from vis.timeseries_plot import timeseries_plot
 import cvdp_utils.avg_functions as af
 import cvdp_utils.utils as helper_utils
 import cvdp_utils.analysis as an
@@ -220,12 +222,16 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
                 fig = polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
             if map_type == "global":
                 fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
+            if map_type == "timeseries":
+                fig = timeseries_plot(var, ref_seas_ts, sim_seas_ts)
         elif plot_type == "indmem":
             if map_type == "polar":
                 #polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype)
                 fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
             if map_type == "global":
                 fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
+            if map_type == "timeseries":
+                fig = timeseries_plot(var, ref_seas_ts, sim_seas_ts)
         elif plot_type == "indmemdiff":
         #if plot_type == "indmemdiff":
             run = f"{sim.run.values} - {ref.run.values}"
@@ -288,6 +294,16 @@ def graphics(plot_loc, **kwargs):
                             for fig, plot_name in results:
                                 fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                                 plt.close(fig)
+                    # Time series plots?
+                    if ptype == "trends" and vn == "psl" and map_type == "timeseries":
+                        for var in eof_vars:
+                            vres = res[var]
+                            vtres = vres[ptype]
+                            results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+                            for fig, plot_name in results:
+                                fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                                plt.close(fig)
+                            
                     else:
                         results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
 
