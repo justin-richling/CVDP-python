@@ -167,10 +167,10 @@ def compute_trend(data):
     return af.lin_regress(data)[0]  # returns the trend array
 
 
-def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=None,
+def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, ref_data=None, var=None,
                 sim_seas_ts=None, ref_seas_ts=None,
                 ref_season_anom_avgs=None, sim_season_anom_avgs=None):
-    print("\\t ** nhandle_plot VAR name",var,"**")
+    print("\t ** nhandle_plot VAR name",var,"**")
     """sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
     ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
 

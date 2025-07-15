@@ -672,8 +672,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     else:
         if cbarticks is None:
             cbarticks = ticks"""
-    print("\tGLOBAL: cbarticks diff plot",ptype,cbarticks)
-    print("\tGLOBAL: ticks diff plot",ptype,ticks)
+    #print("\tGLOBAL: cbarticks diff plot",ptype,cbarticks)
+    #print("\tGLOBAL: ticks diff plot",ptype,ticks)
 
     # color map
     cmap = plot_info["cmap"]
@@ -690,8 +690,8 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     # Get wrapped data around zeroth longitude
     lat = arr.lat
     lon_idx = arr.dims.index('lon')
-    if "NPI" in title:
-        print("NPI ARR",arr,"\n\n")
+    #if "NPI" in title:
+    #    print("NPI ARR",arr,"\n\n")
     wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
     #wrap_data = arr.values
     #wrap_lon = arr.lon
@@ -761,7 +761,7 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
                 tick_loc = ''
             tick_labels.append(tick_loc)"""
     #End if
-    print("\tGLOBAL: tick_labels diff plot",ptype,tick_labels,"\n")
+    #print("\tGLOBAL: tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------

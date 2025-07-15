@@ -51,8 +51,8 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         diff_max = arr.max().item()
         diff_min = arr.min().item()
         levels = np.linspace(diff_min, diff_max, 20)
-    print(arr.max().item())
-    print(arr.min().item())
+    #print(arr.max().item())
+    #print(arr.min().item())
     # colorbar ticks
     ticks = plot_info.get("diff_ticks_range",levels)
     if isinstance(ticks,list):
@@ -72,8 +72,8 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     else:
         if cbarticks is None:
             cbarticks = ticks"""
-    print("\tPOLAR: cbarticks diff plot",ptype,cbarticks)
-    print("\tPOLAR: ticks diff plot",ptype,ticks)
+    #print("\tPOLAR: cbarticks diff plot",ptype,cbarticks)
+    #print("\tPOLAR: ticks diff plot",ptype,ticks)
 
     # color map
     cmap = plot_info.get("diff_cmap",plot_info["cmap"])
@@ -226,7 +226,7 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
             tick_labels.append(tick_loc)"""
     #End if
 
-    print("\tPOLAR: tick_labels diff plot",ptype,tick_labels,"\n")
+    #print("\tPOLAR: tick_labels diff plot",ptype,tick_labels,"\n")
 
     # Set up colorbar
     #----------------
@@ -576,8 +576,8 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
                 diff_max = arr.max().item()
                 diff_min = arr.min().item()
                 levels = np.linspace(diff_min, diff_max, 20)
-            print(arr.max().item())
-            print(arr.min().item())
+            #print(arr.max().item())
+            #print(arr.min().item())
             # colorbar ticks
             ticks = plot_info.get("diff_ticks_range",levels)
             if isinstance(ticks,list):

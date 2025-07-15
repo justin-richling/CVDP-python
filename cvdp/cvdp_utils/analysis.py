@@ -216,7 +216,7 @@ def get_eof(ds, season, latlon_dict, neof):
 
     # To facilitate data subsetting
     ds2 = ds.copy()
-    print("ds2",ds2)
+    #print("ds2",ds2)
     #season = "DJF"
     SLP = month_to_season(ds2, season)
 
