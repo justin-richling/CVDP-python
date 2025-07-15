@@ -133,6 +133,8 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
                 "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
             }[plot_type]
             results.append((plot_name, title))
+    elif ptype == "spatialmean" and map_type == "polar" and vn == "psl":
+        a = 5
     else:
         plot_name = f"{base_var}_pattern_{season_lower}.{plot_type}.png"
         title = {
