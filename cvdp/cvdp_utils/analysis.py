@@ -170,7 +170,7 @@ def interp_diff(arr_anom1, arr_anom2):
 
     if (not same_lons) and (not same_lats):
 
-        ds_out = xr.Dataset(
+        """ds_out = xr.Dataset(
             {
                 "lat": (["lat"], obs_lats.values, {"units": "degrees_north"}),
                 "lon": (["lon"], obs_lons.values, {"units": "degrees_east"}),
@@ -179,7 +179,18 @@ def interp_diff(arr_anom1, arr_anom2):
 
         # Regrid to the ensemble grid to make altered obs grid
         regridder = xe.Regridder(arr_anom1, ds_out, "bilinear", periodic=True)
-        arr_prime = regridder(arr_anom1, keep_attrs=True)
+        arr_prime = regridder(arr_anom1, keep_attrs=True)"""
+
+        ds_out = xr.Dataset(
+            {
+                "lat": (["lat"], test_lons.values, {"units": "degrees_north"}),
+                "lon": (["lon"], test_lats.values, {"units": "degrees_east"}),
+            }
+        )
+
+        # Regrid to the ensemble grid to make altered obs grid
+        regridder = xe.Regridder(arr_anom2, ds_out, "bilinear", periodic=True)
+        arr_prime = regridder(arr_anom2, keep_attrs=True)
 
     # Return the new interpolated obs array
     return arr_prime
