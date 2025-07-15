@@ -229,6 +229,8 @@ def graphics(plot_loc, **kwargs):
                     # Use EOF vars for polar PSL
                     if vn == "psl" and map_type == "polar":
                         for var in eof_vars:
+                            vres = res[var]
+                            vtres = vres[ptype]
                             results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
 
                             for fig, plot_name in results:
