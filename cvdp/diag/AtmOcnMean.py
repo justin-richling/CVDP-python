@@ -13,14 +13,14 @@ from diag import compute_seasonal_avgs
 def mean_seasonal_calc(ref_dataset, sim_dataset, var_name):
 
     print("\nCalculating climatological seasonal means...")
-    ref_seas_avgs, ref_season_anom_avgs, ref_seas_ts, ref_eof_ts  = compute_seasonal_avgs(ref_dataset, var_name)
+    ref_seas_avgs, ref_season_anom_avgs, ref_seas_ts = compute_seasonal_avgs(ref_dataset, var_name)
     if "member" in ref_seas_avgs.coords:
         attrs = ref_seas_avgs.attrs  # save before doing groupby/mean
         members = ref_seas_avgs.member
         ref_seas_avgs = ref_seas_avgs.mean(dim="member")
         ref_seas_avgs.attrs = attrs
         ref_seas_avgs.attrs["members"] = members
-    sim_seas_avgs, sim_season_anom_avgs, sim_seas_ts, sim_eof_ts = compute_seasonal_avgs(sim_dataset, var_name)
+    sim_seas_avgs, sim_season_anom_avgs, sim_seas_ts = compute_seasonal_avgs(sim_dataset, var_name)
     if "member" in sim_seas_avgs.coords:
         attrs = sim_seas_avgs.attrs  # save before doing groupby/mean
         members = sim_seas_avgs.member
@@ -71,4 +71,4 @@ def mean_seasonal_calc(ref_dataset, sim_dataset, var_name):
     #sim_seas_avg, sim_res, sim_fit = af.lin_regress(sim_seas_avgs[f"{vn}_{type}_{season.lower()}"])
     #ref_seas_avg, ref_res, res_fit = af.lin_regress(ref_seas_avgs[f"{vn}_{type}_{season.lower()}"])
 
-    return ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts, ref_eof_ts, sim_eof_ts
+    return ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts
