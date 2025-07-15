@@ -62,7 +62,7 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
     for r in range(0,ncols):
         if r == 2:
 
-            levels = plot_info.get("diff_range",None)
+            """levels = plot_info.get("diff_range",None)
             if not levels:
                 diff = arr_diff
                 diff_max = diff.max().item()
@@ -77,7 +77,28 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             ticks = np.arange(*plot_info.get("diff_ticks_range",levels))
             cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
             if cbarticks is None:
-                cbarticks = ticks
+                cbarticks = ticks"""
+            
+            if "diff_levels_linspace" in plot_info:
+                #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
+                levels = np.linspace(*plot_info["diff_levels_linspace"])
+            if "diff_levels_range" in plot_info:
+                #print('plot_info["diff_levels_range"]',plot_info["diff_levels_range"])
+                levels = np.arange(*plot_info["diff_levels_range"])
+            if "diff_levels_list" in plot_info:
+                #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
+                levels = np.arange(plot_info["diff_levels_list"])
+            #print("type(levels)",type(levels))
+            if not isinstance(levels,np.ndarray):
+                diff_max = arr.max().item()
+                diff_min = arr.min().item()
+                levels = np.linspace(diff_min, diff_max, 20)
+
+            cbarticks = plot_info.get("diff_cbar_labels", levels)
+            # colorbar ticks
+            ticks = plot_info.get("diff_ticks_range",levels)
+            if isinstance(ticks,list):
+                ticks = np.arange(*ticks)
 
             # color map
             cmap = plot_info.get("diff_cmap",plot_info["cmap"])
@@ -103,9 +124,15 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
                 arr_min = arr[0].min().item()
                 levels = np.linspace(arr_min, arr_max, 20)
             #levels = np.linspace(-1,1,20)
-        
+
+            cbarticks = plot_info.get("cbar_labels", levels)
             # colorbar ticks
-            ticks = np.arange(*plot_info["ticks_range"])
+            ticks = plot_info.get("ticks_range",levels)
+            if isinstance(ticks,list) and len(ticks)==3:
+                ticks = np.arange(*ticks)
+
+            # colorbar ticks
+            #ticks = np.arange(*plot_info["ticks_range"])
 
             """cbarticks = plot_info.get("cbarticks", None)
             if cbarticks is None:
@@ -145,26 +172,6 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
             #print("AHHHHH",arr,"\n\n")
             run = f"{arrs[0].run.values} - {arrs[1].run.values}"
             yrs_text = ''
-            cbarticks = plot_info.get("diff_cbar_labels", levels)
-            if "diff_levels_linspace" in plot_info:
-                #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
-                levels = np.linspace(*plot_info["diff_levels_linspace"])
-            if "diff_levels_range" in plot_info:
-                #print('plot_info["diff_levels_range"]',plot_info["diff_levels_range"])
-                levels = np.arange(*plot_info["diff_levels_range"])
-            if "diff_levels_list" in plot_info:
-                #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
-                levels = np.arange(plot_info["diff_levels_list"])
-            #print("type(levels)",type(levels))
-            if not isinstance(levels,np.ndarray):
-                diff_max = arr.max().item()
-                diff_min = arr.min().item()
-                levels = np.linspace(diff_min, diff_max, 20)
-
-            # colorbar ticks
-            ticks = plot_info.get("diff_ticks_range",levels)
-            if isinstance(ticks,list):
-                ticks = np.arange(*ticks)
         # End if
 
         # Case plots
