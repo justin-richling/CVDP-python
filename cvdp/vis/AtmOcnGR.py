@@ -199,7 +199,9 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
             arrs.append(npi)
 
         arr_anom1 = arrs[0]
+        sim = arr_anom1
         arr_anom2 = arrs[1]
+        ref = arr_anom2
         arr_prime = an.interp_diff(arr_anom1, arr_anom2)
 
         if arr_prime is None:
