@@ -288,7 +288,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
             #diff = (arr_prime - ref)
             diff = (sim - arr_prime)
     results = []
-    #fig = None
+    fig = None
 
     for plot_name, title in get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
         print("\tplot_name",plot_name)
