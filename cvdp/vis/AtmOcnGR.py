@@ -227,7 +227,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
             if var in sh_vars:
                 latlon_dict['n'] = -20
                 latlon_dict['s'] = -90
-            eofs, pcs, SLP = an.get_eof(arr_eof, season, latlon_dict, eof_nums=3)
+            eofs, pcs, SLP = an.get_eof(arr_eof, season, latlon_dict, neof=3)
             pcs_num = pcs.sel(pc=num)
             pcs_norm_num = (pcs_num - pcs_num.mean(dim='time'))/pcs_num.std(dim='time')
             if ((var == "SAM") and (i == 0)) or ((var == "PSA2") and (i != 0)):
