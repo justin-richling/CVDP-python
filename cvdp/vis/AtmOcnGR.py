@@ -48,7 +48,7 @@ eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
 ptypes = ["trends"]
 vns = ["psl"]
 map_types = ["global", "polar", "timeseries"]
-map_types = ["timeseries"]
+#map_types = ["timeseries"]
 plot_types = ["summary", "indmem", "indmemdiff"]
 #plot_types = ["indmemdiff"]
 
@@ -141,12 +141,12 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
                 "indmemdiff": f"{var} Pattern Differences ({season_upper})\n",
             }[plot_type]
             results.append((plot_name, title))
-    elif ptype == "trends" and map_type == "timeseries" and vn == "psl":
+    elif ptype == "trends" and map_type == "timeseries" and vn == "psl" and (plot_type == "summary" or plot_type == "indmem"):
         # Return one entry per EOF mode
         eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
         #for eof_var in eof_vars:
         if var in eof_vars:
-            plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
+            plot_name = f"{var.lower()}_timeseries_{season_lower}.{plot_type}.png"
             title = {
                 "summary": f"Ensemble Summary: {var} Timeseries ({season_upper})",
                 "indmem": f"{var} Timeseries ({season_upper})\n",
