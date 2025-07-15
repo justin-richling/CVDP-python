@@ -163,7 +163,7 @@ def compute_trend(data):
     return af.lin_regress(data)[0]  # returns the trend array
 
 
-def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=None):
+def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=None, sim_seas_ts=None, ref_seas_ts=None):
     sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
     ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
 
@@ -186,7 +186,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         min_lon = 220
 
         arrs = []
-        for arr_ndjfm in [sim_data[0], ref_data[0]]:
+        for arr_ndjfm in [sim_seas_ts[0], ref_seas_ts[0]]:
             print("arr_ndjfm",arr_ndjfm,"\n\n")
             attrs = arr_ndjfm.attrs
             npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
@@ -245,6 +245,9 @@ def graphics(plot_loc, **kwargs):
     print("\nPlotting climatological seasonal means...")
     ref_seas_avgs = kwargs["ref_seas"]
     sim_seas_avgs = kwargs["sim_seas"]
+
+    ref_seas_ts = kwargs["ref_seas_ts"]
+    sim_seas_ts = kwargs["sim_seas_ts"]
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
 
@@ -264,7 +267,7 @@ def graphics(plot_loc, **kwargs):
                         var = "NPI"
                         vres = res[var]
                         vtres = vres[ptype]
-                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var, sim_seas_ts=sim_seas_ts, ref_seas_ts=ref_seas_ts)
 
                         for fig, plot_name in results:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")

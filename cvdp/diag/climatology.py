@@ -104,6 +104,10 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     #Path(fno_anom_loc).unlink(missing_ok=True)
     #farr_anom.to_netcdf(fno_anom_loc)
 
+    run_name = arr.run_name
+
+    ts_ds = af.seasonal_timeseries(arr, farr_anom, var_name, run_name)
+
 
 
     units = arr.units
@@ -114,7 +118,6 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     ptype = "spatialmean"
     arr3 = arr.rolling(time=3, center=True).mean()
     arr3 = arr3.ffill(dim='time').bfill(dim='time').compute()
-    run_name = arr.run_name
 
     arrANN = af.weighted_temporal_mean(arr)#.mean(dim='time')
     lintrndANN = arrANN.rename(var_name+'_ann')
@@ -189,7 +192,7 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
 
     #print("seasonal climo dataset:",ds,"\n\n")
-    return ds
+    return ds, ts_ds
 
 
 
