@@ -109,7 +109,8 @@ def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
     results = []
 
     if map_type == "global":
-        if ptype == "trends" and vn == "psl" and season == "NDJFM":
+        #if ptype == "trends" and vn == "psl" and season == "NDJFM":
+        if var == "NPI":
             plot_name = f"npi_pattern_{season_lower}.{plot_type}.png"
             title = {
                 "summary": f"Ensemble Summary: NPI Pattern ({season_upper})",
@@ -168,7 +169,7 @@ def compute_trend(data):
 
 def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=None, sim_seas_ts=None, ref_seas_ts=None):
     print("\\t ** nhandle_plot VAR name",var,"**")
-    sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
+    """sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
     ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
 
     arr_prime = an.interp_diff(sim, ref)
@@ -179,7 +180,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         diff = sim - ref
     else:
         #diff = (arr_prime - ref)
-        diff = (sim - arr_prime)
+        diff = (sim - arr_prime)"""
 
     #print("DIFF PLOT BOI",diff,"\n\n")
     #if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
@@ -209,7 +210,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
 
         diff = (arr_prime - arrs[1])
 
-    if var in eof_vars:
+    elif var in eof_vars:
         eof_arrs = []
         for i,arr_eof in enumerate([sim_data, ref_data]):
             # Set EOF number for variable
@@ -251,7 +252,19 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
             arr_prime = arr_anom1 - arr_anom2
 
         diff = (arr_prime - arr_anom2)
+    else:
+        sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
+        ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
 
+        arr_prime = an.interp_diff(sim, ref)
+        #diff = arr_prime if arr_prime is not None else (sim - ref)
+
+        # If arr_prime is None, then the two runs have already been interpolated (TS -> SST) or are the same grid/shape
+        if arr_prime is None:
+            diff = sim - ref
+        else:
+            #diff = (arr_prime - ref)
+            diff = (sim - arr_prime)
     results = []
     #fig = None
     print("\nHANDLE PLOTS:",vn, var, ptype, season, plot_type, map_type,"\n")
@@ -313,6 +326,12 @@ def graphics(plot_loc, **kwargs):
                     ref_data = ref_seas_avgs[key]
 
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
+                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
+
+                        for fig, plot_name in results:
+                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                            plt.close(fig)
+
                         var = "NPI"
                         vres = res[var]
                         vtres = vres[ptype]
@@ -324,12 +343,7 @@ def graphics(plot_loc, **kwargs):
                         for fig, plot_name in results:
                             fig.savefig(plot_loc / plot_name, bbox_inches="tight")
                             plt.close(fig)
-                    else:
-                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data)
 
-                        for fig, plot_name in results:
-                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
-                            plt.close(fig)
 
                     # Use EOF vars for polar PSL
                     if ptype == "trends" and vn == "psl" and map_type == "polar":
