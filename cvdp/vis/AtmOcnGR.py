@@ -230,6 +230,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
 
     elif var in eof_vars:
         eof_arrs = []
+        ahh = []
         for i,arr_eof in enumerate([sim_season_anom_avgs, ref_season_anom_avgs]):
             # Set EOF number for variable
             if var == "NAM" or var == "SAM":
@@ -259,6 +260,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
 
             pattern = xs.linslope(pcs_norm_num, SLP, dim='time')
             eof_arrs.append(pattern)
+            ahh.append(pcs_norm_num)
 
         arr_anom1 = eof_arrs[0]
         sim = arr_anom1
@@ -294,16 +296,16 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data=None, re
                 fig = polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
             if map_type == "global":
                 fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
-            if map_type == "timeseries":
-                fig = timeseries_plot(var, ref_seas_ts, sim_seas_ts)
+            if map_type == "timeseries" and var in eof_arrs:
+                fig = timeseries_plot(var,  ahh[0], ahh[1])
         elif plot_type == "indmem":
             if map_type == "polar":
                 #polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype)
                 fig = polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
             if map_type == "global":
                 fig = global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
-            if map_type == "timeseries":
-                fig = timeseries_plot(var, ref_seas_ts, sim_seas_ts)
+            if map_type == "timeseries" and var in eof_arrs:
+                fig = timeseries_plot(var,  ahh[0], ahh[1])
         elif plot_type == "indmemdiff":
         #if plot_type == "indmemdiff":
             run = f"{sim.run.values} - {ref.run.values}"
@@ -331,6 +333,10 @@ def graphics(plot_loc, **kwargs):
 
     ref_seas_anom_avgs = kwargs["ref_season_anom_avgs"]
     sim_seas_anom_avgs = kwargs["sim_season_anom_avgs"]
+
+    #ref_eof_ts = kwargs["ref_eof_ts"]
+    #sim_eof_ts = kwargs["sim_eof_ts"]
+
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
 
