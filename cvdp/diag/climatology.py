@@ -91,7 +91,8 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
 
     # Add desired start and end years to metadata
     season_yrs = np.unique(arr["time.year"])
-    farr_anom.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
+    farr_anom.attrs['syr'] = season_yrs[0]
+    farr_anom.attrs['eyr'] = season_yrs[-1]
 
     # Rename variable to CVDP variable name
     farr_anom = farr_anom.rename(var_name)

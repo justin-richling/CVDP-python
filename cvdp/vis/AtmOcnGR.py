@@ -211,6 +211,29 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
 
         diff = (arr_prime - arrs[1])
 
+    if var in eof_vars:
+        for arr_ndjfm in [sim_seas_ts, ref_seas_ts]:
+            # Set EOF number for variable
+            if var == "NAM" or var == "SAM":
+                num = 0
+            if var == "PSA1":
+                num = 1
+            if var == "PSA2":
+                num = 2
+            
+            eofs, pcs, SLP = an.get_eof(arr, season, latlon_dict, eof_nums)
+            pcs_num = pcs.sel(pc=num)
+            pcs_norm_num = (pcs_num - pcs_num.mean(dim='time'))/pcs_num.std(dim='time')
+            if ((var == "SAM") and (i == 0)) or ((var == "PSA2") and (i != 0)):
+                pcs_norm_num = pcs_norm_num * -1
+
+            #if num != 0:
+            #    if i == 0:
+            #        pcs_norm_num = pcs_norm_num * -1
+
+            pattern = xs.linslope(pcs_norm_num, SLP, dim='time')
+
+
     results = []
     #fig = None
     print("\nHANDLE PLOTS:",vn, var, ptype, season, plot_type, map_type,"\n")
