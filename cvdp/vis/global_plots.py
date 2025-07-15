@@ -42,7 +42,10 @@ def global_ensemble_plot(arrs, arr_diff, vn, ptype, plot_dict, title, debug=Fals
 
     # get units
     #unit = plot_info["units"]
-    unit = arrs[0].units.values
+    if isinstance(arrs[0].units, str):
+        unit = arrs[0].units
+    else:
+        unit = arrs[0].units.values
 
     # Set up plot
     #------------
@@ -410,7 +413,10 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
         cmap = get_NCL_colormap(cmap, extend='None')
 
     # get units
-    unit = arrs[0].units.values
+    if isinstance(arrs[0].units, str):
+        unit = arrs[0].units
+    else:
+        unit = arrs[0].units.values
 
     #proj = ccrs.Robinson(central_longitude=210)
     proj = WinkelTripel(central_longitude=210)
@@ -612,7 +618,10 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     # plot contour range
     levels = None
 
-    unit = arr.units.values
+    if isinstance(arr.units, str):
+        unit = arr.units
+    else:
+        unit = arr.units.values
 
     #arr = arr.sel(season=season)
 
