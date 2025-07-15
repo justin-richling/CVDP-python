@@ -8,6 +8,8 @@ License: MIT
 
 import numpy as np
 import matplotlib.pyplot as plt
+import xskillscore as xs
+
 from vis.global_plots import (
     global_ensemble_plot,
     global_indmem_latlon_plot,
@@ -174,6 +176,33 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         diff = (sim - arr_prime)
 
     #print("DIFF PLOT BOI",diff,"\n\n")
+    if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
+        max_lat = 30
+        min_lat = 65
+        max_lon = 160
+        min_lon = 220
+
+        arrs = []
+        for arr_ndjfm in [sim_data[0], ref_data[0]]:
+            #display(npi_ndjfm
+            attrs = arr_ndjfm.attrs
+            npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
+
+            npi_ndjfm = npi_ndjfm.weighted(np.cos(np.radians(npi_ndjfm.lat))).mean(dim=('lat','lon'))
+
+            npi_ndjfm_standarized = (npi_ndjfm - npi_ndjfm.mean(dim='time'))/npi_ndjfm.std(dim='time')
+            npi = xs.linslope(npi_ndjfm_standarized, arr_ndjfm, dim='time')
+            npi.attrs = attrs
+            arrs.append(npi)
+
+        arr_anom1 = arrs[0]
+        arr_anom2 = arrs[1]
+        arr_prime = an.interp_diff(arr_anom1, arr_anom2)
+
+        if arr_prime is None:
+            arr_prime = arr_anom1 - arr_anom2
+
+        diff = (arr_prime - arrs[1])
 
     results = []
     #fig = None
@@ -227,6 +256,9 @@ def graphics(plot_loc, **kwargs):
                     key = f"{vn}_{ptype}_{season.lower()}"
                     sim_data = sim_seas_avgs[key]
                     ref_data = ref_seas_avgs[key]
+
+                    if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
+                        print()
 
                     # Use EOF vars for polar PSL
                     if ptype == "trends" and vn == "psl" and map_type == "polar":

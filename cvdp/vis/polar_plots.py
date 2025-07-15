@@ -473,7 +473,7 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
     sub_text_size = 11
 
     nh_vars = ["NAM"]
-    sh_vars = ["SAM"]#, "PSA1", "PSA2"]
+    sh_vars = ["SAM", "PSA1", "PSA2"]
     eof_vars = nh_vars+sh_vars
 
     # Get variable plot info
