@@ -263,13 +263,13 @@ def graphics(plot_loc, **kwargs):
                     sim_data = sim_seas_avgs[key]
                     ref_data = ref_seas_avgs[key]
 
-                    sim_ts_data = sim_seas_ts[key]
-                    ref_ts_data = ref_seas_ts[key]
-
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
                         var = "NPI"
                         vres = res[var]
                         vtres = vres[ptype]
+                        sim_ts_data = sim_seas_ts[key]
+                        ref_ts_data = ref_seas_ts[key]
+                        print("ref_ts_data",ref_ts_data,"\n\n")
                         results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var, sim_seas_ts=sim_ts_data, ref_seas_ts=ref_ts_data)
 
                         for fig, plot_name in results:
