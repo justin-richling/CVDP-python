@@ -170,7 +170,8 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     if arr_prime is None:
         diff = sim - ref
     else:
-        diff = (arr_prime - ref)
+        #diff = (arr_prime - ref)
+        diff = (sim - arr_prime)
 
     #print("DIFF PLOT BOI",diff,"\n\n")
 
