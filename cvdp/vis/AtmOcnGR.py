@@ -31,7 +31,7 @@ import cvdp_utils.analysis as an
 season_list = ["DJF", "JFM", "MAM", "JJA", "JAS", "SON", "ANN"]
 season_list = ["DJF"]
 var_seasons = {
-    "psl": {"global": season_list + ["NDJFM"], "polar": season_list},
+    "psl": {"global": season_list + ["NDJFM"], "polar": season_list, "timeseries": season_list},
     "ts": season_list,
     "trefht": season_list,
     "prect": season_list,
