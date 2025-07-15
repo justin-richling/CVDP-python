@@ -49,8 +49,8 @@ ptypes = ["trends"]
 vns = ["psl"]
 map_types = ["global", "polar", "timeseries"]
 #map_types = ["global"]
-#plot_types = ["summary", "indmem", "indmemdiff"]
-plot_types = ["indmemdiff"]
+plot_types = ["summary", "indmem", "indmemdiff"]
+#plot_types = ["indmemdiff"]
 
 
 '''def get_plot_name_and_title(vn, var, ptype, season, plot_type, map_type):
