@@ -187,7 +187,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
 
         arrs = []
         for arr_ndjfm in [sim_data[0], ref_data[0]]:
-            print(npi_ndjfm,"\n\n")
+            print("arr_ndjfm",arr_ndjfm,"\n\n")
             attrs = arr_ndjfm.attrs
             npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
 
