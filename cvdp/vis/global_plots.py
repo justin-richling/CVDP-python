@@ -643,9 +643,9 @@ def global_indmemdiff_latlon_plot(vn, run, arr, ptype, plot_dict, title):
     lon_idx = arr.dims.index('lon')
     if "NPI" in title:
         print("NPI ARR",arr,"\n\n")
-    #wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
-    wrap_data = arr.values
-    wrap_lon = arr.lon
+    wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
+    #wrap_data = arr.values
+    #wrap_lon = arr.lon
     # End data gather/clean
     #----------------------
 
