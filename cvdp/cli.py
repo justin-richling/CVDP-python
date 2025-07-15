@@ -69,10 +69,11 @@ def main():
 
     vns = ["psl"]
     for vn in vns:
-        ref_seas_avgs, sim_seas_avgs, ref_seas_ts, sim_seas_ts = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn], vn)
+        ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn], vn)
 
         kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
                   "ref_seas_ts":ref_seas_ts, "sim_seas_ts":sim_seas_ts,
+                  "ref_season_anom_avgs":ref_season_anom_avgs, "sim_season_anom_avgs":sim_season_anom_avgs,
                 "vn": vn}
         graphics(plot_loc, **kwargs)
 

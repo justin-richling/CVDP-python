@@ -193,11 +193,20 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     ds = ds.assign_coords(eyr=eyr)
 
 
+    farr_anom
+    farr_anom = farr_anom.assign_coords(run=run_name)
+    farr_anom = farr_anom.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    farr_anom = farr_anom.assign_coords(syr=syr)
+    farr_anom = farr_anom.assign_coords(eyr=eyr)
+
+
 
     #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
 
     #print("seasonal climo dataset:",ds,"\n\n")
-    return ds, ts_ds
+    return ds, farr_anom, ts_ds
 
 
 
