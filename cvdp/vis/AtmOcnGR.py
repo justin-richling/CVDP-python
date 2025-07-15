@@ -176,7 +176,8 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         diff = (sim - arr_prime)
 
     #print("DIFF PLOT BOI",diff,"\n\n")
-    if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
+    #if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
+    if var == "NPI":
         max_lat = 30
         min_lat = 65
         max_lon = 160
@@ -184,7 +185,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
 
         arrs = []
         for arr_ndjfm in [sim_data[0], ref_data[0]]:
-            #display(npi_ndjfm
+            print(npi_ndjfm,"\n\n")
             attrs = arr_ndjfm.attrs
             npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
 
@@ -258,7 +259,14 @@ def graphics(plot_loc, **kwargs):
                     ref_data = ref_seas_avgs[key]
 
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
-                        print()
+                        var = "NPI"
+                        vres = res[var]
+                        vtres = vres[ptype]
+                        results = handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_data, var=var)
+
+                        for fig, plot_name in results:
+                            fig.savefig(plot_loc / plot_name, bbox_inches="tight")
+                            plt.close(fig)
 
                     # Use EOF vars for polar PSL
                     if ptype == "trends" and vn == "psl" and map_type == "polar":
