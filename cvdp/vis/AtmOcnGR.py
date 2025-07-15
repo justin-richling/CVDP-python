@@ -186,7 +186,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         min_lon = 220
 
         arrs = []
-        for arr_ndjfm in [sim_seas_ts[0], ref_seas_ts[0]]:
+        for arr_ndjfm in [sim_seas_ts, ref_seas_ts]:
             print("arr_ndjfm",arr_ndjfm,"\n\n")
             attrs = arr_ndjfm.attrs
             npi_ndjfm = arr_ndjfm.sel(lat=slice(30,65), lon=slice(160,220))
