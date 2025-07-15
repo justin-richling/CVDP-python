@@ -42,9 +42,11 @@ eof_vars = nh_vars + sh_vars
 
 eof_vars = ["NAM", "SAM", "PSA1", "PSA2"]
 
-ptypes = ["spatialmean", "trends"]
+#ptypes = ["spatialmean", "trends"]
+ptypes = ["trends"]
 vns = ["psl"]
-map_types = ["global", "polar"]
+#map_types = ["global", "polar"]
+map_types = ["global"]
 plot_types = ["summary", "indmem", "indmemdiff"]
 #plot_types = ["indmemdiff"]
 
