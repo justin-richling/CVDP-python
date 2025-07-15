@@ -183,7 +183,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         if plot_type == "summary":
             if map_type == "polar":
                 #polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=False)
-                polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
+                fig = polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
             if map_type == "global":
                 fig = global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
         elif plot_type == "indmem":
