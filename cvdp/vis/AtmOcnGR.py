@@ -182,10 +182,6 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
     #print("DIFF PLOT BOI",diff,"\n\n")
     #if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
     if var == "NPI":
-        max_lat = 30
-        min_lat = 65
-        max_lon = 160
-        min_lon = 220
 
         arrs = []
         for arr_ndjfm in [sim_seas_ts, ref_seas_ts]:

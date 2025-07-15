@@ -108,6 +108,12 @@ def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
     run_name = arr.run_name
 
     ts_ds = af.seasonal_timeseries(arr, farr_anom, var_name, run_name)
+    ts_ds = ts_ds.assign_coords(run=run_name)
+    ts_ds = ts_ds.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    ts_ds = ts_ds.assign_coords(syr=syr)
+    ts_ds = ts_ds.assign_coords(eyr=eyr)
 
 
 
