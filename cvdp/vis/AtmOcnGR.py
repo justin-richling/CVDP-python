@@ -269,7 +269,7 @@ def handle_plot(plot_type, ptype, map_type, vn, season, vtres, sim_data, ref_dat
         if arr_prime is None:
             arr_prime = sim - ref
 
-        diff = (arr_prime - arr_anom2)
+        diff = (sim - arr_prime)
     else:
         sim = sim_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(sim_data)[0]
         ref = ref_data.mean(dim="time") if ptype == "spatialmean" else af.lin_regress(ref_data)[0]
