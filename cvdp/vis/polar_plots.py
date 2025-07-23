@@ -610,9 +610,11 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             ticks = np.arange(*plot_info["ticks_range"])
             #print("POLAR Ensemble Cases ticks",ticks)
 
-            cbarticks = plot_info.get("cbarticks", None)
+            cbarticks = plot_info.get("cbarticks_range", None)
             if cbarticks is None:
                 cbarticks = ticks
+            else:
+                cbarticks = np.arange(*plot_info["cbarticks_range"])
 
             # color map
             cmap = plot_info["cmap"]
