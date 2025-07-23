@@ -2,9 +2,7 @@
 """
 AtmOcnGR.py
 
-CVDP functions for plotting climatological diagnostics:
-means, standard deviations, trends, timeseries, metrics tables, etc.
-
+CVDP functions for plotting means, standard deviations, trends, timeseries, metrics tables, etc.
 License: MIT
 """
 
@@ -15,15 +13,16 @@ import xskillscore as xs
 from vis.global_plots import (
     global_ensemble_plot,
     global_indmem_latlon_plot,
-    global_indmemdiff_latlon_plot,
+    global_indmemdiff_latlon_plot
 )
+
 from vis.polar_plots import (
     polar_ensemble_plot,
     polar_indmem_latlon_plot,
-    polar_indmemdiff_latlon_plot,
+    polar_indmemdiff_latlon_plot
 )
-from vis.timeseries_plot import timeseries_plot
 
+from vis.timeseries_plot import timeseries_plot
 import cvdp_utils.avg_functions as af
 import cvdp_utils.utils as helper_utils
 import cvdp_utils.analysis as an
@@ -46,8 +45,9 @@ PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 
 
 def get_plot_title(var, plot_type, ptype, season):
-    if ptype == "trends" and var in ["NPI"] + EOF_VARS:
-        ptype = "Pattern"
+    if ptype == "trends":
+        if var =="NPI" or var in EOF_VARS:
+            ptype = "Pattern"
     base = f"{var} {ptype.capitalize()} ({season})"
     titles = {
         "summary": f"Ensemble Summary: {base}",
@@ -60,14 +60,16 @@ def get_plot_title(var, plot_type, ptype, season):
 def get_plot_name(vn, var, ptype, season, plot_type, map_type):
     season_lower = season.lower()
     suffix = f"{ptype}_{season_lower}"
-
-    if ptype == "trends" and var in ["NPI"] + EOF_VARS:
-        suffix = "pattern_" + season_lower
-        vn = var.lower()
-        if map_type == "timeseries":
-            suffix = f"{map_type}_{season_lower}"
-
-    return f"{vn}_{suffix}.{plot_type}.png"
+    print("get_plot_name var?:",var)
+    if ptype == "trends":
+        if var == "NPI" or var in EOF_VARS:
+            suffix = f"pattern_{season_lower}"
+            vn = var.lower()
+            if map_type == "timeseries":
+                suffix = f"{map_type}_{season_lower}"
+    print("get_plot_name vn?:",vn)
+    plot_name = f"{vn}_{suffix}.{plot_type}.png"
+    return plot_name
 
 
 def compute_trend(data):
@@ -76,7 +78,7 @@ def compute_trend(data):
 
 def compute_diff(sim, ref):
     interp = an.interp_diff(sim, ref)
-    return sim - (interp if interp is not None else ref)
+    return sim - ref if interp is None else sim - interp
 
 
 def compute_npi(sim_ts, ref_ts):
@@ -94,9 +96,14 @@ def compute_npi(sim_ts, ref_ts):
 
 
 def compute_eof(var, sim_anom, ref_anom, season):
-    index_map = {"NAM": 0, "SAM": 0, "PSA1": 1, "PSA2": 2}
-    num = index_map[var]
-    bounds = {"n": 90, "s": 20} if var in NH_VARS else {"n": -20, "s": -90}
+    #num = EOF_VARS.index(var)
+    if var == "NAM" or var == "SAM":
+        num = 0
+    if var == "PSA1":
+        num = 1
+    if var == "PSA2":
+        num = 2
+    bounds = {'n': 90, 's': 20} if var in NH_VARS else {'n': -20, 's': -90}
 
     def _eof(arr, invert=False):
         eofs, pcs, slp = an.get_eof(arr, season, bounds, neof=3)
@@ -109,28 +116,26 @@ def compute_eof(var, sim_anom, ref_anom, season):
 
 
 def plot_dispatch(plot_type, ptype, map_type, vn, var, sim, ref, diff, vtres, title, pcs=None):
-    if map_type == "timeseries" and pcs:
-        return timeseries_plot(var, pcs[0], pcs[1])
-
     if plot_type == "summary":
-        if map_type == "global":
-            return global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
         if map_type == "polar":
             return polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
-
-    elif plot_type == "indmem":
         if map_type == "global":
-            return global_indmem_latlon_plot(vn, [sim, ref], vtres, title, ptype)
+            return global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
+        if map_type == "timeseries" and pcs:
+            return timeseries_plot(var, pcs[0], pcs[1])
+    elif plot_type == "indmem":
         if map_type == "polar":
             return polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
-
+        if map_type == "global":
+            return global_indmem_latlon_plot(vn, [sim, ref], vtres, title, ptype)
+        if map_type == "timeseries" and pcs:
+            return timeseries_plot(var, pcs[0], pcs[1])
     elif plot_type == "indmemdiff":
         run = f"{sim.run.values} - {ref.run.values}"
-        if map_type == "global":
-            return global_indmemdiff_latlon_plot(vn, run, diff, ptype, vtres, title)
         if map_type == "polar":
             return polar_indmemdiff_latlon_plot(vn, var, run, diff, ptype, vtres, title)
-
+        if map_type == "global":
+            return global_indmemdiff_latlon_plot(vn, run, diff, ptype, vtres, title)
     return None
 
 
@@ -140,7 +145,8 @@ def graphics(plot_loc, **kwargs):
 
     for ptype in PTYPES:
         for map_type in MAP_TYPES:
-            seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
+            #vres = res[vn][ptype]
+            #seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
 
             for season in seasons:
                 for plot_type in PLOT_TYPES:
@@ -148,47 +154,42 @@ def graphics(plot_loc, **kwargs):
                     sim_data = kwargs["sim_seas"][key]
                     ref_data = kwargs["ref_seas"][key]
                     figs = []
-
-                    # NPI case
+                    print(vn, plot_type, ptype, map_type, season)
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
                         var = "NPI"
                         vres = res[var][ptype]
+                        seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
                         sim_npi, ref_npi, diff_npi = compute_npi(kwargs["sim_seas_ts"][key], kwargs["ref_seas_ts"][key])
                         title = get_plot_title(var, plot_type, ptype, season)
                         name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
+                        print("fig name:",name)
                         fig = plot_dispatch(plot_type, ptype, map_type, vn, var, sim_npi, ref_npi, diff_npi, vres, title)
-                        if fig:
-                            figs.append((fig, name))
+                        if fig: figs.append((fig, name))
 
-                    # EOF case
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
                         for var in EOF_VARS:
+                            print("\t",var,"\n")
                             vres = res[var][ptype]
-                            sim, ref, diff, sim_pc, ref_pc = compute_eof(
-                                var,
-                                kwargs["sim_season_anom_avgs"],
-                                kwargs["ref_season_anom_avgs"],
-                                season,
-                            )
+                            seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
+                            sim, ref, diff, sim_pc, ref_pc = compute_eof(var, kwargs["sim_season_anom_avgs"], kwargs["ref_season_anom_avgs"], season)
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
                             fig = plot_dispatch(plot_type, ptype, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
-                            if fig:
-                                figs.append((fig, name))
-
-                    # Standard seasonal diagnostics
-                    elif season != "NDJFM":
-                        vres = res[vn][ptype]
-                        sim = compute_trend(sim_data) if ptype == "trends" else sim_data.mean("time")
-                        ref = compute_trend(ref_data) if ptype == "trends" else ref_data.mean("time")
-                        diff = compute_diff(sim, ref)
-                        title = get_plot_title(vn.upper(), plot_type, ptype, season)
-                        name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
-                        fig = plot_dispatch(plot_type, ptype, map_type, vn, vn, sim, ref, diff, vres, title)
-                        if fig:
-                            figs.append((fig, name))
-
-                    # Save figures
+                            print(name)
+                            if fig: figs.append((fig, name))
+                    else:
+                        if season != "NDJFM":
+                            vres = res[vn][ptype]
+                            seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
+                            sim = compute_trend(sim_data) if ptype == "trends" else sim_data.mean("time")
+                            ref = compute_trend(ref_data) if ptype == "trends" else ref_data.mean("time")
+                            diff = compute_diff(sim, ref)
+                            title = get_plot_title(vn.upper(), plot_type, ptype, season)
+                            name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
+                            print("fig name:",name)
+                            fig = plot_dispatch(plot_type, ptype, map_type, vn, vn, sim, ref, diff, vres, title)
+                            if fig: figs.append((fig, name))
+                    print("Saving plot(s)\n")
                     for fig, name in figs:
                         fig.savefig(plot_loc / name, bbox_inches="tight")
                         plt.close(fig)
