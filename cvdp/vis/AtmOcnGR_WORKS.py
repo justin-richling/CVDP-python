@@ -110,8 +110,8 @@ def compute_eof(var, sim_anom, ref_anom, season):
         pcs_std = (pcs.sel(pc=num) - pcs.sel(pc=num).mean("time")) / pcs.sel(pc=num).std("time")
         return xs.linslope(-pcs_std if invert else pcs_std, slp, dim="time"), pcs_std
 
-    sim_pattern, sim_pc = _eof(sim_anom, var == "SAM")
-    ref_pattern, ref_pc = _eof(ref_anom, var == "PSA2")
+    sim_pattern, sim_pc = _eof(sim_anom)
+    ref_pattern, ref_pc = _eof(ref_anom)
     return sim_pattern, ref_pattern, compute_diff(sim_pattern, ref_pattern), sim_pc, ref_pc
 
 
