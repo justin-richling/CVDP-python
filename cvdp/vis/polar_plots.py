@@ -605,7 +605,7 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
                 arr_max = arr.max().item()
                 arr_min = arr.min().item()
                 levels = np.linspace(arr_min, arr_max, 20)
-            #print("POLAR Ensemble Cases levels",levels)
+            print("POLAR Ensemble Cases levels",levels)
             # colorbar ticks
             ticks = np.arange(*plot_info["ticks_range"])
             #print("POLAR Ensemble Cases ticks",ticks)
