@@ -162,6 +162,7 @@ def graphics(plot_loc, **kwargs):
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
                             fig = plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
+                            print("FIG?",fig)
                             if fig: figs.append((fig, name))
                     else:
                         if season != "NDJFM":
