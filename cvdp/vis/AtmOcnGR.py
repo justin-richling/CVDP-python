@@ -57,10 +57,11 @@ def get_plot_title(var, plot_type, ptype, season):
 def get_plot_name(vn, var, ptype, season, plot_type, map_type):
     season_lower = season.lower()
     suffix = f"{ptype}_{season_lower}"
+    print("get_plot_name var?:",var)
     if ptype == "trends":
-        if (var == "NPI" or var in EOF_VARS):
+        if var == "NPI" or var in EOF_VARS:
             suffix = f"pattern_{season_lower}"
-            vn = var
+            vn = var.lower()
     #else:
     #    suffix = f"{ptype}_{season_lower}"
     print("get_plot_name vn?:",vn)
