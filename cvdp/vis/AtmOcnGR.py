@@ -108,27 +108,27 @@ def compute_eof(var, sim_anom, ref_anom, season):
     return sim_pattern, ref_pattern, compute_diff(sim_pattern, ref_pattern), sim_pc, ref_pc
 
 
-def plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vtres, title, pcs=None):
+def plot_dispatch(plot_type, ptype, map_type, vn, var, sim, ref, diff, vtres, title, pcs=None):
     if plot_type == "summary":
         if map_type == "polar":
-            return polar_ensemble_plot([sim, ref], diff, vn, var, "trends", vtres, title)
+            return polar_ensemble_plot([sim, ref], diff, vn, var, ptype, vtres, title)
         if map_type == "global":
-            return global_ensemble_plot([sim, ref], diff, vn, "trends", vtres, title)
+            return global_ensemble_plot([sim, ref], diff, vn, ptype, vtres, title)
         if map_type == "timeseries" and pcs:
             return timeseries_plot(var, pcs[0], pcs[1])
     elif plot_type == "indmem":
         if map_type == "polar":
-            return polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, "trends")
+            return polar_indmem_latlon_plot(vn, var, [sim, ref], vtres, title, ptype)
         if map_type == "global":
-            return global_indmem_latlon_plot(vn, [sim, ref], vtres, title, plot_type)
+            return global_indmem_latlon_plot(vn, [sim, ref], vtres, title, ptype)
         if map_type == "timeseries" and pcs:
             return timeseries_plot(var, pcs[0], pcs[1])
     elif plot_type == "indmemdiff":
         run = f"{sim.run.values} - {ref.run.values}"
         if map_type == "polar":
-            return polar_indmemdiff_latlon_plot(vn, var, run, diff, "trends", vtres, title)
+            return polar_indmemdiff_latlon_plot(vn, var, run, diff, ptype, vtres, title)
         if map_type == "global":
-            return global_indmemdiff_latlon_plot(vn, run, diff, plot_type, vtres, title)
+            return global_indmemdiff_latlon_plot(vn, run, diff, ptype, vtres, title)
     return None
 
 
@@ -162,7 +162,7 @@ def graphics(plot_loc, **kwargs):
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
                             fig = plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
-                            #print("FIG?",fig)
+                            print(name)
                             if fig: figs.append((fig, name))
                     else:
                         if season != "NDJFM":
@@ -175,6 +175,5 @@ def graphics(plot_loc, **kwargs):
                             if fig: figs.append((fig, name))
 
                     for fig, name in figs:
-                        print(name)
                         fig.savefig(plot_loc / name, bbox_inches="tight")
                         plt.close(fig)
