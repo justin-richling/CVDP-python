@@ -152,7 +152,7 @@ def graphics(plot_loc, **kwargs):
                         sim_npi, ref_npi, diff_npi = compute_npi(kwargs["sim_seas_ts"][key], kwargs["ref_seas_ts"][key])
                         title = get_plot_title("NPI", plot_type, ptype, season)
                         name = get_plot_name(vn, "NPI", ptype, season, plot_type, map_type)
-                        fig = plot_dispatch(plot_type, map_type, vn, "NPI", sim_npi, ref_npi, diff_npi, vres, title)
+                        fig = plot_dispatch(plot_type, ptype, map_type, vn, "NPI", sim_npi, ref_npi, diff_npi, vres, title)
                         if fig: figs.append((fig, name))
 
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
@@ -161,7 +161,7 @@ def graphics(plot_loc, **kwargs):
                             sim, ref, diff, sim_pc, ref_pc = compute_eof(var, kwargs["sim_season_anom_avgs"], kwargs["ref_season_anom_avgs"], season)
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
-                            fig = plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
+                            fig = plot_dispatch(plot_type, ptype, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
                             print(name)
                             if fig: figs.append((fig, name))
                     else:
@@ -171,7 +171,7 @@ def graphics(plot_loc, **kwargs):
                             diff = compute_diff(sim, ref)
                             title = get_plot_title(vn.upper(), plot_type, ptype, season)
                             name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
-                            fig = plot_dispatch(plot_type, map_type, vn, vn, sim, ref, diff, vres, title)
+                            fig = plot_dispatch(plot_type, ptype, map_type, vn, vn, sim, ref, diff, vres, title)
                             if fig: figs.append((fig, name))
 
                     for fig, name in figs:
