@@ -151,6 +151,7 @@ def graphics(plot_loc, **kwargs):
 
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
                         for var in EOF_VARS:
+                            print("\t",var,"\n")
                             sim, ref, diff, sim_pc, ref_pc = compute_eof(var, kwargs["sim_season_anom_avgs"], kwargs["ref_season_anom_avgs"], season)
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
