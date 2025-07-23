@@ -62,7 +62,7 @@ def get_plot_name(vn, var, ptype, season, plot_type, map_type):
         if var == "NPI" or var in EOF_VARS:
             suffix = f"pattern_{season_lower}"
             vn = var.lower()
-            print("get_plot_name vn?:",vn)
+            print("get_plot_name vn cvbfgbfgb?:",vn)
         else:
             print("get_plot_name vn? aouhsfjskdm:",vn)
     #else:
