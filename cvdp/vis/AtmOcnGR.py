@@ -160,6 +160,7 @@ def graphics(plot_loc, **kwargs):
                         sim_npi, ref_npi, diff_npi = compute_npi(kwargs["sim_seas_ts"][key], kwargs["ref_seas_ts"][key])
                         title = get_plot_title("NPI", plot_type, ptype, season)
                         name = get_plot_name(vn, "NPI", ptype, season, plot_type, map_type)
+                        print("fig name:",name)
                         fig = plot_dispatch(plot_type, ptype, map_type, vn, "NPI", sim_npi, ref_npi, diff_npi, vres, title)
                         if fig: figs.append((fig, name))
 
@@ -179,6 +180,7 @@ def graphics(plot_loc, **kwargs):
                             diff = compute_diff(sim, ref)
                             title = get_plot_title(vn.upper(), plot_type, ptype, season)
                             name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
+                            print("fig name:",name)
                             fig = plot_dispatch(plot_type, ptype, map_type, vn, vn, sim, ref, diff, vres, title)
                             if fig: figs.append((fig, name))
 
