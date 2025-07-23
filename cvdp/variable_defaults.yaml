@@ -83,11 +83,11 @@ NAM:
     #cmap: "ncl_default"
     cmap: "ncl_default"
     contour_levels_linspace: [-9,9,19]
-    ticks_range: [-10,11,1]
+    ticks_range: [-7,8,1]
     #cbarticks_range: [0,37,2]
 
     diff_levels_range: [-8, 9, 1] #[-10,11,1]
-    diff_ticks_range: [-8, 9, 1]
+    diff_ticks_range: [-7,8,1]
     diff_cbar_labels: [-7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7]
 
 PSA1: 
@@ -99,11 +99,11 @@ PSA1:
     #diff_range_list: [-8, -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8]
     cmap: "ncl_default"
     contour_levels_linspace: [-9,9,19]
-    ticks_range: [-10,11,1]
+    ticks_range: [-7,8,1]
     #cbarticks_range: [0,37,2]
 
     diff_levels_range: [-8, 9, 1] #[-10,11,1]
-    diff_ticks_range: [-8, 9, 1]
+    diff_ticks_range: [-7,8,1]
     diff_cbar_labels: [-7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7]
 
 PSA2: 
@@ -113,11 +113,11 @@ PSA2:
     #cmap: "ncl_default"
     cmap: "ncl_default"
     contour_levels_linspace: [-9,9,19]
-    ticks_range: [-10,11,1]
+    ticks_range: [-7,8,1]
     #cbarticks_range: [0,37,2]
 
     diff_levels_range: [-8, 9, 1] #[-10,11,1]
-    diff_ticks_range: [-8, 9, 1]
+    diff_ticks_range: [-7,8,1]
     diff_cbar_labels: [-7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7]
 
 
