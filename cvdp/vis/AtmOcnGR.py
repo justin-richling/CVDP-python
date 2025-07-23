@@ -141,7 +141,7 @@ def graphics(plot_loc, **kwargs):
                     sim_data = kwargs["sim_seas"][key]
                     ref_data = kwargs["ref_seas"][key]
                     figs = []
-
+                    print(vn, ptype, map_type, season,"\n")
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
                         sim_npi, ref_npi, diff_npi = compute_npi(kwargs["sim_seas_ts"][key], kwargs["ref_seas_ts"][key])
                         title = get_plot_title("NPI", plot_type, ptype, season)
