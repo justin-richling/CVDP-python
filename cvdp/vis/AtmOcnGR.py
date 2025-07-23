@@ -90,7 +90,13 @@ def compute_npi(sim_ts, ref_ts):
 
 
 def compute_eof(var, sim_anom, ref_anom, season):
-    num = EOF_VARS.index(var)
+    #num = EOF_VARS.index(var)
+    if var == "NAM" or var == "SAM":
+        num = 0
+    if var == "PSA1":
+        num = 1
+    if var == "PSA2":
+        num = 2
     bounds = {'n': 90, 's': 20} if var in NH_VARS else {'n': -20, 's': -90}
 
     def _eof(arr, invert=False):
