@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+"""
+climatology.py
+
+CVDP functions for calculating climatological means and standard deviations.
+License: MIT
+"""
+import xarray as xr
+import numpy as np
+
+
+CLIMATOLOGY_SEASON_MONTHS = {
+    "DJF": [12, 1, 2],
+    "JFM": [1, 2, 3],
+    "MAM": [3, 4, 5],
+    "JJA": [6, 7, 8],
+    "JAS": [7, 8, 9],
+    "SON": [9, 10, 11],
+    "NDJFM": [11, 12, 1, 2, 3],
+    "ANN": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12]
+}
+
+
+'''def compute_seasonal_avgs(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
+    """
+    Computes the sesonal averages for a given time series variable.
+    
+    :param var_data: Variable DataArray to compute the seasonal averages for.
+    :type var_data: xarray.DataArray
+    :param seasons: (Optional) Dictionary that maps the seasonal code (key) to its respective month integers (values)
+    :type seasons: dict
+    :return: Variable DataArray with the 'time' dimension reduced to seasons and their average values.
+    :rtype: xarray.DataArray
+    """
+
+    """
+    monthly_avgs = var_data.groupby("time.month").mean().rename(f"{var_data.name}_avg")
+    seasonal_avgs = []
+    for season_label in CLIMATOLOGY_SEASON_MONTHS:
+        season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
+        seasonal_avgs.append(monthly_avgs.sel(month=season_months).mean(dim="month"))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))"""
+
+
+    attrs = var_data.attrs  # save before doing groupby/mean
+
+    # your existing logic
+    monthly_avgs = var_data.groupby("time.month").mean().rename(f"{var_data.name}_avg")
+    seasonal_avgs = []
+    for season_label in CLIMATOLOGY_SEASON_MONTHS:
+        season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
+        seasonal_avg = monthly_avgs.sel(month=season_months).mean(dim="month")
+        seasonal_avgs.append(seasonal_avg)
+
+    # concat and restore attrs
+    season_dim = xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"])
+    seasonal_clim = xarray.concat(seasonal_avgs, dim=season_dim)
+
+    # optional: name and attrs
+    seasonal_clim.name = f"{var_data.name}_seasonal_clim_avg"
+    seasonal_clim.attrs = attrs
+    print("seasonal_clim:",seasonal_clim,"\n\n")
+
+    return seasonal_clim'''
+
+
+
+import cvdp_utils.avg_functions as af
+season_dict = {"NDJFM":0,
+               "DJF":0,
+               "JFM":1,
+               "MAM":3,
+               "JJA":6,
+               "JAS":7,
+               "SON":9
+}
+
+#def compute_seasonal_avgs(arr, arr_anom, var_name, run_name) -> xr.DataArray:
+def compute_seasonal_avgs(arr, var_name) -> xr.DataArray:
+
+    units = arr.units
+    season_yrs = np.unique(arr["time.year"])
+
+    # remove annual trend
+    #--------------------
+    farr_clim = arr.groupby('time.month').mean(dim='time')   # calculate climatology
+    #farr_clim.attrs.update(farr.attrs)
+
+    farr_anom = arr.groupby('time.month') - farr_clim   # form anomalies
+    #print("farr_anom:",farr_anom,"\n")
+    farr_anom.attrs.update(arr.attrs)
+    #farr_anom.attrs['run'] = run_name
+
+    # Add desired start and end years to metadata
+    season_yrs = np.unique(arr["time.year"])
+    farr_anom.attrs['syr'] = season_yrs[0]
+    farr_anom.attrs['eyr'] = season_yrs[-1]
+
+    # Rename variable to CVDP variable name
+    farr_anom = farr_anom.rename(var_name)
+    #fno_anom = arr.run.values+'.cvdp_data.'+var_name+'.trends_monthly.'+arr.syr.values+'-'+arr.eyr.values+'.nc'
+    #fno_anom = fno_anom.replace(' ','_')
+    #fno_anom = Path(f"{fno_anom}")
+    #fno_anom_loc = save_path / fno_anom
+    #fno_anom_loc = fno_anom
+    #print("fno_anom_loc is where farr_anom goes!",fno_anom_loc)
+    #Path(fno_anom_loc).unlink(missing_ok=True)
+    #farr_anom.to_netcdf(fno_anom_loc)
+
+    run_name = arr.run_name
+
+    ts_ds = af.seasonal_timeseries(arr, farr_anom, var_name, run_name)
+    ts_ds = ts_ds.assign_coords(run=run_name)
+    ts_ds = ts_ds.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    ts_ds = ts_ds.assign_coords(syr=syr)
+    ts_ds = ts_ds.assign_coords(eyr=eyr)
+
+    # Spatial Mean
+    #-------------
+    trnd_dict = {}
+    ptype = "spatialmean"
+    arr3 = arr.rolling(time=3, center=True).mean()
+    arr3 = arr3.ffill(dim='time').bfill(dim='time').compute()
+
+    arrANN = af.weighted_temporal_mean(arr)#.mean(dim='time')
+    lintrndANN = arrANN.rename(var_name+'_ann')
+    lintrndANN.attrs = {'units':units,'long_name':var_name+' (annual)','run':run_name,
+                             'yrs':[season_yrs[0],season_yrs[-1]]}
+
+    lintrndANN["time"] = np.arange(season_yrs[0],season_yrs[-1]+1,1)
+    trnd_dict[f'{var_name}_{ptype}_ann'] = lintrndANN
+
+    for s in season_dict:
+        lintrnd_da = arr3.isel( time=slice(season_dict[s], None, 12) )
+        lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
+        trnd_dict[f'{var_name}_{ptype}_{s.lower()}'] = lintrnd_da
+    """if var_name == "psl":
+        s = 'NDJFM'
+        arr5 = arr.rolling(time=5, center=True).mean()
+        arr5 = arr5.ffill(dim='time').bfill(dim='time').compute()
+        lintrnd_da = arr5.isel( time=slice(season_dict[s], None, 12) )
+        lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
+        trnd_dict[f'{var_name}_{ptype}_ndjfm'] = lintrnd_da"""
+
+    # Anomolies
+    #----------
+    #trnd_dict = {}
+    ptype = "trends"
+    # setup 3-month averages
+    arr_anom3 = farr_anom.rolling(time=3, center=True).mean()
+    arr_anom3 = arr_anom3.ffill(dim='time').bfill(dim='time').compute()
+
+    arrANN_anom = af.weighted_temporal_mean(farr_anom)#.mean(dim='time')
+    lintrndANN_anom = arrANN_anom.rename(var_name+'_ann')
+    lintrndANN_anom.attrs = {'units':units,'long_name':var_name+' (annual)','run':run_name,
+                             'yrs':[season_yrs[0],season_yrs[-1]]}
+    #lintrndANN = lin_regress(lintrndANN)
+
+    lintrndANN_anom["time"] = np.arange(season_yrs[0],season_yrs[-1]+1,1)
+    trnd_dict[f'{var_name}_{ptype}_ann'] = lintrndANN_anom
+
+    for s in season_dict:
+        lintrnd_da = arr_anom3.isel( time=slice(season_dict[s], None, 12) )
+        lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
+        #lintrnd_da = lin_regress(lintrnd_da)
+        lintrnd_da = lintrnd_da.drop_vars('month')
+        trnd_dict[f'{var_name}_{ptype}_{s.lower()}'] = lintrnd_da
+    if var_name == "psl":
+        s = 'NDJFM'
+        arr5 = farr_anom.rolling(time=5, center=True).mean()
+        arr5 = arr5.ffill(dim='time').bfill(dim='time').compute()
+        lintrnd_da = arr5.isel( time=slice(season_dict[s], None, 12) )
+
+        lintrnd_da = af.make_seasonal_da(var_name, run_name, lintrnd_da, units, s, season_yrs, ptype)
+        lintrnd_da = lintrnd_da.drop_vars('month')
+        trnd_dict[f'{var_name}_{ptype}_ndjfm'] = lintrnd_da
+    
+
+    #print(trnd_dict)
+
+    ds = xr.Dataset(trnd_dict)
+    #ds.attrs['units']=units
+    #ds.attrs['run']=run_name
+    #ds.attrs['yrs']=[int(season_yrs[0]),int(season_yrs[-1])]
+
+    ds = ds.assign_coords(run=run_name)
+    ds = ds.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    ds = ds.assign_coords(syr=syr)
+    ds = ds.assign_coords(eyr=eyr)
+
+
+    farr_anom
+    farr_anom = farr_anom.assign_coords(run=run_name)
+    farr_anom = farr_anom.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    farr_anom = farr_anom.assign_coords(syr=syr)
+    farr_anom = farr_anom.assign_coords(eyr=eyr)
+
+
+
+    #arrDJF_anom, res, fit = lin_regress(arrDJF_anom)
+
+    #print("seasonal climo dataset:",ds,"\n\n")
+    return ds, farr_anom, ts_ds
+
+
+
+
+
+
+
+
+import xarray as xr
+import numpy as np
+import dask
+from pathlib import Path
+
+
+
+
+'''def compute_seasonal_avgs(arr: xr.DataArray, var_name: str) -> xr.Dataset:
+    """
+    Memory-safe, lazy, and optimized version of seasonal average calculator.
+    No intermediate data is persisted in RAM.
+    """
+    import numpy as np
+    import xarray as xr
+    season_yrs = np.unique(arr["time.year"])
+    # Setup
+    season_dict = {"NDJFM":0,
+               "DJF":0,
+               "JFM":1,
+               "MAM":3,
+               "JJA":6,
+               "JAS":7,
+               "SON":9
+    }
+    units     = arr.attrs.get("units", "")
+    run_name  = arr.attrs.get("run_name", "")
+    years     = np.unique(arr["time.year"])
+    yrs_attr  = [int(years[0]), int(years[-1])]
+
+    # Monthly climatology + anomaly
+    clim = arr.groupby('time.month').mean('time')
+    anom = arr.groupby('time.month') - clim
+
+    # Helper to slice by season index
+    def slice_season(da, key):
+        return da.isel(time=slice(season_dict[key], None, 12))
+
+    # Rolling functions: lazy definitions
+    def get_arr3(): return arr.rolling(time=3, center=True, min_periods=3).mean()
+    def get_arr5(): return arr.rolling(time=5, center=True, min_periods=5).mean()
+    def get_anom3(): return anom.rolling(time=3, center=True, min_periods=3).mean()
+    def get_anom5(): return anom.rolling(time=5, center=True, min_periods=5).mean()
+
+    trnd_dict = {}
+
+    # Annual means
+    for ptype, da in (("spatialmean", arr), ("trends", anom)):
+        ann = af.weighted_temporal_mean(da).rename(f"{var_name}_ann")
+        ann.attrs = {"units": units, "long_name": f"{var_name} (annual)", 
+                     "run": run_name, "yrs": yrs_attr}
+        ann["time"] = np.arange(yrs_attr[0], yrs_attr[1] + 1)
+        trnd_dict[f"{var_name}_{ptype}_ann"] = ann
+
+    # Seasonal means
+    for season in season_dict:
+        use_5mo = (season == "NDJFM") and (var_name == "psl")
+
+        for ptype in ("spatialmean", "trends"):
+            da = (
+                get_arr5() if use_5mo and ptype == "spatialmean" else
+                get_anom5() if use_5mo else
+                get_arr3() if ptype == "spatialmean" else
+                get_anom3()
+            )
+            da_s = slice_season(da, season)
+            ds = af.make_seasonal_da(var_name, run_name, da_s, units, season, yrs_attr, ptype)
+            if ptype == "trends" and "month" in ds.coords:
+                ds = ds.drop_vars("month")
+            trnd_dict[f"{var_name}_{ptype}_{season.lower()}"] = ds
+    ds_out = xr.Dataset(trnd_dict)
+    
+    ds_out = ds_out.assign_coords(run=run_name)
+    ds_out = ds_out.assign_coords(units=units)
+    eyr = int(season_yrs[-1])
+    syr = int(season_yrs[0])
+    ds_out = ds_out.assign_coords(syr=syr)
+    ds_out = ds_out.assign_coords(eyr=eyr)
+    return ds_out'''
+
+
+
+
+
+
+
+
+
+
+
+"""def compute_seasonal_stds(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
+    monthly_avgs = var_data.groupby("time.month").mean().rename(f"{var_data.name}_std")
+    seasonal_avgs = []
+    for season_label in CLIMATOLOGY_SEASON_MONTHS:
+        season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
+        seasonal_avgs.append(monthly_avgs.sel(month=season_months).std(dim="month"))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))
+
+
+def compute_seasonal_trends(var_data: xarray.DataArray, seasons: dict=CLIMATOLOGY_SEASON_MONTHS) -> xarray.DataArray:
+    monthly_avgs = var_data.groupby("time.month").mean()
+    monthly_trend_avgs = (var_data.groupby("time.month") - monthly_avgs).rename(f"{var_data.name}_avg") # form anomalies
+    seasonal_avgs = []
+    for season_label in CLIMATOLOGY_SEASON_MONTHS:
+        season_months = CLIMATOLOGY_SEASON_MONTHS[season_label]
+        seasonal_avgs.append(monthly_trend_avgs.sel(month=season_months).mean(dim="month"))
+    return xarray.concat(seasonal_avgs, dim=xarray.DataArray(data=list(CLIMATOLOGY_SEASON_MONTHS.keys()), dims=["season"]))"""
