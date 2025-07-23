@@ -145,8 +145,8 @@ def graphics(plot_loc, **kwargs):
 
     for ptype in PTYPES:
         for map_type in MAP_TYPES:
-            vres = res[vn][ptype]
-            seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
+            #vres = res[vn][ptype]
+            #seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
 
             for season in seasons:
                 for plot_type in PLOT_TYPES:
@@ -179,6 +179,8 @@ def graphics(plot_loc, **kwargs):
                             if fig: figs.append((fig, name))
                     else:
                         if season != "NDJFM":
+                            vres = res[vn][ptype]
+                            seasons = VAR_SEASONS[vn][map_type] if isinstance(VAR_SEASONS[vn], dict) else VAR_SEASONS[vn]
                             sim = compute_trend(sim_data) if ptype == "trends" else sim_data.mean("time")
                             ref = compute_trend(ref_data) if ptype == "trends" else ref_data.mean("time")
                             diff = compute_diff(sim, ref)
