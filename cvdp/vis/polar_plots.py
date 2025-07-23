@@ -605,10 +605,10 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
                 arr_max = arr.max().item()
                 arr_min = arr.min().item()
                 levels = np.linspace(arr_min, arr_max, 20)
-            print("POLAR Ensemble Cases levels",levels)
+            #print("POLAR Ensemble Cases levels",levels)
             # colorbar ticks
             ticks = np.arange(*plot_info["ticks_range"])
-            print("POLAR Ensemble Cases ticks",ticks)
+            #print("POLAR Ensemble Cases ticks",ticks)
 
             cbarticks = plot_info.get("cbarticks", None)
             if cbarticks is None:
@@ -809,11 +809,13 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
         #----------------
         # Set the ticks on the colorbar
         cb.set_ticks(ticks)
-        print("POLAR Ensemble Cases colorabar ticks",r, ticks)
+        if r == 0 or r==1:
+            print("POLAR Ensemble Cases colorabar ticks",r, ticks)
         
         # 
         cb.set_ticklabels(tick_labels)
-        print("POLAR Ensemble Cases colorabar tick_labels",r, tick_labels)
+        if r == 0 or r==1:
+            print("POLAR Ensemble Cases colorabar tick_labels",r, tick_labels)
 
         # Set title of colorbar to units
         cb.ax.set_xlabel(unit,fontsize=18)
