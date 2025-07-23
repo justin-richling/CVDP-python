@@ -344,6 +344,8 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         axs[i].set_boundary(circle, transform=axs[i].transAxes)
 
         arr = arrs[r]#.sel(season=season)
+        if var == "NAM":
+            arr = arr*-1
 
         # Get start and end years for run
         syr = arr.syr.values
