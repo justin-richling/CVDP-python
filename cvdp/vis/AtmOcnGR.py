@@ -147,7 +147,7 @@ def graphics(plot_loc, **kwargs):
                     sim_data = kwargs["sim_seas"][key]
                     ref_data = kwargs["ref_seas"][key]
                     figs = []
-                    print(vn, plot_type, ptype, map_type, season,"\n")
+                    #print(vn, plot_type, ptype, map_type, season,"\n")
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
                         sim_npi, ref_npi, diff_npi = compute_npi(kwargs["sim_seas_ts"][key], kwargs["ref_seas_ts"][key])
                         title = get_plot_title("NPI", plot_type, ptype, season)
@@ -157,12 +157,12 @@ def graphics(plot_loc, **kwargs):
 
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
                         for var in EOF_VARS:
-                            print("\t",var,"\n")
+                            #print("\t",var,"\n")
                             sim, ref, diff, sim_pc, ref_pc = compute_eof(var, kwargs["sim_season_anom_avgs"], kwargs["ref_season_anom_avgs"], season)
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
                             fig = plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
-                            print("FIG?",fig)
+                            #print("FIG?",fig)
                             if fig: figs.append((fig, name))
                     else:
                         if season != "NDJFM":
@@ -175,5 +175,6 @@ def graphics(plot_loc, **kwargs):
                             if fig: figs.append((fig, name))
 
                     for fig, name in figs:
+                        print(name)
                         fig.savefig(plot_loc / name, bbox_inches="tight")
                         plt.close(fig)
