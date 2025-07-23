@@ -45,6 +45,9 @@ PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 
 
 def get_plot_title(var, plot_type, ptype, season):
+    if ptype == "trends":
+        if var =="NPI" or var in EOF_VARS:
+            ptype = "Pattern"
     base = f"{var} {ptype.capitalize()} ({season})"
     titles = {
         "summary": f"Ensemble Summary: {base}",
@@ -62,22 +65,8 @@ def get_plot_name(vn, var, ptype, season, plot_type, map_type):
         if var == "NPI" or var in EOF_VARS:
             suffix = f"pattern_{season_lower}"
             vn = var.lower()
-            print("get_plot_name vn cvbfgbfgb?:",vn)
-        else:
-            print("get_plot_name vn? aouhsfjskdm:",vn)
-    #else:
-    #    suffix = f"{ptype}_{season_lower}"
     print("get_plot_name vn?:",vn)
     plot_name = f"{vn}_{suffix}.{plot_type}.png"
-    #if var == "NPI" or var in EOF_VARS:
-    #    plot_name = f"{var.lower()}_pattern_{season_lower}.{plot_type}.png"
-    
-    #if map_type == "timeseries":
-    #    plot_name = f"{var.lower()}_timeseries_{season_lower}.{plot_type}.png"
-    
-    #if 1==2:
-    #    suffix = f"pattern_{season_lower}" if ptype == "trends" else f"{ptype}_{season_lower}"
-    #    plot_name = f"{vn}_{suffix}.{plot_type}.png"
     return plot_name
 
 
