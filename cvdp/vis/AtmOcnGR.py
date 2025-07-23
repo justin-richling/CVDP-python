@@ -183,7 +183,7 @@ def graphics(plot_loc, **kwargs):
                             print("fig name:",name)
                             fig = plot_dispatch(plot_type, ptype, map_type, vn, vn, sim, ref, diff, vres, title)
                             if fig: figs.append((fig, name))
-
+                    print()
                     for fig, name in figs:
                         fig.savefig(plot_loc / name, bbox_inches="tight")
                         plt.close(fig)
