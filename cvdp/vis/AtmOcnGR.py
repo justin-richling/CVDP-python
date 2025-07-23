@@ -157,13 +157,14 @@ def graphics(plot_loc, **kwargs):
                             fig = plot_dispatch(plot_type, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
                             if fig: figs.append((fig, name))
                     else:
-                        sim = compute_trend(sim_data) if ptype == "trends" else sim_data.mean("time")
-                        ref = compute_trend(ref_data) if ptype == "trends" else ref_data.mean("time")
-                        diff = compute_diff(sim, ref)
-                        title = get_plot_title(vn.upper(), plot_type, ptype, season)
-                        name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
-                        fig = plot_dispatch(plot_type, map_type, vn, vn, sim, ref, diff, vres, title)
-                        if fig: figs.append((fig, name))
+                        if season != "NDJFM":
+                            sim = compute_trend(sim_data) if ptype == "trends" else sim_data.mean("time")
+                            ref = compute_trend(ref_data) if ptype == "trends" else ref_data.mean("time")
+                            diff = compute_diff(sim, ref)
+                            title = get_plot_title(vn.upper(), plot_type, ptype, season)
+                            name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
+                            fig = plot_dispatch(plot_type, map_type, vn, vn, sim, ref, diff, vres, title)
+                            if fig: figs.append((fig, name))
 
                     for fig, name in figs:
                         fig.savefig(plot_loc / name, bbox_inches="tight")
