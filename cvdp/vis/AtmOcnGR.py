@@ -40,7 +40,8 @@ NH_VARS = ["NAM"]
 SH_VARS = ["SAM", "PSA1", "PSA2"]
 
 PTYPES = ["trends"]
-MAP_TYPES = ["global", "polar", "timeseries"]
+#MAP_TYPES = ["global", "polar", "timeseries"]
+MAP_TYPES = ["polar", "timeseries"]
 PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 
 
