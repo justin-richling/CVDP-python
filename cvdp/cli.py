@@ -16,11 +16,11 @@ from cvdp.scripts.atm_ocn_mean_stddev_calc import calcAtmOcnMeanStd
 from cvdp.scripts.atm_mean_stddev_gr import calcAtmOcnMeanStdGR
 """
 
-from diag.AtmOcnMean import *
+#from diag.AtmOcnMean import *
 from vis.AtmOcnGR import *
 from definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 
-#from cvdp.diag.AtmOcnMean import *
+from cvdp.diag.AtmOcnMean import *
 #from cvdp.vis.AtmOcnGR import *
 #from cvdp.definitions import * #PARENT_DIR,PATH_VARIABLE_DEFAULTS
 #from vis import *
