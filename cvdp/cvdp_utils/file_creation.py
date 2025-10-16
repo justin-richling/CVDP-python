@@ -36,12 +36,6 @@ def yyyymm_time(yrStrt, yrLast, t=int):
 
     return timeVals
 
-# Author - Isla Simpson
-#
-def YYYYMM2date(time, caltype='standard'):
-    """ Convert a date of the form YYYYMM to a datetime64 object """
-    date = pd.to_datetime(time, format='%Y%m')
-    return date
 #
 def create_empty_array( yS, yE, mS, mE, opt_type):
     '''create array of nans for use when something may be/is wrong.'''
@@ -82,7 +76,7 @@ def create_empty_array( yS, yE, mS, mE, opt_type):
 # Function to convert time to cftime.DatetimeNoLeap
 import cftime
 # Function to convert time to cftime.DatetimeNoLeap
-def convert_to_cftime_no_leap(time_values):
+def convert_to_cftime_no_leap(time_values,input_files):
     # Check if time is already a cftime object (for specific cftime classes)
     if isinstance(time_values[0], cftime.DatetimeNoLeap):
         return time_values  # Already the correct type
@@ -96,10 +90,16 @@ def convert_to_cftime_no_leap(time_values):
                     dt.astype('datetime64[D]').item().day
                 ) for dt in time_values]
     
-    else:
-        raise TypeError("Unsupported time type")
-
-
+    else:     # grab times from first/last file names
+#        raise TypeError("Unsupported time type")
+         cpathSs = input_files[0]
+         cpathEs = input_files[-1]
+         sydatas = cpathSs[len(cpathSs)-16:len(cpathSs)-12]  # start year of data (specified in file name)
+         smdatas = cpathSs[len(cpathSs)-12:len(cpathSs)-10]  # start month of data
+         dates = xr.date_range(start=sydatas+'-'+smdatas+'-01',periods=len(time_values), freq='MS', use_cftime=True,calendar='noleap')
+         print('Using file names to create valid time coordinate; assuming data is monthly and continuous starting at '+sydatas+smdatas)
+         datesShift = dates.shift(periods=14,freq="D")
+         return(datesShift)
 
 def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     '''
@@ -138,9 +138,9 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     print(f" File Var: {vari}\n")
 
     ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
-    print("ADAM: ds",ds,"\n\n")
+    print("ds",ds,"\n\n")
     #print(ds['time'].values,type(ds['time'].values[0]),"\n")
-    ds['time'] = convert_to_cftime_no_leap(ds['time'].values)
+    ds['time'] = convert_to_cftime_no_leap(ds['time'].values,fil0)
     sydata = ds['time'].values[0].year  # start year of data (specified in file name)
     smdata = ds['time'].values[0].month  # start month of data
     eydata = ds['time'].values[-1].year   # end year of data
@@ -151,13 +151,13 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
         time = ds['time']
         # NOTE: force `load` here b/c if dask & time is cftime, throws a NotImplementedError:
         if 'nbnd' in ds['time_bnds'].dims:
-            print("AHHH, no 'nbnd' dim in 'time_bnds' coordinate, I guess we'll keep the current time. Ok?")
             time = xr.DataArray(ds['time_bnds'].load().mean(dim='nbnd').values, dims=time.dims, attrs=time.attrs)
             ds['time'] = time
             ds.assign_coords(time=time)
             ds = xr.decode_cf(ds)
     if vari in ds:
         print(f"    ** The variable {vari} is used for CVDP variable {cvdp_v} **\n")
+    print("ds",ds,"\n\n")
     ds = ds.rename({vari : cvdp_v})
     arr = ds.data_vars[cvdp_v]
     ds.close()
@@ -206,25 +206,18 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
         if hasattr(arr,"is_all_missing"):
             print('')
         else:
-            timeT = yyyymm_time(sydata, eydata, "integer")    # reassign time coordinate to YYYYMM
-            time = timeT.sel(time=slice(sydata*100+smdata, eydata*100+emdata))
-            arr = arr.assign_coords(time=time)
-            arr = arr.sel(time=slice(int(sy)*100+1,int(ey)*100+12))
+             arr = arr.sel(time=slice(str(sy).zfill(4)+'-01-01',str(ey).zfill(4)+'-12-31'))
+             print(" arr",arr,"\n\n")
 
-    mocheck = np.array([((int(sy)*100+1)-min(arr.coords['time'])), ((int(ey)*100+12) - max(arr.coords['time']))])
-    if [True for mon in mocheck if mon != 0]:
-        if mocheck[0] != 0:
-            print("First requested year is incomplete")
-        if mocheck[1] != 0:
-            print("Last requested year is incomplete")
-            print(f'Incomplete data year(s) requested for file {fil0}, printing out time and creating blank array')
-            print(f'Time requested: {sy}-{ey}')
-            print(arr.coords['time'])
-            arr = create_empty_array(sydata, eydata, 1, 12, 'time_lat_lon')
-
-    time_yyyymm = arr.time.values
-    time2 = YYYYMM2date(time_yyyymm,'standard')   #switch from YYYYMM->datetime64
-    arr = arr.assign_coords(time=time2)
+    time_check = arr.time.values
+#    years = time_check.astype('datetime64[Y]').astype(int)+1970
+    months = time_check.astype('datetime64[M]').astype(int) % 12 + 1
+    if months[0] != 1:
+        print("First requested year is incomplete; alter first year")
+        print(f'Incomplete data year(s) requested for file {fil0}, printing out time and creating blank array')
+    if months[-1] != 12:
+        print("Last requested year is incomplete")
+        print(f'Incomplete data year(s) requested for file {fil0}, printing out time and creating blank array') 
 
     # fix units if necessary, but first convert from dask array -> numpy array  by calling compute
     # attributes will get lost here  if calculation is done below, but that's OK as the only one
