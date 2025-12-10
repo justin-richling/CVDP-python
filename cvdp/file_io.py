@@ -65,16 +65,56 @@ def get_input_data(config_path: str) -> dict:
             eyr = eydata
 
         fno = f'{ds_name}.cvdp_data.{vn}.climo.{syr}-{eyr}.nc'
-        save_loc = Path(config["Paths"]["nc_save_loc"])
-        file_name = save_loc / fno
-        print("save_loc",save_loc,"\n")
-        if not save_loc.is_dir():
-            print(f"\tINFO: Directory not found, making new netcdf save location")
-            save_loc.mkdir(parents=True)
-        clobber = False
-        #if file_name.is_file() and not clobber:
-        #    var_data_array = xarray.open_mfdataset(file_name,coords="minimal", compat="override", decode_times=True)
-        if 1==2:
+        premade_path = Path(config["Paths"].get(["premade_path"],None))
+        if premade_path is None:
+            save_loc = Path(config["Paths"].get(["nc_save_loc"],None))
+            if save_loc is None:
+                save_loc = Path("./")
+            file_name = save_loc / fno
+            print("save_loc",save_loc,"\n")
+            if not save_loc.is_dir():
+                print(f"\tINFO: Directory not found, making new netcdf save location")
+                save_loc.mkdir(parents=True)
+            if type(ds_info["paths"]) is str:
+                paths = glob(ds_info["paths"])
+            else:
+                paths = ds_info["paths"]
+            cpathS = paths[0]
+            cpathE = paths[-1]
+            sydata = int(cpathS[len(cpathS)-16:len(cpathS)-12])  # start year of data (specified in file name)
+            smdata = int(cpathS[len(cpathS)-12:len(cpathS)-10])  # start month of data
+            eydata = int(cpathE[len(cpathE)-9:len(cpathE)-5])    # end year of data
+            emdata = int(cpathE[len(cpathE)-5:len(cpathE)-3])    # end month of data
+
+            mems = ds_info.get("members",None)
+            print('ds_info["variable"]',ds_info["variable"],"\n")
+            var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
+            print("Data set model run name (ds_name)",ds_name,"\n")
+            var_data_array.attrs["run_name"] = ds_name
+
+            # Add desired start and end years to metadata
+            season_yrs = np.unique(var_data_array["time.year"])
+            var_data_array.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
+
+            var_data_array.to_netcdf(file_name)
+        #if premade_path.parts[-1].isintance(xr.Data):
+        else:
+            file_name = premade_path
+        
+            clobber = False
+            if file_name.is_file() and not clobber:
+                var_data_array = xarray.open_mfdataset(file_name,coords="minimal",
+                                                    compat="override",
+                                                    decode_times=True)
+
+                """cvdp_var = vname[vn]
+                if ds_info["reference"]:
+                    ref_dataarray[ds_name] = {}
+                    ref_dataarray[ds_name][cvdp_var] = var_data_array
+                else:
+                    sim_dataarray[ds_name] = {}
+                    sim_dataarray[ds_name][cvdp_var] = var_data_array"""
+        """if 1==2:
             print("OK THIS IS WIERD!")
         else:
             if type(ds_info["paths"]) is str:
@@ -99,6 +139,7 @@ def get_input_data(config_path: str) -> dict:
             var_data_array.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
 
             var_data_array.to_netcdf(file_name)
+        """
 
         cvdp_var = vname[vn]
         if ds_info["reference"]:
