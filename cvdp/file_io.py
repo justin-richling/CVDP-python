@@ -48,8 +48,10 @@ def get_input_data(config_path: str) -> dict:
     with open(config_path) as stream:
         config = yaml.safe_load(stream)
 
+    config_dict = {}
     ref_dataarray = {}
     sim_dataarray = {}
+    save_loc = Path(config["Paths"]["nc_save_loc"])
 
     for ds_name in config["Data"]:
         ds_info = config["Data"][ds_name]
@@ -63,15 +65,28 @@ def get_input_data(config_path: str) -> dict:
             eyr = ds_info["end_yr"]
         else:
             eyr = eydata
+        config_dict[ds_name] = {"syr":syr,"eyr":eyr}
 
-        fno = f'{ds_name}.cvdp_data.{vn}.climo.{syr}-{eyr}.nc'
-        premade_path = Path(config["Paths"].get(["premade_path"],None))
+        premade_path = None
+        #fno = f'{ds_name}.cvdp_data.{vn}.climo.{syr}-{eyr}.nc'
+        fno = f'{ds_name}.cvdp_data.{vn}.{syr}-{eyr}.nc'
+        if "premade_path" in ds_info:
+            #premade_path = Path(ds_info["premade_path"])
+            premade_path = Path(ds_info.get("premade_path",None))
         if premade_path is None:
-            save_loc = Path(config["Paths"].get(["nc_save_loc"],None))
-            if save_loc is None:
-                save_loc = Path("./")
+            print("LOOKS LIKE A PREMADE PATH DOES NOT EXIST, WILL MAKE SOME FILE",fno,"\n")
+            #save_loc = Path(config["Paths"].get(["nc_save_loc"],None))
+            #if "nc_save_loc" in ds_info
+            if "nc_save_loc" in ds_info:
+                case_save_loc = Path(ds_info.get("nc_save_loc",None))
+                if case_save_loc is not None:
+                    case_save_loc = save_loc
+                if save_loc is None:
+                    save_loc = Path("./cvdp_output/netcdf/")
+            print("SAVING FILE TO",save_loc,"\n")
             file_name = save_loc / fno
-            print("save_loc",save_loc,"\n")
+            config_dict[ds_name]['file_name'] = file_name
+            config_dict[ds_name]['save_loc'] = save_loc
             if not save_loc.is_dir():
                 print(f"\tINFO: Directory not found, making new netcdf save location")
                 save_loc.mkdir(parents=True)
@@ -99,48 +114,15 @@ def get_input_data(config_path: str) -> dict:
             var_data_array.to_netcdf(file_name)
         #if premade_path.parts[-1].isintance(xr.Data):
         else:
+            print("LOOKS LIKE A PREMADE PATH EXISTS",premade_path,"\n")
             file_name = premade_path
         
             clobber = False
             if file_name.is_file() and not clobber:
-                var_data_array = xarray.open_mfdataset(file_name,coords="minimal",
+                var_data_set = xarray.open_mfdataset(file_name,coords="minimal",
                                                     compat="override",
                                                     decode_times=True)
-
-                """cvdp_var = vname[vn]
-                if ds_info["reference"]:
-                    ref_dataarray[ds_name] = {}
-                    ref_dataarray[ds_name][cvdp_var] = var_data_array
-                else:
-                    sim_dataarray[ds_name] = {}
-                    sim_dataarray[ds_name][cvdp_var] = var_data_array"""
-        """if 1==2:
-            print("OK THIS IS WIERD!")
-        else:
-            if type(ds_info["paths"]) is str:
-                paths = glob(ds_info["paths"])
-            else:
-                paths = ds_info["paths"]
-            cpathS = paths[0]
-            cpathE = paths[-1]
-            sydata = int(cpathS[len(cpathS)-16:len(cpathS)-12])  # start year of data (specified in file name)
-            smdata = int(cpathS[len(cpathS)-12:len(cpathS)-10])  # start month of data
-            eydata = int(cpathE[len(cpathE)-9:len(cpathE)-5])    # end year of data
-            emdata = int(cpathE[len(cpathE)-5:len(cpathE)-3])    # end month of data
-
-            mems = ds_info.get("members",None)
-            print('ds_info["variable"]',ds_info["variable"],"\n")
-            var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
-            print("Data set model run name (ds_name)",ds_name,"\n")
-            var_data_array.attrs["run_name"] = ds_name
-
-            # Add desired start and end years to metadata
-            season_yrs = np.unique(var_data_array["time.year"])
-            var_data_array.attrs['yrs'] = [season_yrs[0],season_yrs[-1]]
-
-            var_data_array.to_netcdf(file_name)
-        """
-
+                var_data_array = var_data_set[ vname[vn] ]
         cvdp_var = vname[vn]
         if ds_info["reference"]:
             ref_dataarray[ds_name] = {}
@@ -149,7 +131,7 @@ def get_input_data(config_path: str) -> dict:
             sim_dataarray[ds_name] = {}
             sim_dataarray[ds_name][cvdp_var] = var_data_array
 
-    return (ref_dataarray, sim_dataarray)
+    return (ref_dataarray, sim_dataarray, config_dict)
 
 
 
