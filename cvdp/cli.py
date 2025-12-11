@@ -57,25 +57,73 @@ def main():
             #Path(save_loc).unlink(missing_ok=True)
             #var_data_array.to_netcdf(save_loc)
             return None"""
-
+    
+    #save_loc.mkdir(parents=True, exist_ok=True)
     #from io import get_input_data
     from file_io import get_input_data
+    #from cvdp.io import get_input_data
     print("PARENT_DIR",PARENT_DIR)
-    ref_datasets, sim_datasets = get_input_data(f"{PARENT_DIR}/example_config.yaml")
 
-    ref_0 = list(ref_datasets.keys())[0]
-    sim_0 = list(sim_datasets.keys())[0]
-
+    # These are dictionaries of datasets
+    ref_datasets, sim_datasets, config_dict = get_input_data(f"{PARENT_DIR}/example_config.yaml")
+    print(list(ref_datasets.keys()))
+    ref_names = list(ref_datasets.keys())
+    sim_names = list(sim_datasets.keys())
+    ref_0_name = ref_names[0]
+    sim_0_name  = sim_names[0]
 
     vns = ["psl"]
     for vn in vns:
-        ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn], vn)
-
+        #print(f"\nProcessing variable: {vn}\n")
+        #ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn], vn)
+        #for ref_0 in ref_names:
+        for ref_0 in [ref_0_name]:
+            print("ref_0",ref_0)
+            print("OH BOY",ref_datasets[ref_0][vn])
+            #for sim_0 in [sim_0_name]:
+            if 1==1:
+                #sim_0_name, sim_datasets[sim_0][vn]
+                data_dict = mean_seasonal_calc(ref_0_name, ref_datasets[ref_0][vn],
+                                               vn, config_dict)
+                ref_seas_avgs = data_dict["seas_avgs"]
+                ref_season_anom_avgs = data_dict["season_anom_avgs"]
+                ref_seas_ts = data_dict["seas_ts"]
+        for sim_0 in [sim_0_name]:
+            print("sim_0",sim_0)
+            print("OH BOY",sim_datasets[sim_0][vn])
+            #for sim_0 in [sim_0_name]:
+            if 1==1:
+                #sim_0_name, sim_datasets[sim_0][vn]
+                data_dict = mean_seasonal_calc(sim_0_name, sim_datasets[sim_0][vn],
+                                               vn, config_dict)
+                sim_seas_avgs = data_dict["seas_avgs"]
+                sim_season_anom_avgs = data_dict["season_anom_avgs"]
+                sim_seas_ts = data_dict["seas_ts"]
         kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
-                  "ref_seas_ts":ref_seas_ts, "sim_seas_ts":sim_seas_ts,
-                  "ref_season_anom_avgs":ref_season_anom_avgs, "sim_season_anom_avgs":sim_season_anom_avgs,
-                "vn": vn}
+                        "ref_seas_ts":ref_seas_ts, "sim_seas_ts":sim_seas_ts,
+                        "ref_season_anom_avgs":ref_season_anom_avgs, "sim_season_anom_avgs":sim_season_anom_avgs,
+                        "vn": vn}
         graphics(plot_loc, **kwargs)
+        '''#for ref_0 in ref_names:
+        for ref_0 in [ref_0_name]:
+            print("ref_0",ref_0)
+            print("OH BOY",ref_datasets[ref_0][vn])
+            for sim_0 in [sim_0_name]:
+                data_dict = mean_seasonal_calc(ref_0_name, ref_datasets[ref_0][vn],
+                                               sim_0_name, sim_datasets[sim_0][vn],
+                                               vn, config_dict)
+                ref_seas_avgs = data_dict["ref_seas_avgs"]
+                sim_seas_avgs = data_dict["sim_seas_avgs"]
+                ref_season_anom_avgs = data_dict["ref_season_anom_avgs"]
+                sim_season_anom_avgs = data_dict["sim_season_anom_avgs"]
+                ref_seas_ts = data_dict["ref_seas_ts"]
+                sim_seas_ts = data_dict["sim_seas_ts"]
+
+                kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
+                        "ref_seas_ts":ref_seas_ts, "sim_seas_ts":sim_seas_ts,
+                        "ref_season_anom_avgs":ref_season_anom_avgs, "sim_season_anom_avgs":sim_season_anom_avgs,
+                        "vn": vn}
+                graphics(plot_loc, **kwargs)'''
 
 
 if __name__ == '__main__':
