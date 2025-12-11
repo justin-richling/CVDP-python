@@ -111,5 +111,9 @@ def compute_seasonal_avgs(arr, var_name) -> tuple[xr.Dataset, xr.DataArray, xr.D
     # --- Combine all outputs into dataset ---
     ds = xr.Dataset(trnd_dict)
     ds = ds.assign_coords(run=run_name, units=units, syr=syr, eyr=eyr)
-
+    print("\n***************************************\n")
+    print("DS:",ds,"\n------------------------------------------\n")
+    print("FARR_ANOM",farr_anom,"\n------------------------------------------\n")
+    print("TS_DS:",ts_ds,"\n------------------------------------------\n")
+    print("\n***************************************\n")
     return ds, farr_anom, ts_ds
