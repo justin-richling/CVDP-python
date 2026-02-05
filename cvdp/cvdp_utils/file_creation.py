@@ -135,10 +135,10 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     #print("type(vari)",type(vari))
     if vari in vname:
         cvdp_v = vname[vari]
-    print(f" File Var: {vari}\n")
+    print(f"File Var: {vari}")
 
     ds = xr.open_mfdataset(fil0,coords="minimal", compat="override", decode_times=True)
-    print("ds raw",ds,"\n\n")
+    #print("ds raw",ds,"\n\n")
     #print(ds['time'].values,type(ds['time'].values[0]),"\n")
     ds['time'] = convert_to_cftime_no_leap(ds['time'].values,fil0)
     sydata = ds['time'].values[0].year  # start year of data (specified in file name)
@@ -147,7 +147,7 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     emdata = ds['time'].values[-1].month   # end month of data
     #Average time dimension over time bounds, if bounds exist:
     if 'time_bnds' in ds:
-        print("Array has 'time_bnds', force time fix (even if this is a new CESM run)")
+        print("  Array has 'time_bnds', force time fix (even if this is a new CESM run)")
         time = ds['time']
         # NOTE: force `load` here b/c if dask & time is cftime, throws a NotImplementedError:
         if 'nbnd' in ds['time_bnds'].dims:
@@ -157,7 +157,7 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
             ds = xr.decode_cf(ds)
     if vari in ds:
         print(f"    ** The variable {vari} is used for CVDP variable {cvdp_v} **\n")
-    print("ds fixed",ds,"\n\n")
+    #print("ds fixed",ds,"\n\n")
     ds = ds.rename({vari : cvdp_v})
     arr = ds.data_vars[cvdp_v]
     ds.close()
@@ -207,7 +207,7 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
             print('')
         else:
              arr = arr.sel(time=slice(str(sy).zfill(4)+'-01-01',str(ey).zfill(4)+'-12-31'))
-             print("Time fixed arr",arr,"\n\n")
+             #print("Time fixed arr",arr,"\n\n")
 
     time_check = arr.time.values
 #    years = time_check.astype('datetime64[Y]').astype(int)+1970

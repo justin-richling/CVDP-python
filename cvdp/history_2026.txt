@@ -1,0 +1,1000 @@
+   22  ls
+   23  mv CVDP_output_tking/ CVDP_output/
+   24  mv ADF_output_tking/ ADF_output/
+   25  cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-234v250
+   26  ls
+   27  cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-234v250
+   28  ls
+   29  vi adf_config.yml
+   30  ls
+   31  history
+   32  vi adf_config.yml
+   33  cnode
+   34  work
+   35  ls
+   36  mkdir cupid-test
+   37  cd cupid-test/
+   38  git clone https://github.com/NCAR/CUPiD.git
+   39  cd CUPiD/
+   40  ls
+   41  conda activate cupid-infrastructure
+   42  pip install -e .
+   43  pre-commit install
+   44  cd examples/key_metrics/
+   45  ../../helper_scripts/generate_adf_config_file.py --cupid-config-loc . --adf-template ../../externals/ADF/config_amwg_default_plots.yaml --out-file ADF_config.yaml
+   46  vi config.yml 
+   47  ../../helper_scripts/generate_adf_config_file.py --cupid-config-loc . --adf-template ../../externals/ADF/config_amwg_default_plots.yaml --out-file ADF_config.yaml
+   48  cd ../../
+   49  git submodule update --init
+   50  cnode
+   51  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/config.yml 
+   52  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/adf_config.yml 
+   53  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/config.yml 
+   54  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/adf_config.yml 
+   55  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/config.yml 
+   56  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/adf_config.yml 
+   57  vi /glade/work/richling/cupid-test-2/CUPiD/examples/key_metrics/config.yml 
+   58  cd /glade/work/richling/cesm-diagnostics/COMPASS/COMPASS-dev/plots
+   59  ls
+   60  cd f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/
+   61  ls
+   62  cd T/
+   63  ls
+   64  cd ERA5/
+   65  ls
+   66  cd RF13/
+   67  ls
+   68  scp -r *820hPa* ${tung}:/project/webshare/projects/ADF/compass-imgs/
+   69  ls *820*
+   70  echo ${tung}
+   71  scp -r ./*820hPa* ${tung}:/project/webshare/projects/ADF/compass-imgs/
+   72  scratch
+   73  mkdir compass-viewer
+   74  cd compass-viewer/
+   75  conda create -n shiny311 python=3.11
+   76  conda activate shiny311
+   77  pip install shiny rsconnect-python 
+   78  rsconnect add --account justin-richling-ncar --name justin-richling-ncar --token 56D0032B0DF0662676A6D45DACE730D7 --secret rMU9mAlzZB9YXkG18RS3uExAz0EXkTbrC8VS6waw
+   79  rsconnect deploy shiny compass-viewer --name justin-richling-ncar --title wowsa4
+   80  cd ../
+   81  rsconnect deploy shiny compass-viewer --name justin-richling-ncar --title wowsa4
+   82  module load conda
+   83  conda activate npl-2024a
+   84  code
+   85  . /glade/u/apps/opt/conda/etc/profile.d/conda.sh && conda activate shiny-app
+   86  ls ~/.vscode-server/extensions
+   87  which python
+   88  code --list-extensions --show-versions
+   89  code --status
+   90  code nblibrary/atm/COMPASS.ipynb 
+   91  code nblibrary/atm/ADF.ipynb 
+   92  scratch
+   93  mkdir compass-cupid
+   94  cd compass-cupid
+   95  git clone --recurse-submodules https://github.com/NCAR/CUPiD.git
+   96  conda activate cupid-infrastructure
+   97  pip install -e .
+   98  cd CUPiD/
+   99  pip install -e .
+  100  pre-commit install
+  101  git checkout -b compass
+  102  rm -rf ~/.vscode-server
+  103  rm -rf ~/.vscode-remote
+  104  cd ../
+  105  ls
+  106  work
+  107  ls
+  108  cd cesm-diagnostics/
+  109  ls
+  110  cd INFORM-COMPASS-cookbook/
+  111  git remote -v
+  112  git branch
+  113  git checkout main
+  114  git pull origin main
+  115  ls *.ip*
+  116  scp *.ipynb /glade/derecho/scratch/richling/compass-cupid/CUPiD/nblibrary/
+  117  cd /glade/derecho/scratch/richling/compass-cupid/CUPiD/nblibrary
+  118  git branch
+  119  ls
+  120  mv *.ipy* atm/
+  121  conda activate cvdp-dev
+  122  conda activate cvdp-dev
+  123  ca cupid-analysis
+  124  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  125  alias cnode
+  126  cd ../../../
+  127  cd ../
+  128  mkdir cupid-dec-03_2
+  129  cd cupid-dec-03_2
+  130  git clone --recurse-submodules https://github.com/NCAR/CUPiD.git
+  131  conda activate /glade/work/tking/conda-envs/cupid-infrastructure/
+  132  pre-commit install
+  133  cd CUPiD/
+  134  pip install -e .
+  135  pre-commit install
+  136  conda info --envs
+  137  echo $CONDA_PREFIX
+  138  cd examples/key_metrics/
+  139  mv config.yml config_original.yml 
+  140  ls
+  141  cp /glade/derecho/scratch/richling/cupid-dec-03/CUPiD/examples/key_metrics/config.yml ./
+  142  ls
+  143  ../../helper_scripts/generate_adf_config_file.py --cupid-config-loc . --adf-template ../../externals/ADF/config_amwg_default_plots.yaml --out-file ADF_config.yaml
+  144  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  145  ca /glade/work/tking/conda-envs/cupid-analysis
+  146  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  147  cd ../../
+  148  cd externals/ADF/
+  149  ls
+  150  vi lib/adf_diag.py 
+  151  vi run_adf_diag 
+  152  cd ../../examples/key_metrics/
+  153  ls
+  154  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  155  vi ADF_config.yaml
+  156  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  157  module unload ncl
+  158  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  159  module load ncl
+  160  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  161  module unload ncl
+  162  ../../externals/ADF/run_adf_diag ADF_config.yaml
+  163  cd /glade/derecho/scratch/richling/cupid-dec-03/CUPiD/examples/key_metrics/CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/
+  164  ls
+  165  ls output/
+  166  ls
+  167  ls output/
+  168  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/
+  169  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/CVDP_output/
+  170  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.256/
+  171  ls output/
+  172  cd /glade/derecho/scratch/richling/cupid-dec-03_2/CUPiD/examples/key_metrics/CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/output/
+  173  ls
+  174  ncl
+  175  module unload NCL
+  176  module unload ncl
+  177  ncl
+  178  cd ../
+  179  ls
+  180  ncl driver.b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247.ncl
+  181  module load ncl
+  182  ncl driver.b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247.ncl
+  183  cd ../
+  184  ls
+  185  rm -rf CVDP_output/
+  186  rm -rf ADF_output/
+  187  ls
+  188  ls CVDP_output/
+  189  ls CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/
+  190  ls CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/output/
+  191  rm -rf CVDP_output/
+  192  rm -rf ADF_output/
+  193  ls
+  194  vi ../../externals/ADF/lib/adf_diag.py 
+  195  ls
+  196  ls CVDP_output/
+  197  ls CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/
+  198  ls CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/output/
+  199  vi ../../externals/ADF/lib/adf_diag.py 
+  200  ncl driver.b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247.ncl
+  201  ls
+  202  rm -rf CVDP_output/
+  203  ls
+  204  ls CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/output/
+  205  ls CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/output/index.html
+  206  adfdev
+  207  git checkout -b cupid-cvdp-update
+  208  cd /glade/derecho/scratch/richling/cupid-dec-03_2/CUPiD/examples/key_metrics/
+  209  vi ../../externals/ADF/lib/adf_diag.py 
+  210  cd /glade/work/richling/cesm-diagnostics/COMPASS/COMPASS-dev/plots/
+  211  cp -r /f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/ f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001_fake/
+  212  cp -r f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/ f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001_fake/
+  213  ls
+  214  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001_fake
+  215  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001_fake/T/ERA5/
+  216  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001_fake/T/ERA5/RF13/
+  217  scratch
+  218  ls
+  219  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/
+  220  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/CVDP_output/
+  221  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.256/
+  222  vi /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/256v234/CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.256/cvdp.out
+  223  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/
+  224  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/key_metrics/
+  225  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/key_metrics/CVDP_output/
+  226  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/key_metrics/CVDP_output/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.247/
+  227  ls /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/key_metrics/
+  228  vi /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/key_metrics/config.yml
+  229  mkdir cupid-dec-03
+  230  cd cupid-dec-03
+  231  git clone --recurse-submodules https://github.com/NCAR/CUPiD.git
+  232  cd CUPiD/
+  233  conda activate cupid-infrastructure
+  234  pip install -e .
+  235  pre-commit install
+  236  cd examples/key_metrics/
+  237  ls
+  238  mv config.yml config_original.yml 
+  239  cp /glade/work/tking/cupid_project/other_cupids/dec1/CUPiD/examples/key_metrics/config.yml ./
+  240  ls
+  241  vi config.yml 
+  242  ../../helper_scripts/generate_adf_config_file.py --cupid-config-loc . --adf-template ../../externals/ADF/config_amwg_default_plots.yaml --out-file ADF_config.yaml
+  243  vi config.yml 
+  244  ../../helper_scripts/generate_adf_config_file.py --cupid-config-loc . --adf-template ../../externals/ADF/config_amwg_default_plots.yaml --out-file ADF_config.yaml
+  245  ls
+  246  cnode
+  247  cd /glade/work/richling/cesm-diagnostics/COMPASS/COMPASS-dev/plots/
+  248  ls
+  249  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001
+  250  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/T/
+  251  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/T/ERA5/
+  252  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/
+  253  cd ../
+  254  ls f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/
+  255  ls f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/T
+  256  ls f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/T/ERA5/
+  257  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau24h.001/
+  258  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau24h.001/T/
+  259  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau24h.001/T/ERA5/
+  260  cd f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau24h.001/T/ERA5/
+  261  mkdir RF13
+  262  mv *.png RF13/
+  263  cd ../../../
+  264  ls
+  265  lsl 8
+  266  lsl 9
+  267  lsl 8
+  268  ls f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/T/ERA5/RF13/
+  269  vi isla_cases.txt 
+  270  rm -f isla_cases.txt 
+  271  vi isla_cases.txt 
+  272  rm -f isla_cases.txt 
+  273  cat isla_cases.txt 
+  274  vi isla_cases.txt 
+  275  cat isla_cases.txt 
+  276  cd /glade/derecho/scratch/richling/data/COMPASS/socrates/nasa/modis/L2/MOD06_L2/2018/050/
+  277  module load gdal hdf4 hdf-eos2
+  278  gdalinfo MOD06_L2.A2018050.2355.061.2018051080832.hdf
+  279  cd /glade/work/richling/ADF/ADF_dev/Justin_ADF_2/ADF>
+  280  cd /glade/work/richling/ADF/ADF_dev/Justin_ADF_2/ADF
+  281  ls
+  282  ls -alt
+  283  ls -alt adf_try_plots/
+  284  rm -rf adf_try_plots/
+  285  ls -alt adf_try_plots/
+  286  ls /glade/derecho/scratch/richling/adf-output/tests/compass-diags/
+  287  ls /glade/derecho/scratch/richling/adf-output/tests/
+  288  ls /glade/derecho/scratch/richling/adf-output/tests/compass-diags/
+  289  ls -alt adf_try_plots/
+  290  ls -alt adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/
+  291  ls -alt adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/
+  292  ls -alt adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/ERA5/
+  293  ls -alt adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/ERA5/RF13/
+  294  adfdev
+  295  git branch
+  296  git checkout -b compass-inform-draft
+  297  ./run_adf_diag --model-state config_compass.yaml 
+  298  npl
+  299  ./run_adf_diag --model-state config_compass.yaml 
+  300  ./run_adf_diag config_derived_vars_update.yaml --model-state config_compass.yaml 
+  301  ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml 
+  302  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml 
+  303  ls
+  304  scratch
+  305  cd compass-cupid/
+  306  ls
+  307  cd CUPiD/
+  308  ca cupid-infrastructure
+  309  cupid-diagnostics -atm
+  310  cd examples/external_diag_packages/
+  311  cupid-diagnostics -atm
+  312  ca cupid-analysis
+  313  cupid-diagnostics -atm
+  314  conda create --name cupid-analysis-compass --clone cupid-analysis
+  315  ca cupid-analysis-compass
+  316  cupid-diagnostics -atm
+  317  conda create --name cupid-infrastructure-compass --clone cupid-infrastructure
+  318  ca cupid-infrastructure-compass
+  319  conda install -c conda-forge ipywidgets
+  320  ca cupid-analysis-compass
+  321  cupid-diagnostics -atm
+  322  ls
+  323  rm -rf computed_notebooks/
+  324  cupid-diagnostics -atm
+  325  scp -r computed_notebooks/* $[tung}:/project/webshare/projects/ADF/cupid-compass/
+  326  scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  327  cupid-webpage
+  328  scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  329  cupid-clean
+  330  cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  331  scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  332  cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  333  cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  334  ls ../../../
+  335  ls ../../../cupid-dec-03_2/
+  336  ls ../../../../cupid-dec-03_2/
+  337  cp ../../../../cupid-dec-03_2/CUPiD/examples/key_metrics/ADF_output/ .
+  338  cp -r ../../../../cupid-dec-03_2/CUPiD/examples/key_metrics/ADF_output/ .
+  339  ls
+  340  cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  341  ls
+  342  ls temp_data/
+  343  ls ../../
+  344  ls ../../cupid
+  345  ls ../../
+  346  ls ../../cime_config/
+  347  ls ../../environments/
+  348  ca cupid-infrastructure && conda install -c conda-forge ipywidgets
+  349  cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  350  ca cupid-analysis
+  351  cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  352  time cupid-clean && cupid-diagnostics -atm && cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  353  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  354  ls
+  355  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  356  scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  357  cnode
+  358  cd /glade/derecho/scratch/richling/compass-cupid/CUPiD/examples/external_diag_packages
+  359  ca cupid-analysis
+  360  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  361  cd /glade/derecho/scratch/richling/cvdp-dev-output
+  362  ls
+  363  ls /glade/work/richling/CVDP-python-dev/CVDP-python
+  364  ls /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  365  ca cvdp-dev && python cli.py /glade/derecho/scratch/richling/cvdp-dev-output
+  366  cd cvdp/
+  367  python cli.py /glade/derecho/scratch/richling/cvdp-dev-output
+  368  python cli.py ./
+  369  cd ../
+  370  cvdp
+  371  cd /glade/work/richling/CVDP-python-dev/CVDP-python
+  372  cd cvdp/
+  373  git branch
+  374  ls
+  375  python cli.py ./
+  376  time python cli.py ./
+  377  cd /glade/campaign/cesm/development/cross-wg/diagnostic_framework/CESM_output_for_testing 
+  378  ls
+  379  rm -rf atm
+  380  rm -rf None
+  381  rm -rf Obs
+  382  cd b.e30_beta02.BLTHIST.ne30_t232.104
+  383  ls
+  384  cd ../
+  385  ld
+  386  ls
+  387  cd CESM_output_for_testing/
+  388  ls
+  389  ls b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.250/
+  390  ls b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.250/atm/
+  391  ls b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.250/atm/proc/
+  392  cd /glade/campaign/cesm/development/cross-wg/diagnostic_framework/CESM_output_for_testing/b.e30_beta02.BLT1850.ne30_t232.104/atm/proc/tseries/regrid
+  393  ls
+  394  cd ../
+  395  ls
+  396  ls regrid/
+  397  chmod 777 regrid/
+  398  ls regrid/
+  399  cd /glade/derecho/scratch/richling/compass-cupid/CUPiD/examples/external_diag_packages
+  400  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  401  ls
+  402  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  403  cp /glade/derecho/scratch/richling/compass-cupid/CUPiD/nblibrary/atm/compass_schematic_2025_12_09.jpg /glade/work/richling/ADF/ADF_dev/Justin_ADF_2/ADF/adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/ERA5/RF13/
+  404  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  405  adfdev
+  406  git branch
+  407  git fetch --all
+  408  git branch -r
+  409  git push -u origin compass-inform-draft
+  410  history
+  411  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml
+  412  npl
+  413  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml
+  414  ls adf_try_plots/
+  415  ls adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/
+  416  ls adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/ERA5/RF13/
+  417  work
+  418  ls
+  419  ls CVDP-LE
+  420  ls cvdp-dev/
+  421  ls cvdp-dev/CVDP/
+  422  git bdranch
+  423  git branch
+  424  cd cvdp-dev/CVDP/
+  425  git branch
+  426  git status
+  427  ls
+  428  conda env list
+  429  ca cvdp-dev
+  430  ls
+  431  ls scripts/
+  432  cd ../../
+  433  ls
+  434  cd CVDP-python-dev/
+  435  ls
+  436  cd CVDP-python/
+  437  ls
+  438  cd cvdp/
+  439  ls
+  440  python cli.py 
+  441  git branch
+  442  cd ../
+  443  ls
+  444  cd ../
+  445  ls
+  446  ls CVDP-python
+  447  ls CVDP-python/my_fork/
+  448  ls CVDP-python/my_fork/CVDP/
+  449  ls CVDP-python/my_fork/CVDP/cvdp/
+  450  ls CVDP-python/
+  451  ls CVDP-python/CVDP-python/
+  452  ls CVDP-python/CVDP-python/cvdp
+  453  cd CVDP-python/CVDP-python/cvdp
+  454  git branch
+  455  cd ../../
+  456  cd ../
+  457  ls
+  458  find . -mindepth 1 -maxdepth 1 -type d -exec bash -c '
+  459    for d; do
+  460      newest=$(find "$d" -type f -printf "%T@\n" 2>/dev/null | sort -nr | head -1)
+  461      printf "%s %s\n" "$newest" "$d"
+  462    done
+  463  ' bash {} + | sort -nr
+  464  cd CVDP-python-dev
+  465  ls
+  466  cd CVDP-python/
+  467  ls
+  468  git branch
+  469  ls
+  470  ls cvdp
+  471  git branch
+  472  git pull
+  473  git fetch
+  474  git branch
+  475  git remote -v
+  476  ls
+  477  cvdp
+  478  cd /glade/work/richling/CVDP-python-dev/CVDP-python
+  479  cd cvdp/
+  480  python cli.py /glade/derecho/scratch/richling/cvdp-dev-output
+  481  git checkout main
+  482  git pull
+  483  python cli.py /glade/derecho/scratch/richling/cvdp-dev-output
+  484  cd ../
+  485  pip install -e .
+  486  cnode
+  487  ls /glade/derecho/scratch/richling/cvdp-dev-output
+  488  ls -alt /glade/derecho/scratch/richling/cvdp-dev-output
+  489  ls /glade/derecho/scratch/richling/cvdp-output/netcdf
+  490  ls /glade/derecho/scratch/richling/cvdp-output/netcdfcd /glade/derecho/scratch/richling/cvdp-output/netcdf
+  491  sls
+  492  ls
+  493  cd /glade/derecho/scratch/richling/cvdp-output/netcdf
+  494  ls
+  495  ncdump -h 1-CESM1-LENS_1-10.cvdp_data.PSL.climo.1979-2013.nc
+  496  ls
+  497  ncdump -h ERA5.cvdp_data.msl.climo.1950-2023.nc
+  498  rm -rf *
+  499  ls
+  500  watch ls
+  501  watch ls /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp/*.png
+  502  ca cvdp-dev
+  503  time python cli.py ./
+  504  time python cli.py output/
+  505  time python cli.py output_2/
+  506  time python cli.py output_3/
+  507  time python cli.py output_4/
+  508  time python cli.py output_5/
+  509  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  510  time python cli.py ./
+  511  ca cvdp-dev
+  512  cnode
+  513  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  514  ls /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  515  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  516  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  517  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  518  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf
+  519  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  520  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  521  cnode
+  522  npl
+  523  time python cli.py output_6/
+  524  rm -rf output*
+  525  time python cli.py output_6/
+  526  cnode
+  527  time python cli.py output_6/
+  528  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  529  time python cli.py output_6/
+  530  cnode
+  531  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  532  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_2/
+  533  ls
+  534  cd ./cvdp/
+  535  ls
+  536  rm -rf *.pn
+  537  ls output_6/
+  538  ls -alt output_6/
+  539  watch ls -alt output_6/
+  540  npl
+  541  time python cli.py output_6/
+  542  rm -rf output_6/
+  543  time python cli.py output_6/
+  544  exit
+  545  npl
+  546  time python cli.py output_6/
+  547  ls output_6/
+  548  ls /glade/work/richling/CVDP-LE/dev/cvdp/
+  549  time python cli.py output_7/
+  550  ls /glade/work/richling/CVDP-LE/dev/cvdp/
+  551  ls /glade/work/richling/CVDP-LE/dev/cvdp/*time*
+  552  exit
+  553  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  554  cnode
+  555  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  556  cnode
+  557  ls -alt cvdp/output_6/
+  558  watch ls -alt cvdp/output_6/
+  559  clear
+  560  watch ls -alt cvdp/output_7/
+  561  ls /glade/work/richling/CVDP-LE/dev/cvdp/
+  562  ls /glade/work/richling/CVDP-LE/dev/cvdp/*time*
+  563  ls -alt cvdp/output_7/
+  564  ls -alt cvdp/output_7/*time*
+  565  watch ls -alt cvdp/output_7/
+  566  npl
+  567  time python cli.py output_8/
+  568  rm -rf output_*
+  569  time python cli.py output_8/
+  570  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  571  ls
+  572  ls ./cvdp/output_8/
+  573  ls -alt ./cvdp/output_8/
+  574  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  575  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  576  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  577  ncdump -h /glade/derecho/scratch/richling/cvdp-output/netcdf_3/1-CESM1-LENS_1-10.cvdp_data.PSL.mm.ts.1979-2013.nc
+  578  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  579  npl
+  580  time python cli.py output_8/
+  581  exit
+  582  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  583  cnode
+  584  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  585  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  586  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  587  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  588  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  589  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/*climo.*
+  590  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  591  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/*climo.*
+  592  npl
+  593  time python cli.py output_8/
+  594  time python cli.py output_9/
+  595  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  596  cnode
+  597  npl
+  598  time python cli.py output_9/rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  599  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  600  time python cli.py output_9/
+  601  time python cli.py output_1/
+  602  ls /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  603  time python cli.py output_1/
+  604  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  605  time python cli.py output_1/
+  606  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  607  time python cli.py output_1/
+  608  ls /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  609  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  610  source ~/.pofile
+  611  source ~/.profile
+  612  ls /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  613  vi ~/.profile
+  614  spurce ~/.profile
+  615  source ~/.profile
+  616  cvdpdev
+  617  cnode
+  618  source ~/.profile
+  619  ls /glade/derecho/scratch/richling/cvdp-output/netcdf_3/
+  620  ls /glade/derecho/scratch/richling/cvdp-output/netcdf_4/
+  621  cd /glade/derecho/scratch/richling/cvdp-output/netcdf_4/
+  622  ls
+  623  ncdump -h CESM2-LE.cvdp_data.PSL.mm.ts.1979-2013.nc
+  624  ncdump -v members CESM2-LE.cvdp_data.PSL.mm.ts.1979-2013.nc
+  625  ncdump -v member CESM2-LE.cvdp_data.PSL.mm.ts.1979-2013.nc
+  626  rm -rf CESM2-LE.cvdp_data.PSL.mm.ts.1979-2013.nc
+  627  rm -rf *
+  628  ls
+  629  rm -rf ERA5.cvdp_data.psl.climo.ts.1950-2023.nc
+  630  rm -rf *
+  631  ls
+  632  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_4/*
+  633  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_4/*
+  634  cd /glade/derecho/scratch/richling/cvdp-output/netcdf_4/
+  635  ls
+  636  ls -alt
+  637  ca cvdp-dev
+  638  time python cli.py output_new_global/
+  639  time python cli.py output_woah
+  640  ca cvdp-dev
+  641  time python cli.py output_woah
+  642  exit
+  643  cd /glade/derecho/scratch/richling/cvdp-output/netcdf_4/
+  644  rm -rf *
+  645  ls
+  646  ls -alt
+  647  rm -rf *
+  648  ls
+  649  rm -rf *
+  650  cd ../netcdf_5
+  651  cd ../
+  652  ls
+  653  cd ./netcdf_ensemble/
+  654  ls
+  655  ls -alt
+  656  source ~/.profile
+  657  ls
+  658  rm -rf *
+  659  ca cvdp-dev
+  660  time python cli.py output_ensemble
+  661  ca cvdp-dev
+  662  exit
+  663  ca cvdp-dev
+  664  time python cli.py output_ensemble
+  665  ca cvdp-dev
+  666  time python cli.py output_ensemble
+  667  ca cvdp-dev
+  668  time python cli.py output_ensemble
+  669  exit
+  670  cvdpdev
+  671  cnode
+  672  ca cvdp-dev
+  673  time python cli.py output_ensemble
+  674  cnode
+  675  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  676  npl
+  677  time python cli.py output_ensemble
+  678  npl
+  679  time python cli.py output_ensemble
+  680  exit
+  681  cvdp-dev
+  682  cvdpdev
+  683  cnode
+  684  npl
+  685  time python cli.py output_ensemble
+  686  exit
+  687  cd > client_loop: send disconnect: Broken pipe
+  688  cvdpdev
+  689  cnode
+  690  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  691  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  692  source ~/.profile
+  693  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  694  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  695  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  696  ls /glade/campaign/cgd/cesm/CESM2-LE/*/proc/tseries/month_1/*/*1251.**.PSL.* > ok.txt
+  697  mv ok.txt cvdp
+  698  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  699  ls -alt cvdp/output_ensemble/
+  700  rm -rf /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  701  ls -alt /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/
+  702  conda env list
+  703  ca my_satpy_env_modis
+  704  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml
+  705  ca compass-env
+  706  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml
+  707  ca npl-2024a
+  708  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml
+  709  ls
+  710  exit
+  711  npl
+  712  time python cli.py output_ensemble
+  713  time python cli.py output_ensemble_2
+  714  exit
+  715  cd /glade/work/richling/ADF/ADF_dev/Justin_ADF_2/ADF/
+  716  gitr branch
+  717  git branch
+  718  cnode
+  719  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp/
+  720  cnode
+  721  ncdump -h /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/CESM2-LE.cvdp_data.PSL.mm.ts.1979-2013.nc
+  722  ncdump -v member /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble/CESM2-LE.cvdp_data.PSL.mm.ts.1979-2013.nc
+  723  cd /glade/derecho/scratch/richling/compass-cupid/CUPiD/examples/external_diag_packages
+  724  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  725  ca cupid-infrastructure
+  726  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  727  ca cupid-analysis
+  728  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  729  scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  730  time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  731  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  732  npl
+  733  time ./run_adf_diag config_PR_compass.yaml --model-state config_compass.yaml
+  734  adfdev
+  735  time ./run_adf_diag config_PR_compass.yaml --campaign-cloud-micro config_compass_cloud_micro.yaml
+  736  ls /glade/derecho/scratch/richling/adf-output/tests/compass-diags/
+  737  ls /glade/derecho/scratch/richling/adf-output/tests/
+  738  ls /glade/derecho/scratch/richling/adf-output/tests/compass-trys
+  739  ls /glade/derecho/scratch/richling/adf-output/tests/compass-try/diag-plot/
+  740  ls /glade/derecho/scratch/richling/adf-output/tests/compass-try/diag-plot/b.e30_beta06.B1850C_LTso.ne30_t232_wgx3.192_10_15_vs_b.e30_beta06.B1850C_LTso.ne30_t232_wgx3.193_10_15/
+  741  ls /glade/derecho/scratch/richling/adf-output/tests/compass-try/diag-plot/b.e30_beta06.B1850C_LTso.ne30_t232_wgx3.192_10_15_vs_b.e30_beta06.B1850C_LTso.ne30_t232_wgx3.193_10_15/website/
+  742  time ./run_adf_diag config_PR_compass.yaml --campaign-cloud-micro config_compass_cloud_micro.yaml
+  743  ls /glade/derecho/scratch/richling/adf-output/tests/compass-diags/
+  744  time ./run_adf_diag config_PR_compass.yaml --campaign-cloud-micro config_compass_cloud_micro.yaml
+  745  ls /glade/derecho/scratch/richling/adf-output/tests/compass-diags/
+  746  ls /glade/u/home/patnaude/inform/composited \ data
+  747  ls /glade/u/home/patnaude/inform/composited\ data/
+  748  cd /glade/derecho/scratch/tking/cupid_file_permission_logs
+  749  ls
+  750  vi wrong_group_permissions.out_richling
+  751  find /glade/campaign/cesm/development/cross-wg/diagnostic_framework/ -type f -user $USER
+  752  find /glade/campaign/cesm/development/cross-wg/diagnostic_framework/ -type d -user $USER | xargs chmod g+ws,o-w
+  753  find /glade/campaign/cesm/development/cross-wg/diagnostic_framework/ -type f -user $USER | xargs chmod -x
+  754  ls *richling*
+  755  vi wrong_group.out_richling
+  756  find /glade/campaign/cesm/development/cross-wg/diagnostic_framework/ -type f -user $USER | xargs chgrp cesm
+  757  chmod -R go+rX /glade/campaign/cesm/development/cross-wg/diagnostic_framework/
+  758  vi wrong_group_permissions.out_richling
+  759  cd /glade/campaign/cesm/development/cross-wg/diagnostic_framework/CESM_output_for_testing/b.e30_alpha07c_cesm.B1850C_LTso.ne30_t232_wgx3.232/atm/proc/climo
+  760  ls
+  761  cd ../../
+  762  cd ../
+  763  ls
+  764  ls b.e30_alpha07g.B1850C_LTso.ne30_t232_wgx3.268/atm/proc/climo
+  765  ls b.e30_alpha07g.B1850C_LTso.ne30_t232_wgx3.266/atm/proc/climo
+  766  adfdev
+  767  cd ../
+  768  ls
+  769  cd Brian_ADF/
+  770  cd ../
+  771  git clone https://github.com/brianpm/ADF.git
+  772  mkdir Brian_ADF
+  773  cd Brian_ADF/
+  774  ls
+  775  rm -rf *
+  776  git clone https://github.com/brianpm/ADF.git
+  777  cd ADF/
+  778  git checkout cloud_regime_analysis
+  779  npl
+  780  cd /glade/derecho/scratch/richling/adf-output/tests/cloud-regime-pr-test/
+  781  ks
+  782  ls
+  783  ls diag-plot/
+  784  ls diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_2001_vs_Obs/
+  785  cd /glade/work/richling/ADF/ADF_dev/Brian_ADF/ADF/
+  786  git branch
+  787  time ./run_adf_diag /glade/u/home/richling/adf_config_files/tests/config_cloudregime.yaml
+  788  alias cnode
+  789  execcasper -A P03010039 -l select=1:ncpus=4:mem=100GB
+  790  cd /glade/derecho/scratch/richling/adf-output/tests/cloud-regime-pr-test-new/
+  791  ls
+  792  ls diag-plot/
+  793  ls diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_2001_vs_Obs/
+  794  ls
+  795  ls regrid/
+  796  ls climo/
+  797  ls climo/f.e30_beta06.FHISTC_LTso.ne30.b183.001/
+  798  ls
+  799  ls timeseries/f.e30_beta06.FHISTC_LTso.ne30.b183.001/
+  800  watch ls
+  801  watch ls diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_2001_vs_Obs/
+  802  ls diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_2001_vs_Obs/
+  803  cd /glade/work/richling/ADF/ADF_dev/Brian_ADF/ADF
+  804  ca cr_npl
+  805  time ./run_adf_diag /glade/u/home/richling/adf_config_files/tests/config_cloudregime.yaml
+  806  cd /glade/derecho/scratch/richling/adf-output/tests/cloud-regime-pr-test-new-2
+  807  ls
+  808  ls diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_1991_vs_Obs/
+  809  cd diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_1991_vs_Obs/
+  810  ls
+  811  watch ls
+  812  watch ls -alt
+  813  ls glade/work/richling/ADF/ADF_dev/Justin_ADF_2/ADF/adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/ERA5/RF13//SOCRATES_PDF_w_by_flight_type_Cloud_regime_Tgm5.png
+  814  ls glade/work/richling/ADF/ADF_dev/Justin_ADF_2/ADF/adf_try_plots/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull/T/ERA5/RF13/
+  815  ls -alt
+  816  watch ls -alt
+  817  adfdev
+  818  execcasper -A P03010039 -l select=1:ncpus=4:mem=100GB
+  819  cd /glade/derecho/scratch/richling/compass-cupid/CUPiD/examples/external_diag_packages/
+  820  ca cupid-analysis
+  821  time cupid-clean && time cupid-diagnostics -atm && time cupid-webpage && scp -r computed_notebooks/* ${tung}:/project/webshare/projects/ADF/cupid-compass/
+  822  cd /glade/derecho/scratch/richling/compass-cupid/CUPiD/examples/external_diag_packages
+  823  cd /glade/work/richling/ADF/ADF_dev/Brian_ADF/ADF/
+  824  scp -r /glade/derecho/scratch/richling/adf-output/tests/cloud-regime-pr-test-new-2/diag-plot/f.e30_beta06.FHISTC_LTso.ne30.b183.001_1990_1991_vs_Obs/website/* ${tung}:/project/webshare/projects/ADF/cosp-adf
+  825  ls /glade/campaign/cesm/cesmdata/cseg/runs/cesm2_0/b.e30_alpha08a.B1850C_LTso.ne30_t232_wgx3.280/cupid-postprocessing/
+  826  ls /glade/campaign/cesm/cesmdata/cseg/runs/cesm2_0/b.e30_alpha08a.B1850C_LTso.ne30_t232_wgx3.280/cupid-postprocessing/ADF_output/
+  827  ls /glade/campaign/cesm/cesmdata/cseg/runs/cesm2_0/b.e30_alpha08a.B1850C_LTso.ne30_t232_wgx3.280/cupid-postprocessing/ADF_output/b.e30_alpha08a.B1850C_LTso.ne30_t232_wgx3.280_2_21_vs_b.e30_alpha07g.B1850C_LTso.ne30_t232_wgx3.271_2_21/
+  828  npl
+  829  time ./run_adf_diag /glade/u/home/richling/adf_config_files/runs/config_CTL_divdamp_fmt_c64126_MCSP_test1_vs_CTL_divdamp_fmt_c64126_MCSP_v0.yaml
+  830  ls /glade/derecho/scratch/cchen/archive/CTL_divdamp_fmt_c64126_MCSP_v0
+  831  ls /glade/derecho/scratch/cchen/archive/CTL_divdamp_fmt_c64126_MCSP_v0/atm/hist/*h0a*
+  832  ls /glade/derecho/scratch/cchen/archive/CTL_divdamp_fmt_c64126_MCSP_test1/atm/hist/*h0a*
+  833  ls /glade/campaign/cesm/cesmdata/cseg/runs/cesm2_0/b.e30_alpha08a.B1850C_LTso.ne30_t232_wgx3.280/
+  834  adfmain
+  835  cd ../
+  836  ls
+  837  cd NCAR_ADF/
+  838  cd ADF/
+  839  git branch
+  840  git pull origin main
+  841  alias cnode
+  842  execcasper -A P03010039 -l select=1:ncpus=4:mem=100GB
+  843  scratch
+  844  cd ../hannay/
+  845  cd archive/
+  846  lsl 10
+  847  ncdump -h /glade/derecho/scratch/cchen/archive/CTL_divdamp_fmt_c64126_MCSP_v0/atm/hist/CTL_divdamp_fmt_c64126_MCSP_v0.cam.h0a.1981-10.nc
+  848  ls /glade/derecho/scratch/richling/adf-output/CTL_divdamp_fmt_c64126_MCSP_test1_vs_CTL_divdamp_fmt_c64126_MCSP_v0/
+  849  ls /glade/derecho/scratch/richling/adf-output/CTL_divdamp_fmt_c64126_MCSP_test1_vs_CTL_divdamp_fmt_c64126_MCSP_v0/diag-plot/
+  850  cd /glade/derecho/scratch/richling/adf-output/CTL_divdamp_fmt_c64126_MCSP_test1_vs_CTL_divdamp_fmt_c64126_MCSP_v0/diag-plot/CTL_divdamp_fmt_c64126_MCSP_test1_1985_1994_vs_CTL_divdamp_fmt_c64126_MCSP_v0_1979_1988/
+  851  ls
+  852  cd /glade/derecho/scratch/richling/adf-output/ADF-data/climo/
+  853  lsl 5
+  854  ls CTL_divdamp_fmt_c64126_MCSP_test1/yrs_1985-1994/
+  855  lsl 5
+  856  lsl 10
+  857  ncdump -h CTL_divdamp_fmt_c64126_MCSP_test1_U_climo.nc
+  858  ncdump -h CTL_divdamp_fmt_c64126_MCSP_test1/CTL_divdamp_fmt_c64126_MCSP_test1_U_climo.nc
+  859  ncdump -h CTL_divdamp_fmt_c64126_MCSP_test1/yrs_1985-1994/CTL_divdamp_fmt_c64126_MCSP_test1_U_climo.nc
+  860  lsl 10
+  861  ls CTL_divdamp_fmt_c64126_MCSP_test1/yrs_1985-1994/
+  862  lsl 10
+  863  ls CTL_divdamp_fmt_c64126_MCSP_v0/yrs_1979_1988/
+  864  watch ls CTL_divdamp_fmt_c64126_MCSP_v0/yrs_1979_1988/
+  865  watch ls -alt CTL_divdamp_fmt_c64126_MCSP_v0/yrs_1979_1988/
+  866  cd /glade/derecho/scratch/richling/adf-output/CTL_divdamp_fmt_c64126_MCSP_test1_vs_CTL_divdamp_fmt_c64126_MCSP_v0/diag-plot/CTL_divdamp_fmt_c64126_MCSP_test1_1985_1994_vs_CTL_divdamp_fmt_c64126_MCSP_v0_1979_1988
+  867  scp -r website/* ${tung}:/project/diagnostics/external/MCSP/CTL_divdamp_fmt_c64126_MCSP_test1_1985_1994_vs_CTL_divdamp_fmt_c64126_MCSP_v0_1979_1988
+  868  cd /glade/work/richling/CVDP-python-dev/CVDP-python/cvdp
+  869  ls
+  870  ls output_ensemble_2
+  871  ls output_ensemble
+  872  ls
+  873  cd home
+  874  ls
+  875  pwd
+  876  git clone https://github.com/justin-richling/INFORM-COMPASS.git
+  877  cd INFORM-COMPASS
+  878  ls
+  879  python scripts/generate_matrix.py
+  880  conda activate npl-2024a
+  881  python scripts/generate_matrix.py
+  882  python scripts/generate_exp_matrix.py
+  883  conda activate npl-2024a
+  884  python scripts/generate_exp_matrix.py
+  885  python
+  886  python scripts/generate_exp_matrix.py
+  887  python scripts/generate_exp_matrix.py && git add docs/run_matrix.json && git commit -m "Update experiment matrix" && git push origin main
+  888  git stauts
+  889  git status
+  890  git rm --cached config/runs.yml
+  891  git commit -m "Remove tracked file"
+  892  git push origin main
+  893  python scripts/generate_exp_matrix.py && git add docs/run_matrix.json && git commit -m "Update experiment matrix" && git push origin main
+  894  ls /glade/derecho/scratch/islas/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001
+  895  cd /glade/derecho/scratch/islas/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001
+  896  ls
+  897  ls bld/
+  898  vi bld/CASEROOT
+  899  ls bld/atm
+  900  vi bld/atm.bldlog.250928-214807.gz 
+  901  ls
+  902  ls ../archive/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/
+  903  ls ../archive/f.e21.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_tau12h.001/atm/
+  904  ls bld/
+  905  scratch
+  906  mkdir f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE4
+  907  mkdir f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE3
+  908  mkdir f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE2
+  909  mkdir f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE
+  910  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in && cd ../../
+  911  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  912  cd ../../
+  913  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  914  ls run/
+  915  cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./
+  916  cd ../../
+  917  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE2 && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  918  ls
+  919  lsl 10
+  920  cd richling
+  921  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE2 && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  922  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE3 && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  923  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE4 && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  924  ls f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE/run/
+  925  cd f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001_FAKE && mkdir run && cd run && cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./ && cd ../../
+  926  cd run
+  927  ls
+  928  cp /glade/derecho/scratch/islas/f.e30_cam6_4_120.FHIST_BGC.f09_f09_mg17.SOCRATES_nudgeUVTfull_withCOSP_tau6h.001/run/atm_in ./
+  929  ls
+  930  conda activate npl-2024a
+  931  python scripts/generate_exp_matrix.py
+  932  history
+  933  source ~/.profile
+  934  python scripts/generate_exp_matrix.py
+  935  git status
+  936  python scripts/generate_exp_matrix.py
+  937  ls /glade/derecho/scratch/richling/cases/F2000climo.f09_f09_mg17.window.exp.6hrInit.R13.003/
+  938  python scripts/generate_exp_matrix.py
+  939  git add docs/run_matrix.json && git commit -m "Add new CESM run" && git push origin
+  940  python scripts/generate_exp_matrix.py && git add docs/run_matrix.json && git commit -m "Add new CESM run" && git push origin
+  941  ls /glade/derecho/scratch/richling/cases/
+  942  ls /glade/derecho/scratch/richling/cases/F2000climo.f09_f09_mg17.window.exp.cosp.120hrInit.R13.003/
+  943  python scripts/generate_exp_matrix.py && git add docs/run_matrix.json && git commit -m "Add new CESM run" && git push origin
+  944  python scripts/generate_exp_matrix.py && git add docs/run_matrix.json && git commit -m "Remove deprecated CESM run" && git push origin
+  945  python scripts/generate_exp_matrix.py push-github
+  946  git stauts
+  947  git status
+  948  git push origin
+  949  git push origin main
+  950  git fetch origin
+  951  git rebase origin/main
+  952  git rebase --continue
+  953  python scripts/generate_exp_matrix.py push-github
+  954  ls
+  955  cd scripts/
+  956  ls
+  957  cd ../
+  958  tree
+  959  python scripts/generate_exp_matrix.py push-github
+  960  ls
+  961  python scripts/generate_exp_matrix.py push-github
+  962  echo "# trigger rebuild" >> README2.md
+  963  git add README2.md
+  964  git commit -m "Trigger fresh GitHub Pages build"
+  965  git push origin main
+  966  npl
+  967  python
+  968  python test.py 
+  969  nohup python test.py  &
+  970  ls
+  971  python test.py 
+  972  python scripts/generate_exp_matrix.py push-github
+  973  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  974  python scripts/generate_exp_matrix.py push-github
+  975  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  976  python scripts/generate_exp_matrix.py push-github
+  977  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  978  python scripts/generate_exp_matrix.py push-github
+  979  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  980  python scripts/generate_exp_matrix.py push-github
+  981  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  982  python scripts/generate_exp_matrix.py push-github
+  983  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  984  python scripts/generate_exp_matrix.py push-github
+  985  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  986  python scripts/generate_exp_matrix.py push-github
+  987  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  988  python scripts/generate_exp_matrix.py push-github
+  989  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  990  python scripts/generate_exp_matrix.py push-github
+  991  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  992  python scripts/generate_exp_matrix.py push-github
+  993  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  994  python scripts/generate_exp_matrix.py push-github
+  995  scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  996  python scripts/generate_exp_matrix.py push-github && scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  997  python scripts/generate_exp_matrix.py && scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  998  python scripts/generate_exp_matrix.py push-github && scp -r docs/* ${tung}:/project/webshare/projects/ADF/inform-matrix/
+  999  scp -r * richling@data-access.ucar.edu:/Users/chowdahead/NCAR/
+ 1000  cd ../
+ 1001  cd ../../work/richling/
+ 1002  du -hs
+ 1003  ls
+ 1004  exit
+ 1005  du -hs ./
+ 1006  ls
+ 1007  ls -alt
+ 1008  cd ../
+ 1009  cd ../../work/richling
+ 1010  du -hs
+ 1011  work
+ 1012  lsl 10
+ 1013  ls
+ 1014  cd CVDP-python-dev
+ 1015  ls
+ 1016  cd CVDP-python/
+ 1017  ls
+ 1018  cd cvdp/
+ 1019  ls
+ 1020  history
+ 1021  history > history_2026.txt

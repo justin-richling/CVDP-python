@@ -21,22 +21,19 @@ import cvdp_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 
 
-def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
-    nh_vars = ["NAM"]
-    sh_vars = ["SAM", "PSA1", "PSA2"]
+def polar_indmemdiff_latlon_plot(vn, var, runs, arr, ptype, plot_dict, title):
+    nh_vars = ["NAM","psl"]
+    sh_vars = ["SAM", "PSA1", "PSA2","psl"]
 
     y_title = .715
 
     # Get variable plot info
     #-----------------------
     plot_info = plot_dict
+    run = runs[0]
 
     # plot contour range
     levels = None
-
-    #arr = arr.sel(season=season)
-
-
     if "diff_levels_linspace" in plot_info:
         #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
         levels = np.linspace(*plot_info["diff_levels_linspace"])
@@ -45,44 +42,38 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         levels = np.arange(*plot_info["diff_levels_range"])
     if "diff_levels_list" in plot_info:
         #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
-        levels = np.arange(plot_info["diff_levels_list"])
+        levels = np.array(plot_info["diff_levels_list"])
+        good_list = True
     #print("type(levels)",type(levels))
-    if not isinstance(levels,np.ndarray):
+    if not isinstance(levels,np.ndarray) and not good_list:
         diff_max = arr.max().item()
         diff_min = arr.min().item()
         levels = np.linspace(diff_min, diff_max, 20)
-    #print(arr.max().item())
-    #print(arr.min().item())
-    # colorbar ticks
-    ticks = plot_info.get("diff_ticks_range",levels)
-    if isinstance(ticks,list):
-        ticks = np.arange(*ticks)
-    """
-    diff_levels_range: [-8, 9, 1] #[-10,11,1]
-    diff_ticks_range: [-8, 9, 1]
-    diff_cbarticks_range: [-7, 8, 1]
-    """
 
-
-    #cbarticks = plot_info.get("diff_cbarticks_range", levels)
     cbarticks = plot_info.get("diff_cbar_labels", levels)
-    """if isinstance(cbarticks,list):
-        cbarticks = np.arange(*cbarticks)
-    #plot_info.get("diff_cbarticks", None)
-    else:
-        if cbarticks is None:
-            cbarticks = ticks"""
-    #print("\tPOLAR: cbarticks diff plot",ptype,cbarticks)
-    #print("\tPOLAR: ticks diff plot",ptype,ticks)
+    """# colorbar ticks
+    #ticks = plot_info.get("diff_ticks_range",levels)
+    #if isinstance(ticks,list):
+    #    ticks = np.arange(*ticks)
+    # colorbar ticks
+    if "diff_ticks_list" in plot_info:
+        ticks = plot_info.get("diff_ticks_list",levels)
+    elif "diff_ticks_linspace" in plot_info:
+        ticks = np.linspace(*plot_info.get("diff_ticks_linspace",levels))
+    elif "diff_ticks_range" in plot_info:
+        ticks = plot_info.get("diff_ticks_range",levels)
+    if isinstance(ticks,list) and len(ticks)==3:
+        ticks = np.arange(*ticks)"""
 
     # color map
-    cmap = plot_info.get("diff_cmap",plot_info["cmap"])
-    if not cmap in plt.colormaps():
-        #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+    cmap = plot_info.get("diff_cmap","PuOr")
+    if cmap not in plt.colormaps():
         cmap = get_NCL_colormap(cmap, extend='None')
 
+    #print("arr",arr,"\n_-_-_-_-_-_-_-_-_-_-_-")
     # get units
-    unit = arr.units.values
+    unit = arr.units#.values
+    
 
     # Set up figure and axes
     if var in nh_vars:
@@ -122,16 +113,6 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         circle = mpath.Path(verts * radius + center)
         axs.set_boundary(circle, transform=axs.transAxes)
 
-        # Data years
-        #syr = finarrs[vn].time[0].dt.year.values
-        #eyr = finarrs[vn].time[-1].dt.year.values
-
-        # Run name
-        #run = finarrs[vn].run
-
-        #arr = arrs
-
-        #lon_idx = arr.dims.index('lon')
         wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
         lat = arr.lat
 
@@ -175,20 +156,6 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
         axs.coastlines('50m', color="#b5b5b5", alpha=0.5)
         axs.set_title(run, loc='center', fontdict={'fontsize': 20, 'color': '#0c80ab'}, y=1.07)
 
-        #yrs_text = f'{syr}-{eyr}'
-        #axs.text(0.0, 0.93, yrs_text, transform=axs.transAxes, fontsize=12, verticalalignment='top')
-
-        """
-        madeup_percent = "23.6%"
-        r_text = madeup_percent
-        axs.text(.85, 0.93, r_text, transform=axs.transAxes, fontsize=12, verticalalignment='top')
-
-        if r == 0:
-            madeup_r = f"r={0.77}"
-            r_text = madeup_r
-            axs.text(.85, 0.9, r_text, transform=axs.transAxes, fontsize=12, verticalalignment='top')
-        """
-
     axins = inset_axes(axs, width="120%", height="5%", loc='lower center', borderpad=-9)
     tick_font_size = 16
 
@@ -199,7 +166,7 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
             #print("ts trends cbarticks",cbarticks)
 
             # Define specific tick locations for the colorbar
-            ticks = levels
+            ticks = cbarticks
             # Create a list of labels where only the selected labels are shown
             tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
         if ptype == "spatialmean":
@@ -208,13 +175,13 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
             #print("ts spatialmean cbarticks",cbarticks)
 
             # Define specific tick locations for the colorbar
-            ticks = levels
+            ticks = cbarticks
             # Create a list of labels where only the selected labels are shown
             tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     else:
-        #cbarticks = ticks
+        ticks = cbarticks
         #print("cbarticks",cbarticks)
-        tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
+        #tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
         """tick_labels = []
         for loc in ticks:
             if str(int(loc)) in cbarticks:
@@ -231,28 +198,17 @@ def polar_indmemdiff_latlon_plot(vn, var, run, arr, ptype, plot_dict, title):
     # Set up colorbar
     #----------------
     cb = fig.colorbar(img, orientation='horizontal',
-                     cax=axins,
-                     ticks=ticks
-                     )
-    # Set tick label font size
-    tick_font_size = 16
+                        cax=axins, ticks=ticks, extend='both')
+                        #cax=axins, ticks=tick_labels, extend='both')
 
     # Format colorbar
-    #----------------
-    # Set the ticks on the colorbar
-    cb.set_ticks(ticks)
-        
-    # 
-    cb.set_ticklabels(tick_labels)
-
-    # Set title of colorbar to units
-    cb.ax.set_xlabel(unit,fontsize=18)
-
+    #----------------        
     # Set tick label size and remove the tick lines (optional)
-    cb.ax.tick_params(labelsize=16, size=0)
-
+    cb.ax.tick_params(labelsize=12, size=0)
     # Remove border of colorbar
-    cb.outline.set_visible(False)
+    #cb.outline.set_visible(False)
+    cb.outline.set_edgecolor("grey")
+    cb.outline.set_linewidth(0.6)
 
     # Add CVDP watermark
     fig.text(0.95, 0.77, "$\\copyright$ CVDP-LE", fontsize=10, color='#b5b5b5', weight='bold', 
@@ -275,6 +231,11 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     nrows = 2
     ncols = 1
 
+    nh_vars = ["NAM"]+["psl"]
+    sh_vars = ["SAM", "PSA1", "PSA2"]+["psl"]
+    eof_vars = nh_vars+sh_vars
+    eof_vars = np.unique(eof_vars).tolist()
+
     # Format spacing
     hspace = 0.6
     y_title = .97
@@ -282,6 +243,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     # Get variable plot info
     plot_info = plot_dict
 
+    # Plot contour range
     # Plot contour range
     levels = None
     if "contour_levels_linspace" in plot_info:
@@ -291,36 +253,42 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
         levels = np.arange(*plot_info["contour_levels_range"])
     if "contour_levels_list" in plot_info:
-        #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
-        levels = np.arange(plot_info["contour_levels_list"])
-    if not isinstance(levels,np.ndarray):
+        #print('plot_info["contour_levels_list"]',vn,"\n",plot_info["contour_levels_list"])
+        levels = np.array(plot_info["contour_levels_list"])
+        good_list = True
+    if not isinstance(levels,np.ndarray) and not good_list:
         arr_max = arrs[0].max().item()
-        arr_min = arr[0].min().item()
+        arr_min = arrs[0].min().item()
         levels = np.linspace(arr_min, arr_max, 20)
+    #levels = np.linspace(-1,1,20)
+    #print("AHHHHHH INDMEM","levels",levels,)
 
+    cbarticks = plot_info.get("cbar_labels", levels)
     # colorbar ticks
-    ticks = plot_info.get("diff_range_list",levels)
+    if "ticks_list" in plot_info:
+        ticks = plot_info.get("ticks_list",levels)
+    elif "ticks_linspace" in plot_info:
+        ticks = np.linspace(*plot_info.get("ticks_linspace",levels))
+    elif "ticks_range" in plot_info:
+        ticks = plot_info.get("ticks_range",levels)
+    if isinstance(ticks,list) and len(ticks)==3:
+        ticks = np.arange(*ticks)
+    #print("AHHHHHH INDMEM 2","ticks",ticks,)
 
-
-    cbarticks = plot_info.get("diff_cbarticks", plot_info.get("cbarticks", None))
-    if cbarticks is None:
-        cbarticks = ticks
-
-    # Color map
-    cmap = plot_info.get("diff_cmap",plot_info["cmap"])
-    if not cmap in plt.colormaps():
-        #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
+    # color map
+    cmap = plot_info["cmap"]
+    if cmap not in plt.colormaps():
         cmap = get_NCL_colormap(cmap, extend='None')
 
     # Units
-    unit = arrs[0].units.values
+    unit = arrs[0].units
 
     # Define projection and extent
-    if var == "NAM" or var == "PNO" or var == "PNA":
+    if var == "NAM" or var == "PNO" or var == "PNA" or var == "psl":
         proj = ccrs.NorthPolarStereo(central_longitude=0)
         extent = [-180, 180, 20, 90]
         space = 17
-    if var == "SAM" or var == "PSA1" or var == "PSA2":
+    if var == "SAM" or var == "PSA1" or var == "PSA2" or var == "psl":
         proj =ccrs.SouthPolarStereo(central_longitude=0)
         extent = [-180, 180, -20, -90]
         space = -17
@@ -331,9 +299,8 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width, fig_height), facecolor='w', edgecolor='k',
                             sharex=True, sharey=True, subplot_kw={"projection": proj})
 
-    #img = []
-    #for r in range(nrows):
-     # Set empty list for contour plot objects
+
+    # Set empty list for contour plot objects
     img = []
     for i,r in enumerate([1,0]): # Plot obs first (second array in list) then case (first array in list)
         axs[i].set_extent(extent, ccrs.PlateCarree())
@@ -344,18 +311,17 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         axs[i].set_boundary(circle, transform=axs[i].transAxes)
 
         arr = arrs[r]#.sel(season=season)
-        if var == "NAM":
-            arr = arr*-1
-
         # Get start and end years for run
-        syr = arr.syr.values
-        eyr = arr.eyr.values
+        #print("WHAT IS HAPPENING:",arr,"WHAT IS HAPPENING:")
+        syr = arr.yrs[0]#.syr.values
+        eyr = arr.yrs[-1]#.eyr.values
         yrs_text = f'{syr}-{eyr}'
 
         # Run name
-        run = arr.run.values
+        run = arr.run
 
-
+        if var == "NAM":
+            arr = arr*-1
         lon_idx = arr.dims.index('lon')
         wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
         lat = arr.lat
@@ -474,27 +440,30 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
     y_title = .72
     sub_text_size = 11
 
-    nh_vars = ["NAM"]
-    sh_vars = ["SAM", "PSA1", "PSA2"]
+    nh_vars = ["NAM"]#+["psl"]
+    sh_vars = ["SAM", "PSA1", "PSA2"]#+["psl"]
     eof_vars = nh_vars+sh_vars
+    eof_vars = np.unique(eof_vars).tolist()
 
     # Get variable plot info
     #-----------------------
     plot_info = plot_dict
 
     # get units
-    unit = arrs[0].units.values
+    unit = arrs[0].units#.values
 
     # Set up figure and axes
     if var in nh_vars:
         proj = ccrs.NorthPolarStereo(central_longitude=0)
         extent = [-180, 180, 20, 90]
         space = 14 #16.5
-    if var in sh_vars:
+    elif var in sh_vars:
         proj = ccrs.SouthPolarStereo(central_longitude=0)
         extent = [-180, 180, -20, -90]
         space = -14 #-16.5
-
+    else:
+        print("ummm",var)
+        #raise ValueError(f"Variable {var} not recognized as polar variable.")
     # Set up plot
     #------------
     nrows = 1
@@ -535,34 +504,8 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
         axs[r].coastlines('50m', color="#b5b5b5", alpha=0.5)
 
         if r == 2:
-            arr_diff = arr_diff#.sel(season=season)
+            arr_diff = arr_diff
             levels = None
-            """#levels = np.arange(*levels)
-            if "diff_range_list" in plot_info:
-                levels = plot_info["diff_range_list"]
-            if not levels:
-                #diff = arrs[0]-arrs[1]
-                diff = arr_diff
-                diff_max = diff.max().item()
-                diff_min = diff.min().item()
-                levels = np.linspace(diff_min, diff_max, 20)
-            
-
-
-            #diff = arr_diff
-            #diff_max = diff.max().item()
-            #diff_min = diff.min().item()
-            #levels = np.linspace(-8, 8, 24)
-
-            #print("polar ensemble r=2 (diff) levels:",levels,"\n\n")
-            # colorbar ticks
-            #print('plot_info["diff_ticks_range"]',plot_info["diff_ticks_range"],"\n")
-            #ah = plot_info.get("diff_ticks_range",levels)
-            #print('plot_info.get("diff_ticks_range",levels)',ah,"\n")
-            #ticks = np.arange(*ah)
-            cbarticks = plot_info.get("diff_cbarticks_range", plot_info.get("cbarticks", None))
-            if cbarticks is None:
-                cbarticks = ticks"""
 
             if "diff_levels_linspace" in plot_info:
                 #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
@@ -572,22 +515,31 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
                 levels = np.arange(*plot_info["diff_levels_range"])
             if "diff_levels_list" in plot_info:
                 #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
-                levels = np.arange(plot_info["diff_levels_list"])
+                levels = np.array(plot_info["diff_levels_list"])
+                good_list = True
             #print("type(levels)",type(levels))
-            if not isinstance(levels,np.ndarray):
+            if not isinstance(levels,np.ndarray) and not good_list:
                 diff_max = arr.max().item()
                 diff_min = arr.min().item()
                 levels = np.linspace(diff_min, diff_max, 20)
-            #print(arr.max().item())
-            #print(arr.min().item())
-            # colorbar ticks
-            ticks = plot_info.get("diff_ticks_range",levels)
-            if isinstance(ticks,list):
-                ticks = np.arange(*ticks)
+
             cbarticks = plot_info.get("diff_cbar_labels", levels)
+            # colorbar ticks
+            #ticks = plot_info.get("diff_ticks_range",levels)
+            #if isinstance(ticks,list):
+            #    ticks = np.arange(*ticks)
+            # colorbar ticks
+            if "diff_ticks_list" in plot_info:
+                ticks = plot_info.get("diff_ticks_list",levels)
+            elif "diff_ticks_linspace" in plot_info:
+                ticks = np.linspace(*plot_info.get("diff_ticks_linspace",levels))
+            elif "diff_ticks_range" in plot_info:
+                ticks = plot_info.get("diff_ticks_range",levels)
+            if isinstance(ticks,list) and len(ticks)==3:
+                ticks = np.arange(*ticks)
 
             # color map
-            cmap = plot_info.get("diff_cmap",plot_info["cmap"])
+            cmap = plot_info.get("diff_cmap","PuOr")
             if not cmap in plt.colormaps():
                 #print(f"Difference colormap {cmap} is NOT a valid matplotlib colormap. Trying to build from NCL...")
                 cmap = get_NCL_colormap(cmap, extend='None')
@@ -601,22 +553,30 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
                 #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
                 levels = np.arange(*plot_info["contour_levels_range"])
             if "contour_levels_list" in plot_info:
-                #print('plot_info["contour_levels_list"]',plot_info["contour_levels_list"])
-                levels = np.arange(plot_info["contour_levels_list"])
-            if not isinstance(levels,np.ndarray):
-                arr_max = arr.max().item()
-                arr_min = arr.min().item()
+                #print('plot_info["contour_levels_list"]',vn,"\n",plot_info["contour_levels_list"])
+                levels = np.array(plot_info["contour_levels_list"])
+                good_list = True
+            if not isinstance(levels,np.ndarray) and not good_list:
+                arr_max = arrs[0].max().item()
+                arr_min = arrs[0].min().item()
                 levels = np.linspace(arr_min, arr_max, 20)
-            print("POLAR Ensemble Cases levels",levels)
-            # colorbar ticks
-            ticks = np.arange(*plot_info["ticks_range"])
-            #print("POLAR Ensemble Cases ticks",ticks)
+            #levels = np.linspace(-1,1,20)
+            #print("AHHHHHH",r,"levels",levels,)
 
-            cbarticks = plot_info.get("cbarticks_range", None)
-            if cbarticks is None:
-                cbarticks = ticks
-            else:
-                cbarticks = np.arange(*plot_info["cbarticks_range"])
+            cbarticks = plot_info.get("cbar_labels", levels)
+            # colorbar ticks
+            if "ticks_list" in plot_info:
+                ticks = plot_info.get("ticks_list",levels)
+            elif "ticks_linspace" in plot_info:
+                ticks = np.linspace(*plot_info.get("ticks_linspace",levels))
+            elif "ticks_range" in plot_info:
+                ticks = plot_info.get("ticks_range",levels)
+            if isinstance(ticks,list) and len(ticks)==3:
+                ticks = np.arange(*ticks)
+            #print("AHHHHHH 2",r,"ticks",ticks,)
+            # colorbar ticks
+            #ticks = np.arange(*plot_info["ticks_range"])
+
 
             # color map
             cmap = plot_info["cmap"]
@@ -645,8 +605,8 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
 
         # Difference plot
         if r == 2:
-            arr = arr_diff#.sel(season=season)
-            run = f"{arrs[0].run.values} - {arrs[1].run.values}"
+            arr = arr_diff
+            run = f"{arrs[0].run} - {arrs[1].run}"
             yrs_text = ''
         # End if
 
@@ -655,13 +615,11 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             arr = arrs[r]#.sel(season=season)
 
             # Get run name
-            #TODO: run names need to be better to get
-            run = arr.run.values
-            #run = f"{finarrs[r].run}"
+            run = arr.run
 
             # Get start and end years for run
-            syr = arr.syr.values
-            eyr = arr.eyr.values
+            syr = arr.yrs[0]
+            eyr = arr.yrs[-1]
             yrs_text = f'{syr}-{eyr}'
             #if debug:
             #    print(yrs_text,"\n")
@@ -703,9 +661,9 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
         if (vn == "ts") and (ptype == "spatialmean") and (r in [0,1]):
             #ticks = plot_info["ticks"][::2]
             cbarticks = cbarticks[::2]
-        if vn == "psl":
-            #ticks = plot_info["ticks"][::2]
-            cbarticks = cbarticks[::2]
+        #if vn == "psl":
+        #    #ticks = plot_info["ticks"][::2]
+        #    cbarticks = cbarticks[::2]
 
         # Create a dictionary with arguments for contourf
         contourf_args = {'wrap_lon': wrap_lon, 'lat': lat,
@@ -786,12 +744,12 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
             elif vn == "psl":
                 if ptype == "spatialmean":
                     # Define specific tick locations for the colorbar
-                    ticks = levels
+                    ticks = cbarticks
                     # Create a list of labels where only the selected labels are shown
                     tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
                     #tick_labels = [str(v) if v <= 1 else str(int(v)) for v in ticks]
                 else:
-                    cbarticks = ticks
+                    ticks = cbarticks
                     tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
             else:
                 tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
@@ -799,7 +757,7 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
         else:
             # colorbar ticks for Rank
             cbarticks = [0,5,10,20,80,90,95,100]
-            ticks = rank_levs
+            ticks = cbarticks
             # Create a list of labels where only the selected labels are shown
             tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
         # End if
@@ -813,13 +771,13 @@ def polar_ensemble_plot(arrs, arr_diff, vn, var, ptype, plot_dict, title, debug=
         #----------------
         # Set the ticks on the colorbar
         cb.set_ticks(ticks)
-        if r == 0 or r==1:
-            print("POLAR Ensemble Cases colorabar ticks",r, ticks)
+        #if r == 0 or r==1:
+            #print("POLAR Ensemble Cases colorabar ticks",r, ticks)
         
         # 
         cb.set_ticklabels(tick_labels)
-        if r == 0 or r==1:
-            print("POLAR Ensemble Cases colorabar tick_labels",r, tick_labels)
+        #if r == 0 or r==1:
+            #print("POLAR Ensemble Cases colorabar tick_labels",r, tick_labels)
 
         # Set title of colorbar to units
         cb.ax.set_xlabel(unit,fontsize=18)

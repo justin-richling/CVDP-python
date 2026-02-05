@@ -48,15 +48,6 @@ def main():
         var_configs = args.c[0]
 
     from pathlib import Path
-    """def check_or_save_nc(save_loc, clobber, var_data_array=None):
-        if Path(save_loc).is_file() and not clobber:
-            var_data_array = xr.open_mfdataset(save_loc,coords="minimal", compat="override", decode_times=True)
-            return var_data_array
-        else:
-            #var_data_array = read_datasets(paths, ds_info["variable"], [syr, eyr], mems)
-            #Path(save_loc).unlink(missing_ok=True)
-            #var_data_array.to_netcdf(save_loc)
-            return None"""
     
     #save_loc.mkdir(parents=True, exist_ok=True)
     #from io import get_input_data
@@ -69,62 +60,44 @@ def main():
     print(list(ref_datasets.keys()))
     ref_names = list(ref_datasets.keys())
     sim_names = list(sim_datasets.keys())
-    ref_0_name = ref_names[0]
-    sim_0_name  = sim_names[0]
+    print("Reference Names:",ref_names)
+    print("Simulation Names:",sim_names,"\n")
 
     vns = ["psl"]
     for vn in vns:
+        kwargs = {}
         #print(f"\nProcessing variable: {vn}\n")
-        #ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts = mean_seasonal_calc(ref_datasets[ref_0][vn], sim_datasets[sim_0][vn], vn)
-        #for ref_0 in ref_names:
-        for ref_0 in [ref_0_name]:
-            print("ref_0",ref_0)
-            print("OH BOY",ref_datasets[ref_0][vn])
-            #for sim_0 in [sim_0_name]:
-            if 1==1:
-                #sim_0_name, sim_datasets[sim_0][vn]
-                data_dict = mean_seasonal_calc(ref_0_name, ref_datasets[ref_0][vn],
+        for ref_name in ref_names:
+            print(f"Trying reference {ref_name} for climatologies")
+            data_dict = mean_seasonal_calc(ref_name, ref_datasets[ref_name][vn],
                                                vn, config_dict)
-                ref_seas_avgs = data_dict["seas_avgs"]
-                ref_season_anom_avgs = data_dict["season_anom_avgs"]
-                ref_seas_ts = data_dict["seas_ts"]
-        for sim_0 in [sim_0_name]:
-            print("sim_0",sim_0)
-            print("OH BOY",sim_datasets[sim_0][vn])
-            #for sim_0 in [sim_0_name]:
-            if 1==1:
-                #sim_0_name, sim_datasets[sim_0][vn]
-                data_dict = mean_seasonal_calc(sim_0_name, sim_datasets[sim_0][vn],
+            kwargs[f"{ref_name}_season_trnd_avgs"] = ref_datasets[ref_name][vn]
+            ref_seas_ts = data_dict["seas_ts"]
+            kwargs[ref_name] = ref_seas_ts
+            if "members" in ref_seas_ts.attrs:
+                members = ref_seas_ts.attrs["members"]
+                for member in members:
+                    kwargs[f"{ref_name}{member[:-1]}"] = data_dict[f"seas_ts{member[:-1]}"]
+        for sim_name in sim_names:
+            print(f"Trying simulation {sim_name} for climatologies")
+            data_dict = mean_seasonal_calc(sim_name, sim_datasets[sim_name][vn],
                                                vn, config_dict)
-                sim_seas_avgs = data_dict["seas_avgs"]
-                sim_season_anom_avgs = data_dict["season_anom_avgs"]
-                sim_seas_ts = data_dict["seas_ts"]
-        kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
-                        "ref_seas_ts":ref_seas_ts, "sim_seas_ts":sim_seas_ts,
-                        "ref_season_anom_avgs":ref_season_anom_avgs, "sim_season_anom_avgs":sim_season_anom_avgs,
-                        "vn": vn}
+            kwargs[f"{sim_name}_season_trnd_avgs"] = sim_datasets[sim_name][vn]
+            sim_seas_ts = data_dict["seas_ts"]
+            kwargs[sim_name] = sim_seas_ts
+            if "members" in sim_seas_ts.attrs:
+                members = sim_seas_ts.attrs["members"]
+                for member in members:
+                    kwargs[f"{sim_name}{member[:-1]}"] = data_dict[f"seas_ts{member[:-1]}"]
+
+        kwargs["ref_seas_ts"] = ref_seas_ts
+        kwargs["sim_seas_ts"] = sim_seas_ts
+        #kwargs["ref_season_trnd_avgs"] = ref_season_trnd_avgs
+        #kwargs["sim_season_trnd_avgs"] = sim_season_trnd_avgs
+        kwargs["vn"] = vn
+        kwargs["sim_names"] = sim_names
+        kwargs["ref_names"] = ref_names
         graphics(plot_loc, **kwargs)
-        '''#for ref_0 in ref_names:
-        for ref_0 in [ref_0_name]:
-            print("ref_0",ref_0)
-            print("OH BOY",ref_datasets[ref_0][vn])
-            for sim_0 in [sim_0_name]:
-                data_dict = mean_seasonal_calc(ref_0_name, ref_datasets[ref_0][vn],
-                                               sim_0_name, sim_datasets[sim_0][vn],
-                                               vn, config_dict)
-                ref_seas_avgs = data_dict["ref_seas_avgs"]
-                sim_seas_avgs = data_dict["sim_seas_avgs"]
-                ref_season_anom_avgs = data_dict["ref_season_anom_avgs"]
-                sim_season_anom_avgs = data_dict["sim_season_anom_avgs"]
-                ref_seas_ts = data_dict["ref_seas_ts"]
-                sim_seas_ts = data_dict["sim_seas_ts"]
-
-                kwargs = {"ref_seas":ref_seas_avgs, "sim_seas":sim_seas_avgs,
-                        "ref_seas_ts":ref_seas_ts, "sim_seas_ts":sim_seas_ts,
-                        "ref_season_anom_avgs":ref_season_anom_avgs, "sim_season_anom_avgs":sim_season_anom_avgs,
-                        "vn": vn}
-                graphics(plot_loc, **kwargs)'''
-
 
 if __name__ == '__main__':
     main()

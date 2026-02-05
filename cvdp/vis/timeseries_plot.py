@@ -11,6 +11,7 @@ from matplotlib.ticker import MultipleLocator
 
 #def timeseries_plot(var, season, test, obs):
 def timeseries_plot(var, test_da, obs_da):
+    print("\t\tIS THIS EVEN TRYGIN TO MAKE TIMESERIES PLOT?")
     season = "DJF"
     testz = test_da#.sel(season="DJF")
     obsz = obs_da#.sel(season="DJF")
