@@ -46,11 +46,13 @@ ANLYS_TYPES = ["spatialmean", "trends", "spatialstddev"]
 #ANLYS_TYPES = ["spatialmean", "trends"]
 #ANLYS_TYPES = ["trends"]
 #ANLYS_TYPES = ["spatialmean"]
+
 MAP_TYPES = ["global", "polar", "timeseries"]
 MAP_TYPES = ["polar", "timeseries"]
 MAP_TYPES = ["polar"]
 MAP_TYPES = ["timeseries"]
 MAP_TYPES = ["global"]
+
 PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 #PLOT_TYPES = ["summary"]
 #PLOT_TYPES = ["summary","indmem"]
@@ -175,6 +177,7 @@ def graphics(plot_loc, **kwargs):
 
                     figs = []
                     names = []
+
                     # NPI case
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
                         var = "NPI"
@@ -196,6 +199,7 @@ def graphics(plot_loc, **kwargs):
                         if fig:
                             figs.append((fig, name))
                     #print("\t  Season: ", season)
+                    """
                     # EOF case
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
                         for var in EOF_VARS:
@@ -229,8 +233,9 @@ def graphics(plot_loc, **kwargs):
                             fig = plot_dispatch(plot_type, ptype, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
                             if fig:
                                 figs.append((fig, name))
+                    """
                     # Standard seasonal diagnostics
-                    if season != "NDJFM":
+                    elif season != "NDJFM":
                         if map_type == "polar":
                             print("Skipping polar plot for non EOF vars")
                             dont_continue = True
@@ -239,7 +244,7 @@ def graphics(plot_loc, **kwargs):
                         #sim_attrs = sim_data.attrs.copy()
                         #ref_attrs = ref_data.attrs.copy()
 
-
+                        """
                         #if dont_continue:
                         if ptype == "spatialstddev":
                             sim = sim_data
@@ -250,6 +255,8 @@ def graphics(plot_loc, **kwargs):
                             #print("sim",sim,"\n====================\n")
                             ref = af.lin_regress(ref_data)[0]
                         else:
+                        """
+                        if 1==1:
                             sims = []
                             sims_ens = []
                             for sim_name in sim_names:

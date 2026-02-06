@@ -36,8 +36,7 @@ sh_vars = ["SAM", "PSA1", "PSA2"]
 eof_vars = nh_vars+sh_vars
             
 ptypes = ["trends","spatialmean"]#,"spatialstddev"
-
-
+#ANLYS_TYPES
 
 def get_variable_defaults():
     #Open YAML file:

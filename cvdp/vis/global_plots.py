@@ -175,11 +175,11 @@ def global_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title) -> p
 
                 # Get start and end years for run
                 if isinstance(arr.yrs[0], str):
-                    run = arr.yrs[0]
+                    syr = arr.yrs[0]
                 else:
                     syr = arr.yrs[0]
                 if isinstance(arr.yrs[-1], str):
-                    run = arr.yrs[-1]
+                    eyr = arr.yrs[-1]
                 else:
                     eyr = arr.yrs[-1]
         
