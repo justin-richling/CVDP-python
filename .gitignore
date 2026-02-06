@@ -156,7 +156,13 @@ cython_debug/
 
 **/*diff.png
 **/*mem.png
+**/*indmem*
 **/*summary.png
+
+**/*main.py
+**/*copy*
+**/*WORKS*
+**/*works*
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
