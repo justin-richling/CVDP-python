@@ -6,89 +6,65 @@ CVDP functions for calculating means, standard deviations, and trends.
 License: MIT
 """
 
+import cvdp_utils.analysis as an
 from diag import compute_seasonal_avgs
 from pathlib import Path
 import xarray as xr
 
 def mean_seasonal_calc(ds_name, dataset, var_name, config_dict):
-    save_loc = config_dict[ds_name]["save_loc"]
-    Path(save_loc).mkdir(parents=True, exist_ok=True)
+    save_loc = config_dict[ds_name]["save_loc"]#.mkdir(parents=True, exist_ok=True)
     syr = config_dict[ds_name]["syr"]
     eyr = config_dict[ds_name]["eyr"]
 
+    avgs_filname = f'{ds_name}.cvdp_data.{var_name}.climo.avgs.{syr}-{eyr}.nc'
+    anom_avgs_filename = f'{ds_name}.cvdp_data.{var_name}.climo.anom_avgs.{syr}-{eyr}.nc'
     ts_filename = f'{ds_name}.cvdp_data.{var_name}.climo.ts.{syr}-{eyr}.nc'
-    ts_fno = save_loc / Path(ts_filename)
-
-    data_dict = {}
-    calc_all_mean = False
-    #if ts_fno.is_file():
-    if "members" in config_dict[ds_name]:
-        print("AtmOcnMean.py:  members are in this case:",ds_name)
-
-        if ts_fno.is_file():
-            seas_ts = xr.open_dataset(ts_fno)
-        members = config_dict[ds_name]["members"]
-        for member in members:
-            ts_mem_filename = f'{ds_name}.cvdp_data.{var_name}{member}climo.ts.{syr}-{eyr}.nc'
-            ts_mem_fno = save_loc / Path(ts_mem_filename)
-
-            ts_mem_mean_filename = f'{ds_name}.cvdp_data.{var_name}{member}climo.ts.mean.{syr}-{eyr}.nc'
-            ts_mem_mean_fno = save_loc / Path(ts_mem_mean_filename)
-
-            if ts_mem_fno.is_file() and ts_mem_mean_fno.is_file():
-                print(f"\tFound pre-existing climatology files for {ds_name} {var_name} {member}, loading from disk...\n")
-                seas_mem_ts = xr.open_dataset(ts_mem_fno)
-                data_dict[f"seas_ts{member[:-1]}"] = seas_mem_ts
-
-                seas_mem_mean_ts = xr.open_dataset(ts_mem_mean_fno)
-                data_dict[f"seas_ts{member[:-1]}_mean"] = seas_mem_mean_ts
-                calc_all_mean = False
-            else:
-                seas_ts = compute_seasonal_avgs(dataset, var_name)
-                print(f"\tDid not find pre-existing climatology files for {ds_name} {var_name} {member}, calculating seasonal means...")
-                #ts_mem_filename = f'{ds_name}.cvdp_data.{var_name}{member}climo.ts.{syr}-{eyr}.nc'
-                #ts_mem_fno = save_loc / Path(ts_mem_filename)
-                seas_ts.attrs["member"] = member
-                seas_mem_ts = seas_ts.sel(member=member)
-                data_dict[f"seas_ts{member[:-1]}"] = seas_mem_ts
-                print(f"\t  SUCCESS: Climatological seasonal for member saved to file: {ts_mem_fno}")
-                seas_mem_ts.to_netcdf(ts_mem_fno)        
-                
-                # Means
-                sim = seas_mem_ts.mean("time")
-                sim.attrs = seas_ts.attrs
-                #ts_filename = f'{ds_name}.cvdp_data.{var_name}{member}climo.ts.mean.{syr}-{eyr}.nc'
-                #ts_fno = save_loc / Path(ts_filename)
-                sim.to_netcdf(ts_mem_mean_fno)
-                print(f"\t  SUCCESS: Climatological seasonal means for member saved to file: {ts_mem_mean_fno}\n")
-                data_dict[f"seas_ts{member[:-1]}_mean"] = sim
-                calc_all_mean = True
-        
-        # Average all members if applicable    
-        if calc_all_mean:
-            #seas_ts = xr.open_dataset(ts_fno)
-            seas_ts = seas_ts.mean(dim="member", keep_attrs=True)
-            seas_ts.attrs["members"] = members
-            seas_ts.to_netcdf(ts_fno)
-            print(f"\tSUCCESS: Climatological seasonal mean over members saved to file: {ts_fno}\n")
-        #else:
-        #    seas_ts = xr.open_dataset(ts_fno)
-    else:
-        print("AtmOcnMean.py:  members are NOT in this case:",ds_name)
-        if ts_fno.is_file():
-            print(f"\tFound pre-existing climatology files for {ds_name} {var_name}, loading from disk...\n")
-            seas_ts = xr.open_dataset(ts_fno)
-        else:
-            print(f"\tDid not find pre-existing climatology files for {ds_name} {var_name}, calculating seasonal means...")
-            seas_ts = compute_seasonal_avgs(dataset, var_name)
-            print(f"\t  SUCCESS: Climatological seasonal saved to file: {ts_fno}")
-            seas_ts.to_netcdf(ts_fno)
-
-            ts_mean_filename = f'{ds_name}.cvdp_data.{var_name}climo.ts.mean.{syr}-{eyr}.nc'
-            ts_mean_fno = save_loc / Path(ts_mean_filename)
-            sim = seas_ts.mean("time")
-            sim.to_netcdf(ts_mean_fno)
-            print(f"\t  SUCCESS: Climatological seasonal means saved to file: {ts_mean_fno}\n")
+    avgs_fno = Path(avgs_filname)
+    anom_avgs_fno = Path(anom_avgs_filename)
+    ts_fno = Path(ts_filename)
+    if avgs_fno.is_file() and anom_avgs_fno.is_file() and ts_fno.is_file():
+        print(f"\nFound pre-existing climatology files for {ds_name} {var_name}, loading from disk...\n")
+        seas_avgs = xr.open_dataarray(save_loc / avgs_fno)
+        season_anom_avgs = xr.open_dataarray(save_loc / anom_avgs_fno)
+        seas_ts = xr.open_dataarray(save_loc / ts_fno)
+        data_dict = {
+            "seas_avgs": seas_avgs,
+            "season_anom_avgs": season_anom_avgs,
+            "seas_ts": seas_ts,
+        }
+        return data_dict
+    print("\nCalculating climatological seasonal means...")
+    seas_avgs, season_anom_avgs, seas_ts = compute_seasonal_avgs(dataset, var_name)
+    if "member" in seas_avgs.coords:
+        attrs = seas_avgs.attrs  # save before doing groupby/mean
+        members = seas_avgs.member
+        seas_avgs = seas_avgs.mean(dim="member")
+        seas_avgs.attrs = attrs
+        seas_avgs.attrs["members"] = members
     
-    data_dict["seas_ts"] = seas_ts
+    #ds = xr.Dataset(trnd_dict)
+    #ds = ds.assign_coords(run=run_name, units=units, syr=syr, eyr=eyr)
+    #for ds_name in config["Data"]:
+        #syr, eyr = config["Data"][ds_name]["start_yr"], config["Data"][ds_name]["end_yr"]
+        #save_loc = Path( config["Paths"]["nc_save_loc"] )
+        #save_loc.mkdir(parents=True, exist_ok=True)
+
+    #fno = f'{ds_name}.cvdp_data.{var_name}.climo.avgs.{syr}-{eyr}.nc'
+    file_name = save_loc / avgs_fno
+    #seas_avgs.to_netcdf(file_name)
+
+    #fno = f'{ds_name}.cvdp_data.{var_name}.climo.anom_avgs.{syr}-{eyr}.nc'
+    file_name = save_loc / anom_avgs_fno
+    #season_anom_avgs.to_netcdf(file_name)
+
+    #fno = f'{ds_name}.cvdp_data.{var_name}.climo.ts.{syr}-{eyr}.nc'
+    file_name = save_loc / ts_fno
+    #seas_ts.to_netcdf(file_name)
+
+    #return ref_seas_avgs, sim_seas_avgs, ref_season_anom_avgs, sim_season_anom_avgs, ref_seas_ts, sim_seas_ts
+    data_dict = {
+        "seas_avgs": seas_avgs,
+        "season_anom_avgs": season_anom_avgs,
+        "seas_ts": seas_ts,
+    }
     return data_dict
