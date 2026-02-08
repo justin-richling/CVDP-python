@@ -70,7 +70,7 @@ def global_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title) -> p
     fig_height = 9
     fig, axs = plt.subplots(nrows=nrows,ncols=ncols,figsize=(fig_width,fig_height),
                             facecolor='w', edgecolor='k', sharex=True, sharey=True,
-                            subplot_kw={"projection": proj})
+                            subplot_kw={"projection": proj},squeeze=False,)
 
     img = [[None for _ in range(ncols)] for _ in range(nrows)]
     for row in range(0,nrows):
@@ -406,14 +406,14 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     hgt = nrows*2.5
     fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
                              facecolor="w", edgecolor="k", sharex=True, sharey=True,
-                             subplot_kw={"projection": proj},constrained_layout=False)
+                             subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
 
-    if n_cases > 10:
-        axs = axs.flatten()
+    #if n_cases > 10:
+    #    axs = axs.flatten()
+    axs = axs.ravel()
 
     # Set empty list for contour plot objects
     img = []
-    #or i,r in enumerate([1,0]): # Plot obs first (second array in list) then case (first array in list)
     for i,arr in enumerate(arrs[1]):
         # Grab run metadata for plots
         # ----------------------------
@@ -676,8 +676,290 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     plt.subplots_adjust(hspace=hspace,wspace=0.03)
     return fig
 
-# def polar_indmemdiff_latlon_plot(vn, var, run, unit, arr, ptype, plot_dict, title, season):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
+#vn, runs, arrs, ptype, plot_dict, title
+def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
+    '''
+    Docstring for global_indmem_latlon_plot
+    
+    :param vn: Description
+    :param arrs: Description
+    :param plot_dict: Description
+    :param title: Description
+    :param ptype: Description
+
+    arrs is now a list of lists!
+        first entry is list of simulations
+        second entry is list of references
+    ''' 
+    # Format spacing
+    hspace = 0.5
+    y_title = 1.1
+
+    # Get variable plot info
+    # -----------------------
+    plot_info = plot_dict
+
+    # Plot contour range
+    levels = None
+    if "contour_levels_linspace" in plot_info:
+        #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
+        levels = np.linspace(*plot_info["contour_levels_linspace"])
+    if "contour_levels_range" in plot_info:
+        #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
+        levels = np.arange(*plot_info["contour_levels_range"])
+    if "contour_levels_list" in plot_info:
+        #print('plot_info["contour_levels_list"]',vn,"\n",plot_info["contour_levels_list"])
+        levels = np.array(plot_info["contour_levels_list"])
+        good_list = True
+    if not isinstance(levels,np.ndarray) and not good_list:
+        arr_max = max(max(sub) for sub in arrs[0]) #arrs[0].max().item()
+        arr_min = min(min(sub) for sub in arrs[0]) #arrs[0].min().item()
+        levels = np.linspace(arr_min, arr_max, 20)
+    #levels = np.linspace(-1,1,20)
+    #print("AHHHHHH INDMEM","levels",levels,)
+
+    cbarticks = plot_info.get("cbar_labels", levels)
+    # colorbar ticks
+
+    # color map
+    cmap = plot_info["cmap"]
+    if cmap not in plt.colormaps():
+        cmap = get_NCL_colormap(cmap, extend='None')
+    # get units
+    if isinstance(arrs[0][0].units, str):
+        unit = arrs[0][0].units
+    else:
+        unit = arrs[0][0].units.values
+
+    # Create subplots
+    n_cases = len(arrs)
+    ncols = 10
+    nrows = (n_cases + ncols - 1) // ncols  # Calculate the required rows
+    if n_cases <= ncols:
+        ncols = n_cases
+    print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
+
+    proj = WinkelTripel(central_longitude=210)
+    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+        hgt = nrows*2
+        wdth = ncols*3
+    else:
+        hgt = nrows*2.5
+        wdth = ncols*4
+    hgt = nrows*2.5
+    fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
+                             facecolor="w", edgecolor="k", sharex=True, sharey=True,
+                             subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
+    print(axs,"\n   ->",len(axs[0]),"\n\n\n")
+    #if n_cases > 10:
+    #    axs = axs.flatten()
+    axs = axs.ravel()
+
+    # Set empty list for contour plot objects
+    img = []
+    #print(type(arrs[0]),arrs[0])
+    for i,arr in enumerate(arrs):
+        # Grab run metadata for plots
+        # ----------------------------
+        # Data years for this run
+        #syr = arr.yrs[0]
+        #eyr = arr.yrs[-1]
+
+        # Run name
+        #run = f"{arr.run}"
+
+        # For having 180 as the cental longitude (Pacific centric view), sometimes the data and longitude
+        # have to be "wrapped" around this lingitude. Is this an xarray problem?
+        # NOTE: Maybe not necessary anymore
+        lon_idx = arr.dims.index("lon")
+        wrap_data, wrap_lon = add_cyclic_point(
+                arr.values, coord=arr.lon, axis=lon_idx
+        )
+        lat = arr.lat
+
+        # Create a dictionary with arguments for contourf
+        contourf_args = {
+                "wrap_lon": wrap_lon,
+                "lat": lat,
+                "levels": levels,
+                "cmap": cmap,
+                "transform": ccrs.PlateCarree(),
+            }
+
+        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+
+        # Plot landmask (continents) if TS or SST
+        if vn == "ts":
+            # Land mask
+            # ----------
+            # Mask out land using masking data
+            land_data = ncl_masks.LSMASK.where(ncl_masks.LSMASK == 1)
+
+            # Set up data for land mask
+            lon_idx = land_data.dims.index("lon")
+            wrap_data_land, wrap_lon_land = add_cyclic_point(
+                    land_data.values, coord=land_data.lon, axis=lon_idx
+                )
+
+            # Set up normalization of data based off non-linear set of contour levels
+            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            contourf_args["norm"] = norm
+
+            # Plot masked continents over TS plot to mimic SST's
+            axs[i].contourf(wrap_lon_land, land_data.lat, wrap_data_land, colors="w",
+                                transform=ccrs.PlateCarree(), zorder=300)
+            # Plot lakes
+            axs[i].add_feature(cfeature.LAKES.with_scale("110m"),
+                               edgecolor="#b5b5b5", facecolor="none", zorder=300)
+        # End if
+
+        # Add data to contour args dictionary
+        contourf_args["wrap_data"] = wrap_data
+
+        # Extract the positional arguments and keyword arguments from the dictionary
+        pos_args = [contourf_args.pop(key) for key in ["wrap_lon", "lat", "wrap_data"]]
+
+        # Create a filled contour plot using the dictionary of arguments
+        img.append(axs[i].contourf(*pos_args, **contourf_args))
+
+        # Add coast lines and title
+        axs[i].coastlines("50m", color="#b5b5b5")
+        """if "member" in arr.attrs:
+            run = f'{run} {str(arr.member.values).replace(".","")}'
+        axs[i].set_title(
+                run,
+                loc="center",
+                fontdict={
+                    "fontsize": 14,
+                    #'fontweight': 'bold',
+                    "color": "#0c80ab",
+                },
+            )"""
+
+        """# Add run years to top left of plot
+        yrs_text = f"{syr}-{eyr}"
+        # props = dict(boxstyle='round', facecolor='grey', alpha=0.15)  # bbox features
+        axs[i].text(0.0, 0.98, yrs_text, transform=axs[i].transAxes, fontsize=10, verticalalignment="top")"""
+
+        # Add r value to case run plot
+        # TODO: Calculate r-values
+        if i == 0:
+            madeup_r = 0.98
+            r_text = f"r={madeup_r}"
+            axs[i].text(0.93, 0.98, r_text, transform=axs[i].transAxes, fontsize=10, verticalalignment="top",)
+        # End if
+    
+
+    # COLORBARS
+    # ----------------
+    # Set up axis to insert into color bar
+    #axins = inset_axes(axs[-1], width="100%", height="5%", loc="lower center", borderpad=-5)
+
+    # Format the colorbar depending on the plot type and variable
+    #FLAG: cleaned this up
+    if vn == "ts":
+        if ptype == "trends":
+            # Define specific tick locations for the colorbar
+            ticks = levels
+            # Create a list of labels where only the selected labels are shown
+            tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
+        if ptype == "spatialmean":
+            # Define the locations for custom set of labels
+            #cbarticks = np.arange(0,37,2)
+
+            # Define specific tick locations for the colorbar
+            ticks = cbarticks
+            # Create a list of labels where only the selected labels are shown
+            tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
+    else:
+        #cbarticks = ticks
+        ticks = cbarticks
+        tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
+    #print("ticks:",ticks)
+    #print("tick_labels:",tick_labels)
+
+    # Set up colorbar
+    #----------------
+     # Add colorbar under last row (partial row handled)
+    cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
+                          n_cols_per_row=10,
+                          pad_inches=0.75,
+                          height_inches=0.35)
+
+    # Turn off unused axes
+    for j in range(n_cases, len(axs)):
+        axs[j].axis("off")
+
+
+    # Set values to floats for decimals and int for integers for tick labels
+    #bound_labels = [str(v) if v <= 1 else str(int(v)) for v in ticks]
+    #cb.set_ticklabels(bound_labels, size=0)
+
+    fig.text(0.9, 0.82, "$\\copyright$ CVDP-LE", fontsize=10, color='#b5b5b5', weight='bold', alpha=0.75, ha='right', va='top')
+    #title = f"{title} constrained_layout=true hspace=0.05, ytitle=0.9, y-height=nrows*4"
+    #title = f"{title} constrained_layout=true, hspace=0.05, ytitle=0.99, y-height=nrows*2.5"
+    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+        fontsize = 20
+        y_title = 0.99
+    else:
+        fontsize = 26
+    plt.suptitle(title, fontsize=fontsize, y=y_title, x=0.515)  # y=0.325 y=0.225
+
+    # Clean up the spacing a bit
+    """if n_cases == 2 or n_cases == 3 or n_cases == 4:
+        hspace = -0.03
+    else:
+        hspace = 0.05"""
+    #hspace = 0.05
+    #plt.subplots_adjust(hspace=hspace)
+
+    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+        plt.subplots_adjust(
+            top=0.70,     # lower this → MORE space between title and plots
+            bottom=0.15   # raise this → LESS space between plots and colorbar
+        )
+    else:
+        hspace = 0.05
+        plt.subplots_adjust(hspace=hspace)
+    hspace = 0.05
+    plt.subplots_adjust(hspace=hspace,wspace=0.03)
+    return fig
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+
 def global_indmemdiff_latlon_plot(vn, runs, arrs, ptype, plot_dict, title):
+    print("\n\n\n\n\n",arrs,"\n\n\n\n\n")
     y_title = .715
 
     # Get variable plot info
@@ -727,7 +1009,7 @@ def global_indmemdiff_latlon_plot(vn, runs, arrs, ptype, plot_dict, title):
     fig_width = 15
     fig_height = 21
     fig, axs = plt.subplots(nrows=n_cases,ncols=1,figsize=(fig_width,fig_height), facecolor='w', edgecolor='k',
-                            sharex=True, sharey=True, subplot_kw={"projection": proj})
+                            sharex=True, sharey=True, subplot_kw={"projection": proj},squeeze=False)
     img = []
     for i,arr in enumerate(arrs):
         run = runs[i]
@@ -838,3 +1120,4 @@ def global_indmemdiff_latlon_plot(vn, runs, arrs, ptype, plot_dict, title):
     hspace = 0.05
     plt.subplots_adjust(hspace=hspace,wspace=0.03)
     return fig
+'''
