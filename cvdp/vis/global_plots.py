@@ -696,7 +696,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
 #vn, runs, arrs, ptype, plot_dict, title
 def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     '''
-    Docstring for global_indmem_latlon_plot
+    Docstring for global_indmemdiff_latlon_plot
     
     :param vn: Description
     :param arrs: Description
@@ -718,28 +718,26 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
     # Plot contour range
     levels = None
-    if "contour_levels_linspace" in plot_info:
+    if "diff_levels_linspace" in plot_info:
         #print('plot_info["contour_levels_linspace"]',plot_info["contour_levels_linspace"])
-        levels = np.linspace(*plot_info["contour_levels_linspace"])
-    if "contour_levels_range" in plot_info:
+        levels = np.linspace(*plot_info["diff_levels_linspace"])
+    if "diff_levels_range" in plot_info:
         #print('plot_info["contour_levels_range"]',plot_info["contour_levels_range"])
-        levels = np.arange(*plot_info["contour_levels_range"])
-    if "contour_levels_list" in plot_info:
+        levels = np.arange(*plot_info["diff_levels_range"])
+    if "diff_levels_list" in plot_info:
         #print('plot_info["contour_levels_list"]',vn,"\n",plot_info["contour_levels_list"])
-        levels = np.array(plot_info["contour_levels_list"])
+        levels = np.array(plot_info["diff_levels_list"])
         good_list = True
     if not isinstance(levels,np.ndarray) and not good_list:
         arr_max = max(max(sub) for sub in arrs[0]) #arrs[0].max().item()
         arr_min = min(min(sub) for sub in arrs[0]) #arrs[0].min().item()
         levels = np.linspace(arr_min, arr_max, 20)
-    #levels = np.linspace(-1,1,20)
-    #print("AHHHHHH INDMEM","levels",levels,)
 
-    cbarticks = plot_info.get("cbar_labels", levels)
+    cbarticks = plot_info.get("diff_cbar_labels", levels)
     # colorbar ticks
 
     # color map
-    cmap = plot_info["cmap"]
+    cmap = plot_info.get("diff_cmap","PuOr")
     if cmap not in plt.colormaps():
         cmap = get_NCL_colormap(cmap, extend='None')
     # get units
@@ -754,7 +752,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     nrows = (n_cases + ncols - 1) // ncols  # Calculate the required rows
     if n_cases <= ncols:
         ncols = n_cases
-    print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
+    #print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
 
     proj = WinkelTripel(central_longitude=210)
     if n_cases == 2 or n_cases == 3 or n_cases == 4:
@@ -767,7 +765,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
                              facecolor="w", edgecolor="k", sharex=True, sharey=True,
                              subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
-    print(axs,"\n   ->",len(axs[0]),"\n\n\n")
+
     #if n_cases > 10:
     #    axs = axs.flatten()
     axs = axs.ravel()
@@ -889,7 +887,6 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
             # Create a list of labels where only the selected labels are shown
             tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     else:
-        #cbarticks = ticks
         ticks = cbarticks
         tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     #print("ticks:",ticks)
@@ -897,7 +894,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
     # Set up colorbar
     #----------------
-     # Add colorbar under last row (partial row handled)
+    # Add colorbar under last row (partial row handled)
     cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
                           n_cols_per_row=10,
                           pad_inches=0.75,
@@ -942,182 +939,3 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     plt.subplots_adjust(hspace=hspace,wspace=0.03)
     return fig
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-
-def global_indmemdiff_latlon_plot(vn, runs, arrs, ptype, plot_dict, title):
-    print("\n\n\n\n\n",arrs,"\n\n\n\n\n")
-    y_title = .715
-
-    # Get variable plot info
-    #-----------------------
-    plot_info = plot_dict
-
-    # plot contour range
-    levels = None
-
-    """if isinstance(arr.units, str):
-        unit = arr.units
-    else:
-        unit = arr.units.values"""
-
-    if "diff_levels_linspace" in plot_info:
-        #print('plot_info["diff_levels_linspace"]',plot_info["diff_levels_linspace"])
-        levels = np.linspace(*plot_info["diff_levels_linspace"])
-    if "diff_levels_range" in plot_info:
-        #print('plot_info["diff_levels_range"]',plot_info["diff_levels_range"])
-        levels = np.arange(*plot_info["diff_levels_range"])
-    if "diff_levels_list" in plot_info:
-        #print('plot_info["diff_levels_list"]',plot_info["diff_levels_list"])
-        levels = np.array(plot_info["diff_levels_list"])
-        good_list = True
-    #print("type(levels)",type(levels))
-    if not isinstance(levels,np.ndarray) and not good_list:
-        diff_max = arrs.max().item()
-        diff_min = arrs.min().item()
-        levels = np.linspace(diff_min, diff_max, 20)
-
-    if isinstance(arrs[0][0].units, str):
-        unit = arrs[0][0].units
-    else:
-        unit = arrs[0][0].units.values
-
-    cbarticks = plot_info.get("diff_cbar_labels", levels)
-
-    # color map
-    cmap = plot_info.get("diff_cmap","bgyr")
-    if cmap not in plt.colormaps():
-        cmap = get_NCL_colormap(cmap, extend='None')
-    
-    n_cases = len(runs)
-
-    # Set up figure and axes
-    proj = WinkelTripel(central_longitude=210)
-    fig_width = 15
-    fig_height = 21
-    fig, axs = plt.subplots(nrows=n_cases,ncols=1,figsize=(fig_width,fig_height), facecolor='w', edgecolor='k',
-                            sharex=True, sharey=True, subplot_kw={"projection": proj},squeeze=False)
-    img = []
-    for i,arr in enumerate(arrs):
-        run = runs[i]
-        # Get wrapped data around zeroth longitude
-        lat = arr.lat
-        lon_idx = arr.dims.index('lon')
-        #if "NPI" in title:
-        #    print("NPI ARR",arr,"\n\n")
-        wrap_data, wrap_lon = add_cyclic_point(arr.values, coord=arr.lon, axis=lon_idx)
-        #wrap_data = arr.values
-        #wrap_lon = arr.lon
-        # End data gather/clean
-        #----------------------
-
-        # Variable exceptions:
-        if vn == "ts":
-            # Mask out land using masking data
-            landsies = ncl_masks.LSMASK.where(ncl_masks.LSMASK==1)
-
-            # Set up data for land mask
-            lon_idx = landsies.dims.index('lon')
-            wrap_data_land, wrap_lon_land = add_cyclic_point(landsies.values, coord=landsies.lon, axis=lon_idx)
-
-            # Plot masked continents over TS plot to mimic SST's
-            axs[i].contourf(wrap_lon_land,landsies.lat,wrap_data_land,
-                                colors="w", zorder=300,
-                                transform=ccrs.PlateCarree())
-
-            axs[i].add_feature(cfeature.LAKES.with_scale('110m'), #alpha=0, #facecolor=cfeature.COLORS['water'],
-                            edgecolor="#b5b5b5", facecolor="none", zorder=300)
-
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=True)
-        
-        img.append(axs[i].contourf(wrap_lon, lat, wrap_data, cmap=cmap, levels=levels, transform=ccrs.PlateCarree()))
-
-        axs[i].coastlines('50m',color="#b5b5b5", alpha=0.5)
-        axs[i].set_title(run,loc='center',fontdict={'fontsize': 20,
-                                    #'fontweight': 'bold',
-                                    'color': '#0c80ab',
-                                    })
-
-    # Format the colorbar depending on the plot type and variable
-    #FLAG: cleaned this up
-    if vn == "ts":
-        if ptype == "trends":
-            # Define specific tick locations for the colorbar
-            ticks = levels
-            # Create a list of labels where only the selected labels are shown
-            tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
-        if ptype == "spatialmean":
-            # Define the locations for custom set of labels
-            #cbarticks = np.arange(0,37,2)
-
-            # Define specific tick locations for the colorbar
-            ticks = cbarticks
-            # Create a list of labels where only the selected labels are shown
-            tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
-    else:
-        #cbarticks = ticks
-        ticks = cbarticks
-        tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
-    #print("ticks:",ticks)
-    #print("tick_labels:",tick_labels)
-
-    # Set up colorbar
-    #----------------
-     # Add colorbar under last row (partial row handled)
-    cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
-                          n_cols_per_row=10,
-                          pad_inches=0.75,
-                          height_inches=0.35)
-
-    # Turn off unused axes
-    for j in range(n_cases, len(axs)):
-        axs[j].axis("off")
-
-
-    # Set values to floats for decimals and int for integers for tick labels
-    #bound_labels = [str(v) if v <= 1 else str(int(v)) for v in ticks]
-    #cb.set_ticklabels(bound_labels, size=0)
-
-    fig.text(0.9, 0.82, "$\\copyright$ CVDP-LE", fontsize=10, color='#b5b5b5', weight='bold', alpha=0.75, ha='right', va='top')
-    #title = f"{title} constrained_layout=true hspace=0.05, ytitle=0.9, y-height=nrows*4"
-    #title = f"{title} constrained_layout=true, hspace=0.05, ytitle=0.99, y-height=nrows*2.5"
-    if n_cases == 2 or n_cases == 3 or n_cases == 4:
-        fontsize = 20
-        y_title = 0.99
-    else:
-        fontsize = 26
-    plt.suptitle(title, fontsize=fontsize, y=y_title, x=0.515)  # y=0.325 y=0.225
-
-    # Clean up the spacing a bit
-    """if n_cases == 2 or n_cases == 3 or n_cases == 4:
-        hspace = -0.03
-    else:
-        hspace = 0.05"""
-    #hspace = 0.05
-    #plt.subplots_adjust(hspace=hspace)
-
-    if n_cases == 2 or n_cases == 3 or n_cases == 4:
-        plt.subplots_adjust(
-            top=0.70,     # lower this → MORE space between title and plots
-            bottom=0.15   # raise this → LESS space between plots and colorbar
-        )
-    else:
-        hspace = 0.05
-        plt.subplots_adjust(hspace=hspace)
-    hspace = 0.05
-    plt.subplots_adjust(hspace=hspace,wspace=0.03)
-    return fig
-'''
