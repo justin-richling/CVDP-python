@@ -21,7 +21,7 @@ def mean_seasonal_calc(ds_name, dataset, var_name, config_dict):
 
     data_dict = {}
     calc_all_mean = False
-    #if ts_fno.is_file():
+
     if "members" in config_dict[ds_name]:
         print("AtmOcnMean.py:  members are in this case:",ds_name)
 
@@ -36,7 +36,7 @@ def mean_seasonal_calc(ds_name, dataset, var_name, config_dict):
             ts_mem_mean_fno = save_loc / Path(ts_mem_mean_filename)
 
             if ts_mem_fno.is_file() and ts_mem_mean_fno.is_file():
-                print(f"\tFound pre-existing climatology files for {ds_name} {var_name} {member}, loading from disk...\n")
+                print(f"\tFound pre-existing climatology files for {ds_name}{member[:-1]} {var_name}, loading from disk...\n")
                 seas_mem_ts = xr.open_dataset(ts_mem_fno)
                 data_dict[f"seas_ts{member[:-1]}"] = seas_mem_ts
 
@@ -45,9 +45,7 @@ def mean_seasonal_calc(ds_name, dataset, var_name, config_dict):
                 calc_all_mean = False
             else:
                 seas_ts = compute_seasonal_avgs(dataset, var_name)
-                print(f"\tDid not find pre-existing climatology files for {ds_name} {var_name} {member}, calculating seasonal means...")
-                #ts_mem_filename = f'{ds_name}.cvdp_data.{var_name}{member}climo.ts.{syr}-{eyr}.nc'
-                #ts_mem_fno = save_loc / Path(ts_mem_filename)
+                print(f"\tDid not find pre-existing climatology files for {ds_name}{member[:-1]} {var_name}, calculating seasonal means...")
                 seas_ts.attrs["member"] = member
                 seas_mem_ts = seas_ts.sel(member=member)
                 data_dict[f"seas_ts{member[:-1]}"] = seas_mem_ts
@@ -57,8 +55,6 @@ def mean_seasonal_calc(ds_name, dataset, var_name, config_dict):
                 # Means
                 sim = seas_mem_ts.mean("time")
                 sim.attrs = seas_ts.attrs
-                #ts_filename = f'{ds_name}.cvdp_data.{var_name}{member}climo.ts.mean.{syr}-{eyr}.nc'
-                #ts_fno = save_loc / Path(ts_filename)
                 sim.to_netcdf(ts_mem_mean_fno)
                 print(f"\t  SUCCESS: Climatological seasonal means for member saved to file: {ts_mem_mean_fno}\n")
                 data_dict[f"seas_ts{member[:-1]}_mean"] = sim
@@ -66,13 +62,10 @@ def mean_seasonal_calc(ds_name, dataset, var_name, config_dict):
         
         # Average all members if applicable    
         if calc_all_mean:
-            #seas_ts = xr.open_dataset(ts_fno)
             seas_ts = seas_ts.mean(dim="member", keep_attrs=True)
             seas_ts.attrs["members"] = members
             seas_ts.to_netcdf(ts_fno)
             print(f"\tSUCCESS: Climatological seasonal mean over members saved to file: {ts_fno}\n")
-        #else:
-        #    seas_ts = xr.open_dataset(ts_fno)
     else:
         print("AtmOcnMean.py:  members are NOT in this case:",ds_name)
         if ts_fno.is_file():
