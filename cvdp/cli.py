@@ -167,6 +167,7 @@ def main():
                 for member in huh:
                     try:
                         kwargs[f"{sim_name}{member[:-1]}"] = data_dict[f"seas_ts{member[:-1]}"]
+                        kwargs[f"{sim_name}{member[:-1]}_trnds"] = sim_var.sel(member=member)
                     except KeyError as e:
                         print(f"seas_ts{member[:-1]}")
 
