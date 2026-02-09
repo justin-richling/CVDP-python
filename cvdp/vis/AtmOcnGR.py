@@ -51,7 +51,7 @@ MAP_TYPES = ["global", "polar", "timeseries"]
 MAP_TYPES = ["polar", "timeseries"]
 MAP_TYPES = ["global","polar"]
 #MAP_TYPES = ["timeseries"]
-#MAP_TYPES = ["global"]
+MAP_TYPES = ["global"]
 #MAP_TYPES = ["polar"]
 
 PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
@@ -161,6 +161,8 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
         run_data = run_dataset[key]
         run_attrs = run_data.attrs.copy()
 
+        run_trnd_data = kwargs[f"{run_name}_season_trnd_avgs"]
+
         if f"{run_name}_members" in kwargs:
             # Work over the ensemble members
             # ------------------------------ 
@@ -169,10 +171,12 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
                 print(f"\t        Processessing {run_type} member: ",member)
                 run_dataset_m = kwargs[f"{run_name}{member[:-1]}"]
                 run_data = run_dataset_m[key]
+                #print("run_data",run_data,"\n\n")
                 if ptype == "trends":
                     if var == "NPI":
                         run = compute_npi(run_data)
                     elif var in EOF_VARS:
+                        run_data = kwargs[f"{run_name}{member[:-1]}_trnds"]
                         run, sim_pc = compute_eof(var, run_data, season)
                         runs_pcs.append(sim_pc)
                     else:
@@ -186,21 +190,25 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
                 run.attrs = run_dataset.attrs
                 runs.append(run)
                 print(f"\t         -- Successfully processessed {member}")
-            # Now work over the ensemble mean
+            # Now work over the ensemble mean - THIS IS NOT WORKING CORRECTLY?
             # ------------------------------              
+            print(f"\t        Processessing {run_type} ensemble member mean:")
             if ptype == "trends":
                 if var == "NPI":
-                    run_ug = compute_npi(run_dataset[key])
+                    #run_ug = compute_npi(run_dataset[key])
+                    run_ug = compute_npi(run_data.mean(dim="member"))
                 elif var in EOF_VARS:
-                    run_ug, sim_pc = compute_eof(var, run_dataset[key], season)
+                    run_ug, sim_pc = compute_eof(var, run_trnd_data.mean(dim="member"), season)
                     runs_pcs.append(sim_pc)
-                else:    
-                    run_ug = compute_trend(run_dataset[key])
-            elif ptype != "trends":
-                if "time" in run_dataset[key].dims:
-                    run_ug = run_dataset[key].mean("time")
                 else:
-                    run_ug = run_dataset[key]
+                    print(run_trnd_data.coords,"\n")
+                    run_ug = compute_trend(run_trnd_data.mean(dim="member"))
+            elif ptype != "trends":
+                if "time" in run_data.dims:
+                    #run_ug = run_data.mean(dim="member").mean("time")
+                    run_ug = run_data.mean("time")
+                else:
+                    run_ug = run_data.mean(dim="member")
             else:
                 print("Rut-ro")
                                 
@@ -208,6 +216,7 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
             run_ug.attrs["members"] = members
             runs_ens.append(run_ug)
             print(f"\t     Successfully processessed")
+            # Now work over the ensemble mean - THIS IS NOT WORKING CORRECTLY?
         # No ensemble members
         # -------------------
         else:
@@ -215,7 +224,7 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
                 if var == "NPI":
                     run = compute_npi(run_data)
                 elif var in EOF_VARS:
-                    run, sim_pc = compute_eof(var, kwargs[f"{run_name}_season_trnd_avgs"], season)
+                    run, sim_pc = compute_eof(var, run_trnd_data, season)
                     runs_pcs.append(sim_pc)
                 else:    
                     run = compute_trend(run_data)
@@ -245,7 +254,6 @@ def graphics(plot_loc, **kwargs):
     vn = kwargs["vn"]
     sim_names = kwargs["sim_names"]
     ref_names = kwargs["ref_names"]
-    npi_count = 0
     for ptype in ANLYS_TYPES:
         print(f"*** Analysis Type: {ptype}")
         for map_type in MAP_TYPES:
@@ -262,7 +270,6 @@ def graphics(plot_loc, **kwargs):
 
                     # NPI case
                     if ptype == "trends" and vn == "psl" and map_type == "global" and season == "NDJFM":
-                        npi_count += 1
                         var = "NPI"
                         vres = res[var][ptype]
                         sim_npi = kwargs["sim_seas_ts"][key]
@@ -342,4 +349,3 @@ def graphics(plot_loc, **kwargs):
                         plt.close(fig)
             print(f"  Map Type End ***")
         print(f"Analysis Type End ***\n\n")
-    print("npi_count",npi_count)
