@@ -18,7 +18,13 @@ NOTES:
 * This is running via command line. This is introducing some env problems, like it still looks at `io.py` and does not see the CVDP module, but Python's. This will need to be addressed!
 * There is a certain amount of redundancy, especially in the calculations/file saving/attributes. This is a great area to start looking at streamlining.
 * This workflow now creates global plots for ensembles and ensemble averages (only global, no other plot types yet)
-* 
+* The file saving is not ideal; the top level files are being written, but issues reading them before calcs, so these are being made everytime
+* The climatologies are being checked, and are read in if exists, BUT the individual calculations are still being done everytime in `AtmOcnGR.py`:
+    - NPI
+    - EOF's (NAM, SAM, etc.)
+    - "trends"
+    - ensemble means
+    - etc.
 
 How to run:
 
