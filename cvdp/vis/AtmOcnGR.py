@@ -10,6 +10,7 @@ License: MIT
 
 import numpy as np
 import matplotlib.pyplot as plt
+import xarray as xr
 import xskillscore as xs
 
 from vis.global_plots import (
@@ -44,30 +45,32 @@ SH_VARS = ["SAM", "PSA1", "PSA2"]
 ANLYS_TYPES = ["spatialmean", "trends", "spatialstddev"]
 #ANLYS_TYPES = ["spatialstddev"]
 #ANLYS_TYPES = ["spatialmean", "trends"]
-#ANLYS_TYPES = ["trends"]
+ANLYS_TYPES = ["trends"]
 #ANLYS_TYPES = ["spatialmean"]
 
 MAP_TYPES = ["global", "polar", "timeseries"]
 MAP_TYPES = ["polar", "timeseries"]
 MAP_TYPES = ["global","polar"]
 #MAP_TYPES = ["timeseries"]
-MAP_TYPES = ["global"]
-#MAP_TYPES = ["polar"]
+#MAP_TYPES = ["global"]
+MAP_TYPES = ["polar"]
 
 PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 #PLOT_TYPES = ["summary"]
 #PLOT_TYPES = ["summary","indmem"]
-#PLOT_TYPES = ["indmem", "indmemdiff"]
+PLOT_TYPES = ["indmem", "indmemdiff"]
+PLOT_TYPES = ["indmem"]
+#PLOT_TYPES = ["indmemdiff"]
 
 
 def get_plot_title(var, plot_type, ptype, season):
     if ptype == "trends" and var in ["NPI"] + EOF_VARS:
         ptype = "Pattern"
-    base = f"{var} {ptype.capitalize()} ({season})"
+    base = f"{var} {ptype.capitalize()}"
     titles = {
-        "summary": f"Ensemble Summary: {base}",
-        "indmem": f"{base}\n",
-        "indmemdiff": f"{base} Differences\n",
+        "summary": f"Ensemble Summary: {base} ({season})",
+        "indmem": f"{base} ({season})\n",
+        "indmemdiff": f"{base} Differences ({season})\n",
     }
     return titles.get(plot_type, "Unknown Title")
 
@@ -159,11 +162,13 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
         print(f"\t     Processessing {run_type} run: ",run_name)
         run_dataset = kwargs[f"{run_name}"]
         run_data = run_dataset[key]
+        #print("run_data",run_data,"\n\n")
         run_attrs = run_data.attrs.copy()
 
         run_trnd_data = kwargs[f"{run_name}_season_trnd_avgs"]
 
         if f"{run_name}_members" in kwargs:
+            run_dataset_mems = []
             # Work over the ensemble members
             # ------------------------------ 
             members = kwargs[f"{run_name}_members"]
@@ -171,6 +176,8 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
                 print(f"\t        Processessing {run_type} member: ",member)
                 run_dataset_m = kwargs[f"{run_name}{member[:-1]}"]
                 run_data = run_dataset_m[key]
+                run_dataset_mems.append(run_data)
+                
                 #print("run_data",run_data,"\n\n")
                 if ptype == "trends":
                     if var == "NPI":
@@ -188,34 +195,41 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
                         run = run_data
                                     
                 run.attrs = run_dataset.attrs
+                run.attrs["run"] = f"{run_name}{member[:-1]}"
                 runs.append(run)
-                print(f"\t         -- Successfully processessed {member}")
+                #print(f"\t         -- Successfully processessed {member}")
+
+
+
+            mean = xr.concat(run_dataset_mems, dim="ensemble").mean("ensemble")
             # Now work over the ensemble mean - THIS IS NOT WORKING CORRECTLY?
             # ------------------------------              
             print(f"\t        Processessing {run_type} ensemble member mean:")
             if ptype == "trends":
                 if var == "NPI":
+                    #print("NPI",mean.coords,"\n")
                     #run_ug = compute_npi(run_dataset[key])
-                    run_ug = compute_npi(run_data.mean(dim="member"))
+                    run_ug = compute_npi(mean)
                 elif var in EOF_VARS:
+                    #print("EOF",run_trnd_data.coords,"\n")
                     run_ug, sim_pc = compute_eof(var, run_trnd_data.mean(dim="member"), season)
                     runs_pcs.append(sim_pc)
                 else:
-                    print(run_trnd_data.coords,"\n")
-                    run_ug = compute_trend(run_trnd_data.mean(dim="member"))
+                    #print("NORM VAR",mean.coords,"\n")
+                    run_ug = compute_trend(mean)
             elif ptype != "trends":
-                if "time" in run_data.dims:
+                if "time" in run_dataset[key].dims:
                     #run_ug = run_data.mean(dim="member").mean("time")
-                    run_ug = run_data.mean("time")
+                    run_ug = run_dataset[key].mean("time")
                 else:
-                    run_ug = run_data.mean(dim="member")
+                    run_ug = mean
             else:
                 print("Rut-ro")
                                 
             run_ug.attrs = run_attrs
             run_ug.attrs["members"] = members
             runs_ens.append(run_ug)
-            print(f"\t     Successfully processessed")
+            #print(f"\t     Successfully processessed")
             # Now work over the ensemble mean - THIS IS NOT WORKING CORRECTLY?
         # No ensemble members
         # -------------------
@@ -249,7 +263,7 @@ def gather_data(run_names, key, ptype, var=None, season=None, **kwargs):
 
 
 def graphics(plot_loc, **kwargs):
-    print("\n\n\n\n\n\nkwargs", kwargs.keys()),"\n\n\n\n"
+    #print("\n\n\n\n\n\nkwargs", kwargs.keys()),"\n\n\n\n"
     res = helper_utils.get_variable_defaults()
     vn = kwargs["vn"]
     sim_names = kwargs["sim_names"]
@@ -283,6 +297,7 @@ def graphics(plot_loc, **kwargs):
                             for refel in refs: 
                                 diff = compute_diff(simel, refel)
                                 diff.attrs["units"] = sim_attrs.get("units")
+                                diff.attrs["run"] = f"{simel.run} - {refel.run}"
                                 diffs.append(diff)
                         title = get_plot_title(var, plot_type, ptype, season)
                         name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
@@ -295,7 +310,7 @@ def graphics(plot_loc, **kwargs):
                     # EOF case
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
                         EOF = True
-                        for var in EOF_VARS:
+                        for var in [EOF_VARS[0]]:
                             print("\t    -> EOF var",var)
                             vres = res[var][ptype]
 
@@ -307,6 +322,7 @@ def graphics(plot_loc, **kwargs):
                                 for refel in refs: 
                                     diff = compute_diff(simel, refel)
                                     diff.attrs["units"] = sim_attrs.get("units")
+                                    diff.attrs["run"] = f"{simel.run} - {refel.run}"
                                     diffs.append(diff)
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
@@ -332,6 +348,7 @@ def graphics(plot_loc, **kwargs):
                             for refel in refs: 
                                 diff = compute_diff(simel, refel)
                                 diff.attrs["units"] = sim_attrs.get("units")
+                                diff.attrs["run"] = f"{simel.run} - {refel.run}"
                                 diffs.append(diff)
                         title = get_plot_title(vn.upper(), plot_type, ptype, season)
                         name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
@@ -346,6 +363,7 @@ def graphics(plot_loc, **kwargs):
                     # Save figures
                     for fig, name in figs:
                         fig.savefig(plot_loc / name, bbox_inches="tight", dpi=150)
+                        #fig.savefig(plot_loc / name, dpi=150)
                         plt.close(fig)
             print(f"  Map Type End ***")
         print(f"Analysis Type End ***\n\n")
