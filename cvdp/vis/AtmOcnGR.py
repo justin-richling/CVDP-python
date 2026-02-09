@@ -18,8 +18,8 @@ from vis.global_plots import (
     global_indmemdiff_latlon_plot,
 )
 from vis.polar_plots import (
-    #polar_ensemble_plot,
-    #polar_indmem_latlon_plot,
+    polar_ensemble_plot,
+    polar_indmem_latlon_plot,
     polar_indmemdiff_latlon_plot,
 )
 from vis.timeseries_plot import timeseries_plot
@@ -51,12 +51,13 @@ MAP_TYPES = ["global", "polar", "timeseries"]
 MAP_TYPES = ["polar", "timeseries"]
 MAP_TYPES = ["global","polar"]
 #MAP_TYPES = ["timeseries"]
-MAP_TYPES = ["global"]
+#MAP_TYPES = ["global"]
+#MAP_TYPES = ["polar"]
 
 PLOT_TYPES = ["summary", "indmem", "indmemdiff"]
 #PLOT_TYPES = ["summary"]
 #PLOT_TYPES = ["summary","indmem"]
-#PLOT_TYPES = ["indmemdiff"]
+#PLOT_TYPES = ["indmem", "indmemdiff"]
 
 
 def get_plot_title(var, plot_type, ptype, season):
@@ -118,7 +119,7 @@ def compute_eof(var, run_anom, season):
         pcs_std = (pcs.sel(pc=num) - pcs.sel(pc=num).mean("time")) / pcs.sel(pc=num).std("time")
         return xs.linslope(-pcs_std if invert else pcs_std, slp, dim="time"), pcs_std
 
-    run_pattern, run_pc = _eof(run_anom)
+    run_pattern, run_pc = _eof(run_anom, invert=True)
     run_pattern.attrs = run_attrs
 
     return run_pattern, run_pc
@@ -131,7 +132,7 @@ def plot_dispatch(plot_type, ptype, map_type, vn, var, sims, refs, diffs, vtres,
         if map_type == "global":
             return global_ensemble_plot([sims_ens, refs_ens], diffs, vn, ptype, vtres, title)
         if map_type == "polar":
-            return polar_ensemble_plot([sims_ens, refs_ens], diffs, vn, var, ptype, vtres, title)
+            return polar_ensemble_plot([sims_ens, refs_ens], diffs, vn, ptype, vtres, title, var)
     elif plot_type == "indmem":
         if map_type == "global":
             return global_indmem_latlon_plot(vn, [sims, refs], vtres, title, ptype)
@@ -244,7 +245,6 @@ def graphics(plot_loc, **kwargs):
     vn = kwargs["vn"]
     sim_names = kwargs["sim_names"]
     ref_names = kwargs["ref_names"]
-    dont_continue = False
     npi_count = 0
     for ptype in ANLYS_TYPES:
         print(f"*** Analysis Type: {ptype}")
@@ -284,21 +284,17 @@ def graphics(plot_loc, **kwargs):
                         names.append(name)
                         if fig:
                             figs.append((fig, name))
-
-
-
-
-
                     ####
                     # EOF case
                     elif ptype == "trends" and vn == "psl" and map_type in ["polar", "timeseries"]:
                         EOF = True
                         for var in EOF_VARS:
+                            print("\t    -> EOF var",var)
                             vres = res[var][ptype]
 
                             sims, sims_ens, sim_pcs = gather_data(sim_names, key, ptype, var=var, season= season, **kwargs)
                             refs, refs_ens, ref_pcs = gather_data(ref_names, key, ptype, var=var, season= season, **kwargs)
-
+                            sim_attrs = sims[0].attrs
                             diffs = []
                             for simel in sims:
                                 for refel in refs: 
@@ -307,7 +303,7 @@ def graphics(plot_loc, **kwargs):
                                     diffs.append(diff)
                             title = get_plot_title(var, plot_type, ptype, season)
                             name = get_plot_name(vn, var, ptype, season, plot_type, map_type)
-                            #fig = plot_dispatch(plot_type, ptype, map_type, vn, var, sim, ref, diff, vres, title, pcs=(sim_pc, ref_pc))
+
                             fig = plot_dispatch(plot_type, ptype, map_type, vn, var, sims, refs, diffs,
                                                 vres, title,
                                                 sims_ens=sims_ens, refs_ens=refs_ens,
@@ -330,7 +326,6 @@ def graphics(plot_loc, **kwargs):
                                 diff = compute_diff(simel, refel)
                                 diff.attrs["units"] = sim_attrs.get("units")
                                 diffs.append(diff)
-                        print("* * * * * * * * * * * * * * NO EOF/POLAR DIFFS",type(diffs),"\n",diffs,"* * * * * * * * * * * * * *\n")
                         title = get_plot_title(vn.upper(), plot_type, ptype, season)
                         name = get_plot_name(vn, vn, ptype, season, plot_type, map_type)
 
@@ -340,11 +335,9 @@ def graphics(plot_loc, **kwargs):
                             figs.append((fig, name))
                     else:
                         print(f"I'm curious why this plot: {vn} {ptype} {map_type} {plot_type} {season} was not made?")
-                    #print("FIGS",figs)
-                    #print(names)
+
                     # Save figures
                     for fig, name in figs:
-                        #print("NAME",name)
                         fig.savefig(plot_loc / name, bbox_inches="tight", dpi=150)
                         plt.close(fig)
             print(f"  Map Type End ***")
