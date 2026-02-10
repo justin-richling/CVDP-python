@@ -396,7 +396,6 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
         ncols = n_cases
     #print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
 
-    proj = WinkelTripel(central_longitude=210)
     if n_cases == 2 or n_cases == 3 or n_cases == 4:
         hgt = nrows*2
         wdth = ncols*3
@@ -404,9 +403,30 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
         hgt = nrows*2.5
         wdth = ncols*4
     hgt = nrows*2.5
+
+    """
+    PANEL_W = 4.0   # inches
+    PANEL_H = 6.0   # inches
+
+    ncols = min(10, n_cases)
+    nrows = (n_cases + ncols - 1) // ncols
+
+    wdth = PANEL_W * ncols
+    hgt  = PANEL_H * nrows
+    """
+
+    print("\n\nhgt,wdth",hgt,wdth)
+
+    ew_fontsize=8
+    title_fontsize = 14
+
+    proj = WinkelTripel(central_longitude=210)
     fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
-                             facecolor="w", edgecolor="k", sharex=True, sharey=True,
-                             subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
+                             facecolor="w", edgecolor="k",
+                             sharex=True, sharey=True,
+                             subplot_kw={"projection": proj},
+                             constrained_layout=False,
+                             squeeze=False)
 
     #if n_cases > 10:
     #    axs = axs.flatten()
@@ -480,17 +500,15 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
         # Add coast lines and title
         axs[i].coastlines("50m", color="#b5b5b5")
-        if "member" in arr.attrs:
-            run = f'{run} {str(arr.member.values).replace(".","")}'
-        axs[i].set_title(
-                run,
-                loc="center",
-                fontdict={
-                    "fontsize": 14,
-                    #'fontweight': 'bold',
-                    "color": "#0c80ab",
-                },
-            )
+
+        axs[i].text(
+                    0.5, 1.1, run,
+                    transform=axs[i].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
 
         # Add run years to top left of plot
         yrs_text = f"{syr}-{eyr}"
@@ -574,17 +592,15 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
         # Add coast lines and title
         axs[i].coastlines("50m", color="#b5b5b5")
-        if "member" in arr.coords:
-            run = f'{run} {str(arr.member.values).replace(".","")}'
-        axs[i].set_title(
-                run,
-                loc="center",
-                fontdict={
-                    "fontsize": 14,
-                    #'fontweight': 'bold',
-                    "color": "#0c80ab",
-                },
-            )
+
+        axs[i].text(
+                    0.5, 1.1, run,
+                    transform=axs[i].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
 
         # Add run years to top left of plot
         yrs_text = f"{syr}-{eyr}"
@@ -684,16 +700,6 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
 
 
-
-
-
-
-
-
-
-
-#def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
-#vn, runs, arrs, ptype, plot_dict, title
 def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     '''
     Docstring for global_indmemdiff_latlon_plot
@@ -754,7 +760,6 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
         ncols = n_cases
     #print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
 
-    proj = WinkelTripel(central_longitude=210)
     if n_cases == 2 or n_cases == 3 or n_cases == 4:
         hgt = nrows*2
         wdth = ncols*3
@@ -762,6 +767,23 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
         hgt = nrows*2.5
         wdth = ncols*4
     hgt = nrows*2.5
+    """
+    PANEL_W = 4.0   # inches
+    PANEL_H = 6.0   # inches
+
+    ncols = min(10, n_cases)
+    nrows = (n_cases + ncols - 1) // ncols
+
+    wdth = PANEL_W * ncols
+    hgt  = PANEL_H * nrows
+    """
+
+    print("\n\nindmemdiff hgt,wdth",hgt,wdth)
+
+    ew_fontsize=8
+    title_fontsize = 14
+
+    proj = WinkelTripel(central_longitude=210)
     fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
                              facecolor="w", edgecolor="k", sharex=True, sharey=True,
                              subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
@@ -781,7 +803,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
         #eyr = arr.yrs[-1]
 
         # Run name
-        #run = f"{arr.run}"
+        run = f"{arr.run}"
 
         # For having 180 as the cental longitude (Pacific centric view), sometimes the data and longitude
         # have to be "wrapped" around this lingitude. Is this an xarray problem?
@@ -839,17 +861,15 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
 
         # Add coast lines and title
         axs[i].coastlines("50m", color="#b5b5b5")
-        """if "member" in arr.attrs:
-            run = f'{run} {str(arr.member.values).replace(".","")}'
-        axs[i].set_title(
-                run,
-                loc="center",
-                fontdict={
-                    "fontsize": 14,
-                    #'fontweight': 'bold',
-                    "color": "#0c80ab",
-                },
-            )"""
+
+        axs[i].text(
+                    0.5, 1.1, run,
+                    transform=axs[i].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
 
         """# Add run years to top left of plot
         yrs_text = f"{syr}-{eyr}"
