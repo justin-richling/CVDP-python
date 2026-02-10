@@ -25,6 +25,7 @@ NOTES:
     - "trends"
     - ensemble means
     - etc.
+* The code is there for multiple reference simulations and for reference runs to have members too, I just haven't tested this yet
 
 How to run:
 
