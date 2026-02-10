@@ -46,7 +46,9 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     #nh_vars = ["NAM","psl"]
     #sh_vars = ["SAM", "PSA1", "PSA2","psl"]
 
-    y_title = .715
+    hspace = 0.5
+    y_title = .9
+    wspace=0.3
 
     # Get variable plot info
     # -----------------------
@@ -70,8 +72,8 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         diff_min = arr.min().item()
         levels = np.linspace(diff_min, diff_max, 20)
 
-    cbarticks = plot_info.get("diff_cbar_labels", levels)
     # colorbar ticks
+    cbarticks = plot_info.get("diff_cbar_labels", levels)
 
     # color map
     cmap = plot_info.get("diff_cmap","PuOr")
@@ -92,15 +94,7 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     if var in sh_vars:
         proj = ccrs.SouthPolarStereo(central_longitude=0)
         extent = [-180, 180, -20, -90]
-        space = -16.5
-
-    #fig_width = 10
-    #fig_height = 10+(3) #try and dynamically create size of fig based off number of cases (therefore rows)
-    #fig, axs = plt.subplots(nrows=1,ncols=1,figsize=(fig_width,fig_height), facecolor='w', edgecolor='k',
-    #                        sharex=True,
-    #                        sharey=True,
-    #                        subplot_kw={"projection": proj})
-    
+        space = -16.5    
 
     # Create subplots
     n_cases = len(arrs)
@@ -110,17 +104,43 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         ncols = n_cases
     #print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
 
-    #proj = WinkelTripel(central_longitude=210)
-    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+    """if n_cases == 2 or n_cases == 3 or n_cases == 4:
         hgt = nrows*2
         wdth = ncols*3
     else:
         hgt = nrows*2.5
         wdth = ncols*4
-    hgt = nrows*2.5
+    hgt = nrows*6
+    #wdth = 10/n_cases
+
+    print("\n\nhgt,wdth",hgt,wdth)
+    if wdth > 40:
+        wdth = 40
+        print("hgt,NEW wdth",hgt,wdth,"\n\n")
+    else:
+        print("\n")"""
+
+
+    PANEL_W = 4.0   # inches
+    PANEL_H = 6.0   # inches
+
+    ncols = min(10, n_cases)
+    nrows = (n_cases + ncols - 1) // ncols
+
+    wdth = PANEL_W * ncols
+    hgt  = PANEL_H * nrows
+
+    print("\n\nhgt,wdth",hgt,wdth)
+
+    ew_fontsize=8
+    title_fontsize = 14
+
     fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
-                             facecolor="w", edgecolor="k", sharex=True, sharey=True,
-                             subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
+                             facecolor="w", edgecolor="k",
+                             sharex=True, sharey=True,
+                             subplot_kw={"projection": proj},
+                             #constrained_layout=False,
+                             squeeze=False)
 
     #if n_cases > 10:
     #    axs = axs.flatten()
@@ -128,7 +148,6 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
 
     # Set empty list for contour plot objects
     img = []
-    #print(type(arrs[0]),arrs[0])
     for i,arr in enumerate(arrs):
         # Grab run metadata for plots
         # ----------------------------
@@ -137,7 +156,7 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         #eyr = arr.yrs[-1]
 
         # Run name
-        #run = f"{arr.run}"
+        run = f"{arr.run}"
 
         # For having 180 as the cental longitude (Pacific centric view), sometimes the data and longitude
         # have to be "wrapped" around this lingitude. Is this an xarray problem?
@@ -147,7 +166,7 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
                 arr.values, coord=arr.lon, axis=lon_idx
         )
         lat = arr.lat
-
+        #fig.canvas.draw()   # force layout
         axs[i].set_extent(extent, ccrs.PlateCarree())
         theta = np.linspace(0, 2 * np.pi, 100)
         center, radius = [0.5, 0.5], 0.5
@@ -202,59 +221,47 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         lon_ticks = np.arange(0, 360, 30)
         lon_labels = ['0', '30E', '60E', '90E', '120E', '150E', '180', '150W', '120W', '90W', '60W', '30W']
         #lon_labels = ['0°', '30°E', '60°E', '90°E', '120°E', '150°E', '180°', '150°W', '120°W', '90°W', '60°W', '30°W']
-        
+
         for lon, label in zip(lon_ticks, lon_labels):
             x, y = ccrs.PlateCarree().transform_point(lon, space, ccrs.PlateCarree())
-            axs[i].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=14, ha='center', va='center')
+            axs[i].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=ew_fontsize, ha='center', va='center')
 
         plt.setp(axs[i].spines.values(), lw=.5, color='grey', alpha=0.7)
 
         # Add coast lines and title
         axs[i].coastlines("50m", color="#b5b5b5")
-        #axs[i].set_title(run, loc='center', fontdict={'fontsize': 20, 'color': '#0c80ab'}, y=1.07)
+        
+        axs[i].text(
+                    0.5, 1.1, run,
+                    transform=axs[i].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
+        #print("Requested:", title_fontsize)
+        #print("Actual:", axs[i].title.get_fontsize())
         # Add r value to case run plot
         # TODO: Calculate r-values
-        if i == 0:
-            madeup_r = 0.98
-            r_text = f"r={madeup_r}"
-            axs[i].text(0.93, 0.98, r_text, transform=axs[i].transAxes, fontsize=10, verticalalignment="top",)
+        #if i == 0:
+        #    madeup_r = 0.98
+        #    r_text = f"r={madeup_r}"
+        #    axs[i].text(0.93, 0.98, r_text, transform=axs[i].transAxes, fontsize=10, verticalalignment="top",)
         # End if
 
     # COLORBARS
     # ----------------
-    # Set up axis to insert into color bar
-    #axins = inset_axes(axs[-1], width="100%", height="5%", loc="lower center", borderpad=-5)
-
-    # Format the colorbar depending on the plot type and variable
-    #FLAG: cleaned this up
-
-    #axins = inset_axes(axs, width="120%", height="5%", loc='lower center', borderpad=-9)
-    #tick_font_size = 16
-
     if vn == "ts":
         if ptype == "trends":
-            # Define specific tick locations for the colorbar
             ticks = levels
-            # Create a list of labels where only the selected labels are shown
-            tick_labels = [str(loc) if loc in cbarticks else '' for loc in ticks]
         if ptype == "spatialmean":
-            # Define the locations for custom set of labels
-            #cbarticks = np.arange(-5,6,1)
-
-            # Define specific tick locations for the colorbar
             ticks = cbarticks
-            # Create a list of labels where only the selected labels are shown
-            tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
     else:
         ticks = cbarticks
-        tick_labels = [str(int(loc)) if loc in cbarticks else '' for loc in ticks]
 
     # Set up colorbar
     #----------------
     # Add colorbar under last row (partial row handled)
-    #cb = fig.colorbar(img, orientation='horizontal',
-    #                    cax=axins, ticks=ticks, extend='both')
-    #                    #cax=axins, ticks=tick_labels, extend='both')
     cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
                           n_cols_per_row=10,
                           pad_inches=0.75,
@@ -308,11 +315,16 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
             top=0.70,     # lower this → MORE space between title and plots
             bottom=0.15   # raise this → LESS space between plots and colorbar
         )
-    else:
-        hspace = 0.05
-        plt.subplots_adjust(hspace=hspace)
-    hspace = 0.05
-    plt.subplots_adjust(hspace=hspace,wspace=0.03)
+    #else:
+    #    hspace = 0.05
+    #    #plt.subplots_adjust(hspace=hspace)
+    #    plt.subplots_adjust(
+    #        top=0.70,     # lower this → MORE space between title and plots
+    #        bottom=0.15,   # raise this → LESS space between plots and colorbar
+    #        hspace=hspace
+    #    )
+    #hspace = 0.05
+    plt.subplots_adjust(hspace=hspace,wspace=wspace)
     return fig
 
     
@@ -338,7 +350,8 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     ''' 
     # Format spacing
     hspace = 0.5
-    y_title = 1.1
+    y_title = .9
+    wspace=0.3
 
     # Get variable plot info
     # -----------------------
@@ -360,8 +373,6 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         arr_max = max(max(sub) for sub in arrs[0]) #arrs[0].max().item()
         arr_min = min(min(sub) for sub in arrs[0]) #arrs[0].min().item()
         levels = np.linspace(arr_min, arr_max, 20)
-    #levels = np.linspace(-1,1,20)
-    #print("AHHHHHH INDMEM","levels",levels,)
 
     cbarticks = plot_info.get("cbar_labels", levels)
     # colorbar ticks
@@ -386,26 +397,46 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         extent = [-180, 180, -20, -90]
         space = -16.5
 
-
-
-
-
     # Create subplots
-    n_cases = len(arrs)
+    n_cases = len(arrs[0]) + len(arrs[1])
     ncols = 10
     nrows = (n_cases + ncols - 1) // ncols  # Calculate the required rows
     if n_cases <= ncols:
         ncols = n_cases
     #print("n_cases",n_cases,"nrows",nrows,"ncols",ncols)
 
-    #proj = WinkelTripel(central_longitude=210)
-    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+    """if n_cases == 2 or n_cases == 3 or n_cases == 4:
         hgt = nrows*2
         wdth = ncols*3
     else:
         hgt = nrows*2.5
         wdth = ncols*4
-    hgt = nrows*2.5
+    hgt = nrows*6
+    #wdth = 10/n_cases
+
+    print("\n\nhgt,wdth",hgt,wdth)
+    if wdth > 40:
+        wdth = 40
+        print("hgt,NEW wdth",hgt,wdth,"\n\n")
+    else:
+        print("\n")"""
+
+
+    PANEL_W = 4.0   # inches
+    PANEL_H = 6.0   # inches
+
+    ncols = min(10, n_cases)
+    nrows = (n_cases + ncols - 1) // ncols
+
+    wdth = PANEL_W * ncols
+    #hgt  = PANEL_H + (PANEL_H/2 * (nrows-1)) #PANEL_H * nrows #13
+    hgt  = PANEL_H * nrows #10
+
+    ew_fontsize=8
+    title_fontsize = 14
+
+    print("\n\nhgt,wdth",hgt,wdth)
+
     fig, axs = plt.subplots(nrows, ncols, figsize=(wdth, hgt),
                              facecolor="w", edgecolor="k", sharex=True, sharey=True,
                              subplot_kw={"projection": proj},constrained_layout=False,squeeze=False)
@@ -416,8 +447,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
 
     # Set empty list for contour plot objects
     img = []
-    #print(type(arrs[0]),arrs[0])
-    for i,arr in enumerate(arrs[1]):##################
+    for i,arr in enumerate(arrs[1]):
         # Grab run metadata for plots
         # ----------------------------
         # Data years for this run
@@ -492,10 +522,10 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         lon_ticks = np.arange(0, 360, 30)
         lon_labels = ['0', '30E', '60E', '90E', '120E', '150E', '180', '150W', '120W', '90W', '60W', '30W']
         #lon_labels = ['0°', '30°E', '60°E', '90°E', '120°E', '150°E', '180°', '150°W', '120°W', '90°W', '60°W', '30°W']
-        
+
         for lon, label in zip(lon_ticks, lon_labels):
             x, y = ccrs.PlateCarree().transform_point(lon, space, ccrs.PlateCarree())
-            axs[i].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=14, ha='center', va='center')
+            axs[i].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=ew_fontsize, ha='center', va='center')
 
         plt.setp(axs[i].spines.values(), lw=.5, color='grey', alpha=0.7)
 
@@ -504,17 +534,15 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
 
         # Add coast lines and title
         axs[i].coastlines("50m", color="#b5b5b5")
-        if "member" in arr.attrs:
-            run = f'{run} {str(arr.member.values).replace(".","")}'
-        axs[i].set_title(
-                run,
-                loc="center",
-                fontdict={
-                    "fontsize": 14,
-                    #'fontweight': 'bold',
-                    "color": "#0c80ab",
-                },
-            )
+        
+        axs[i].text(
+                    0.5, 1.1, run,
+                    transform=axs[i].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
 
         # Add run years to top left of plot
         yrs_text = f"{syr}-{eyr}"
@@ -613,23 +641,21 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         
         for lon, label in zip(lon_ticks, lon_labels):
             x, y = ccrs.PlateCarree().transform_point(lon, space, ccrs.PlateCarree())
-            axs[i].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=14, ha='center', va='center')
+            axs[i].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=ew_fontsize, ha='center', va='center')
 
         plt.setp(axs[i].spines.values(), lw=.5, color='grey', alpha=0.7)
 
         # Add coast lines and title
         axs[i].coastlines("50m", color="#b5b5b5")
-        if "member" in arr.coords:
-            run = f'{run} {str(arr.member.values).replace(".","")}'
-        axs[i].set_title(
-                run,
-                loc="center",
-                fontdict={
-                    "fontsize": 14,
-                    #'fontweight': 'bold',
-                    "color": "#0c80ab",
-                },
-            )
+        
+        axs[i].text(
+                    0.5, 1.1, run,
+                    transform=axs[i].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
 
         # Add run years to top left of plot
         yrs_text = f"{syr}-{eyr}"
@@ -709,7 +735,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     #hspace = 0.05
     #plt.subplots_adjust(hspace=hspace)
 
-    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+    """if n_cases == 2 or n_cases == 3 or n_cases == 4:
         plt.subplots_adjust(
             top=0.70,     # lower this → MORE space between title and plots
             bottom=0.15   # raise this → LESS space between plots and colorbar
@@ -718,7 +744,26 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
         hspace = 0.05
         plt.subplots_adjust(hspace=hspace)
     hspace = 0.05
-    plt.subplots_adjust(hspace=hspace,wspace=0.03)
+    plt.subplots_adjust(hspace=hspace,wspace=0.03)"""
+
+
+    if n_cases == 2 or n_cases == 3 or n_cases == 4:
+        plt.subplots_adjust(
+            top=0.70,     # lower this → MORE space between title and plots
+            bottom=0.15   # raise this → LESS space between plots and colorbar
+        )
+    #else:
+    #    hspace = 0.05
+    #    #plt.subplots_adjust(hspace=hspace)
+    #    plt.subplots_adjust(
+    #        top=0.70,     # lower this → MORE space between title and plots
+    #        bottom=0.15,   # raise this → LESS space between plots and colorbar
+    #        hspace=hspace
+    #    )
+    #hspace = 0.05
+    if nrows == 2:
+        hspace = -0.25
+    plt.subplots_adjust(hspace=hspace,wspace=wspace)
     return fig
 
 
@@ -744,6 +789,8 @@ def polar_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title, var=N
     wspace=0.1
     y_title = .63
     sub_text_size = 11
+    title_fontsize = 14
+    ew_fontsize = 8
 
     # Set up figure and axes
     if var in nh_vars:
@@ -965,15 +1012,31 @@ def polar_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title, var=N
             if r == 0:
                 if "members" in arr.attrs:
                     run = f"{run} ({len(arr.attrs['members'])} Members)"
-                axs[row,r].set_title(run,loc='center',fontdict={'fontsize': 18,
+                """axs[row,r].set_title(run,loc='center',fontdict={'fontsize': 18,
                                     #'fontweight': 'bold',
                                     'color': '#0c80ab',
-                                    })
+                                    })"""
+                axs[row,r].text(
+                    0.5, 1.1, run,
+                    transform=axs[row,r].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
             else:
-                axs[row,r].set_title(run,loc='center',fontdict={'fontsize': 18,
+                """axs[row,r].set_title(run,loc='center',fontdict={'fontsize': 18,
                                     #'fontweight': 'bold',
                                     #'color': '#0c80ab',
-                                    })
+                                    })"""
+                axs[row,r].text(
+                    0.5, 1.1, run,
+                    transform=axs[row,r].transAxes,
+                    ha="center",
+                    va="bottom",
+                    fontsize=title_fontsize,
+                    color="#0c80ab",
+                )
             # End if
 
             # Add land mask if TS
@@ -1032,7 +1095,7 @@ def polar_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title, var=N
             
             for lon, label in zip(lon_ticks, lon_labels):
                 x, y = ccrs.PlateCarree().transform_point(lon, space, ccrs.PlateCarree())
-                axs[row,r].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=14, ha='center', va='center')
+                axs[row,r].text(x, y, label, transform=ccrs.PlateCarree(), fontsize=ew_fontsize, ha='center', va='center')
 
             plt.setp(axs[row,r].spines.values(), lw=.5, color='grey', alpha=0.7)
 
@@ -1056,6 +1119,14 @@ def polar_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title, var=N
                     cb.ax.set_xlabel(f'{unit} {yr_range}yr{stuff}',fontsize=18)
                 else:
                     cb.ax.set_xlabel(unit,fontsize=18)
+
+                
+
+
+
+
+
+
 
     madeup_r = 0.28
     r_text = f'r={madeup_r}'
