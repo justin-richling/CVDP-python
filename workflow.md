@@ -26,6 +26,7 @@ NOTES:
     - ensemble means
     - etc.
 * The code is there for multiple reference simulations and for reference runs to have members too, I just haven't tested this yet
+* Work on formatting for `indmem` plots; the reference (if it exists?) should be a single plot top row center, then the postage stamp plots in the rows below (up to 10 for each row) -  This asks the question, what if there are more than 10 references? -> keep the same logic for the simulations I guess...
 
 How to run:
 
@@ -35,4 +36,4 @@ How to run:
 
 
 
-This has a rigid structure, rife with loops. Obviously this is sped-built code that could benefit from refactoring and could better thought out. 
+This has a rigid structure, rife with loops. Obviously this is speed-built code that could benefit from refactoring and could better thought out.
