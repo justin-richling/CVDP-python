@@ -31,13 +31,14 @@ def main():
     #parser = argparse.ArgumentParser(description = f"Command Line Interface (CLI) for Climate Variability and Diagnostics Package (CVDP) Version {getVersion('cvdp')}")
     parser = argparse.ArgumentParser(description = f"Command Line Interface (CLI) for Climate Variability and Diagnostics Package (CVDP) Version 0.0.1")
     parser.add_argument("output_dir", nargs = 1, metavar = "output_dir", type = str, help = "Path to output directory.")
+    #xparser.add_argument("config_yml", nargs = 1, metavar = "config_yml", type = str, help = "Path to configuration dataset YML file.")
     #parser.add_argument("ref_yml", nargs = 1, metavar = "ref_yml", type = str, help = "Path to reference dataset YML file.")
     #parser.add_argument("sim_yml", nargs = 1, metavar = "sim_yml", type = str, help = "Path to simulation dataset YML file.")
     parser.add_argument("-c", nargs = 1, metavar = "--config", type = str, help = "Optional path to YML file to override default variable configurations.")
 
     args = parser.parse_args()
     var_configs = args.c
-
+    print(args)
     from pathlib import Path
     plot_loc = Path(args.output_dir[0])
     if not plot_loc.is_dir():
@@ -117,9 +118,11 @@ def main():
 
 
 
-
-    # These are dictionaries of datasets
-    ref_datasets, sim_datasets, config_dict = get_input_data(f"{PARENT_DIR}/example_config.yaml")
+    if "c" not in args:
+        # These are dictionaries of datasets
+        ref_datasets, sim_datasets, config_dict = get_input_data(f"{PARENT_DIR}/example_config.yaml")
+    else:
+        ref_datasets, sim_datasets, config_dict = get_input_data(f"{args.c[0]}")
     print(list(ref_datasets.keys()))
     ref_names = list(ref_datasets.keys())
     sim_names = list(sim_datasets.keys())
