@@ -8,6 +8,10 @@
 
 /glade/derecho/scratch/richling/cvdp-output/netcdf_ensemble_new/
 
+### Progress Dashboard
+
+https://project.cgd.ucar.edu/projects/ADF/cvdp-python/case_viewer.html
+
 
 ### Justin's Current Workflow
 
