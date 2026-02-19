@@ -6,19 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-*.png
-*.jpeg
-*.html
-*.sh
-*.txt
-
-* copy*
-*WORKS*
-*cleanup*
-*needs*
-*solo.yaml
-*main*
-
 # Distribution / packaging
 .Python
 build/
