@@ -15,8 +15,8 @@ from cartopy.util import add_cyclic_point
 import cartopy.feature as cfeature
 import matplotlib.path as mpath
 
-from vis import *
-from vis.vis_utils import *
+from vis import get_NCL_colormap
+import vis.vis_utils as vis_utils
 import cvdp_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 import cvdp_utils.analysis as an
@@ -182,7 +182,7 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
                 "cmap": cmap,
                 "transform": ccrs.PlateCarree(),
             }
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+        wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
 
         if vn == "ts":
             # Land mask
@@ -198,7 +198,7 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
 
             # Set up normalization of data based off non-linear set of contour levels
             wrap_data = np.where(wrap_data < 0, 0, wrap_data)
-            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            norm = mpl.colors.BoundaryNorm(levels, vis_utils.amwg_cmap.N)
             contourf_args["norm"] = norm
             # Plot masked continents over TS plot to mimic SST's
             axs[i].contourf(wrap_lon_land, land_data.lat, wrap_data_land, colors="w",
@@ -262,7 +262,7 @@ def polar_indmemdiff_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     # Set up colorbar
     #----------------
     # Add colorbar under last row (partial row handled)
-    cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
+    cbar = vis_utils.add_centered_colorbar(fig, axs, img[0], unit, ticks,
                           n_cols_per_row=10,
                           pad_inches=0.75,
                           height_inches=0.35)
@@ -482,7 +482,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
                 "transform": ccrs.PlateCarree(),
             }
 
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+        wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
 
         # Plot landmask (continents) if TS or SST
         if vn == "ts":
@@ -498,7 +498,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
                 )
 
             # Set up normalization of data based off non-linear set of contour levels
-            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            norm = mpl.colors.BoundaryNorm(levels, vis_utils.amwg_cmap.N)
             contourf_args["norm"] = norm
 
             # Plot masked continents over TS plot to mimic SST's
@@ -595,7 +595,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
                 "transform": ccrs.PlateCarree(),
             }
 
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+        wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
 
         # Plot landmask (continents) if TS or SST
         if vn == "ts":
@@ -611,7 +611,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
                 )
 
             # Set up normalization of data based off non-linear set of contour levels
-            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            norm = mpl.colors.BoundaryNorm(levels, vis_utils.amwg_cmap.N)
             contourf_args["norm"] = norm
 
             # Plot masked continents over TS plot to mimic SST's
@@ -703,7 +703,7 @@ def polar_indmem_latlon_plot(vn, var, arrs, plot_dict, title, ptype):
     # Set up colorbar
     #----------------
      # Add colorbar under last row (partial row handled)
-    cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
+    cbar = vis_utils.add_centered_colorbar(fig, axs, img[0], unit, ticks,
                           n_cols_per_row=10,
                           pad_inches=0.75,
                           height_inches=0.35)
@@ -908,15 +908,15 @@ def polar_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title, var=N
             if r == 3:
                 arr = af.zeros_array(arrs[-1][row].shape[0], arrs[-1][row].shape[1])
                 run = "Rank of Observations within Ensemble"
-                cmap = bg_cmap
+                cmap = vis_utils.bg_cmap
                 levels = [-5,0,5,10,20,80,90,95,100,105]
                 yrs_text = ''
-                norm=PiecewiseNorm([0,5,10,20,80,90,95,100])
+                norm = vis_utils.PiecewiseNorm([0,5,10,20,80,90,95,100])
                 unit = "%"
             else:
                 if vn == "ts":
                     # Set up normalization of data based off non-linear set of contour levels
-                    norm = mpl.colors.BoundaryNorm(ticks, amwg_cmap.N)
+                    norm = mpl.colors.BoundaryNorm(ticks, vis_utils.amwg_cmap.N)
                 unit = sim_unit
             # End if
 
@@ -966,11 +966,11 @@ def polar_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title, var=N
                                                                 axis=lon_idx)
             if r < 2:
                 #print("wrap_data BEFORE CLEAN",wrap_data.shape,"\n\n")
-                wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+                wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
                 #print("\twrap_data AFTER CLEAN",wrap_data.shape,"\n\n")
             if r == 2:
                 #print("wrap_data BEFORE CLEAN",wrap_data.shape,"\n\n")
-                wrap_data = clean_data(vn, wrap_data, ptype, diff=True)
+                wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=True)
                 #print("\twrap_data AFTER CLEAN",wrap_data.shape,"\n\n")
 
             # End data gather/clean

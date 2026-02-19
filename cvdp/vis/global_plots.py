@@ -14,8 +14,9 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from cartopy.util import add_cyclic_point
 import cartopy.feature as cfeature
 
-from vis import *
-from vis.vis_utils import *
+from vis import get_NCL_colormap, WinkelTripel
+#from vis.vis_utils import *
+import vis.vis_utils as vis_utils
 import cvdp_utils.avg_functions as af
 lsmask, ncl_masks = af.land_mask()
 import cvdp_utils.analysis as an
@@ -148,15 +149,15 @@ def global_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title) -> p
             if r == 3:
                 arr = af.zeros_array(arrs[-1][row].shape[0], arrs[-1][row].shape[1])
                 run = "Rank of Observations within Ensemble"
-                cmap = bg_cmap
+                cmap = vis_utils.bg_cmap
                 levels = [-5,0,5,10,20,80,90,95,100,105]
                 yrs_text = ''
-                norm=PiecewiseNorm([0,5,10,20,80,90,95,100])
+                norm = vis_utils.PiecewiseNorm([0,5,10,20,80,90,95,100])
                 unit = "%"
             else:
                 if vn == "ts":
                     # Set up normalization of data based off non-linear set of contour levels
-                    norm = mpl.colors.BoundaryNorm(ticks, amwg_cmap.N)
+                    norm = mpl.colors.BoundaryNorm(ticks, vis_utils.amwg_cmap.N)
                 unit = sim_unit
             # End if
 
@@ -201,9 +202,9 @@ def global_ensemble_plot(arrs: list, arr_diff, vn, ptype, plot_dict, title) -> p
                                                                 coord=landsies.lon,
                                                                 axis=lon_idx)
             if r < 2:
-                wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+                wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
             if r == 2:
-                wrap_data = clean_data(vn, wrap_data, ptype, diff=True)
+                wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=True)
 
             # End data gather/clean
             #----------------------
@@ -462,7 +463,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
                 "transform": ccrs.PlateCarree(),
             }
 
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+        wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
 
         # Plot landmask (continents) if TS or SST
         if vn == "ts":
@@ -478,7 +479,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
                 )
 
             # Set up normalization of data based off non-linear set of contour levels
-            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            norm = mpl.colors.BoundaryNorm(levels, vis_utils.amwg_cmap.N)
             contourf_args["norm"] = norm
 
             # Plot masked continents over TS plot to mimic SST's
@@ -554,7 +555,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
                 "transform": ccrs.PlateCarree(),
             }
 
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+        wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
 
         # Plot landmask (continents) if TS or SST
         if vn == "ts":
@@ -570,7 +571,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
                 )
 
             # Set up normalization of data based off non-linear set of contour levels
-            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            norm = mpl.colors.BoundaryNorm(levels, vis_utils.amwg_cmap.N)
             contourf_args["norm"] = norm
 
             # Plot masked continents over TS plot to mimic SST's
@@ -648,7 +649,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     # Set up colorbar
     #----------------
      # Add colorbar under last row (partial row handled)
-    cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
+    cbar = vis_utils.add_centered_colorbar(fig, axs, img[0], unit, ticks,
                           n_cols_per_row=10,
                           pad_inches=0.75,
                           height_inches=0.35)
@@ -823,7 +824,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
                 "transform": ccrs.PlateCarree(),
             }
 
-        wrap_data = clean_data(vn, wrap_data, ptype, diff=False)
+        wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=False)
 
         # Plot landmask (continents) if TS or SST
         if vn == "ts":
@@ -839,7 +840,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
                 )
 
             # Set up normalization of data based off non-linear set of contour levels
-            norm = mpl.colors.BoundaryNorm(levels, amwg_cmap.N)
+            norm = mpl.colors.BoundaryNorm(levels, vis_utils.amwg_cmap.N)
             contourf_args["norm"] = norm
 
             # Plot masked continents over TS plot to mimic SST's
@@ -915,7 +916,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     # Set up colorbar
     #----------------
     # Add colorbar under last row (partial row handled)
-    cbar = add_centered_colorbar(fig, axs, img[0], unit, ticks,
+    cbar = vis_utils.add_centered_colorbar(fig, axs, img[0], unit, ticks,
                           n_cols_per_row=10,
                           pad_inches=0.75,
                           height_inches=0.35)
