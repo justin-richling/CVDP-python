@@ -13,6 +13,71 @@
 https://project.cgd.ucar.edu/projects/ADF/cvdp-python/case_viewer.html
 
 
+Plot types used in CVDP: (examples at https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/)
+Linear:
+    - Timeseries
+        * Global Variable
+            - SST
+            - TAS
+            - PR
+            - PR (land only)
+        * Regional Variables
+            - Atlantic SST Meridional Mode
+            - Atlantic Niño SST
+            - North Atlantic SST
+            - Tropical North Atlantic SST
+            - Tropical South Atlantic SST
+            - niño1+2 SST
+            - niño3 SST
+            - niño3.4 SST
+            - niño4 SST
+            - North Pacific PSL Index (NPI)
+            - North Pacific SST Meridional Mode
+            - South Pacific SST Meridional Mode
+            - Indian Ocean SST Dipole
+            - Tropical Indian Ocean SST
+            - Southern Ocean SST
+        * Nino3.4 Monthly Standard Dev - nino34.monstddev.summary.png
+        * Nino3.4 Monthly Running Standard Devs - nino34_runstddev.timeseries.summary.png
+        * Atmospheric Modes of Variability
+            - SO
+            - NAM
+            - NAO
+            - SAM
+            - PNA
+            - PNO
+            - PSA1
+            - PSA2
+    - Nino3.4 Monthly Autocorrelation - nino34.autocor.summary.png
+    - Monthly SST Power Spectra - nino34.powspec.summary.png
+2-d:
+    - Nino3.4 Monthly Wavelet - nino34.wavelet.summary.png
+    - El Nino/La Nina Composite Hovmoller - nino34.hov.elnino.summary.png/nino34.hov.lanina.summary.png
+
+2-d Spatial:
+    - Global Lat/Lon
+        * El Nino - La Nina Spatial Composite (SST,TAS,PSL) & (PR) - nino34.spatialcomp.summary.djf1.png
+        * El Nino/La Nina Spatial Composite (SST,TAS,PSL) & (PR) - nino34.spatialcomp.elnino.summary.djf1.png/nino34.spatialcomp.lanina.summary.djf1.png
+        * Coupled Modes of Variability
+            - ENSO
+            - AMV
+            - AMV'
+            - PDV
+            - PDV'
+    - Polar Lat/Lon
+        * Atmospheric Modes of Variability
+            - SO
+            - NAM
+            - NAO
+            - SAM
+            - PNA
+            - PNO
+            - PSA1
+            - PSA2
+
+
+
+
 ### Justin's Current Workflow
 
 This workflow is subject to change, but this is the path necessary to match the graphics creation.
@@ -32,13 +97,64 @@ NOTES:
 * Work on formatting for `indmem` plots; the reference (if it exists?) should be a single plot top row center, then the postage stamp plots in the rows below (up to 10 for each row) -  This asks the question, what if there are more than 10 references? -> keep the same logic for the simulations I guess...
 * Need to add area averaged check for EOF outputs and add logic to get the same sign as reference EOFs.
 
+* Calculations should be reviewed by Adam! -
+    - are the EOF's looking ok?
+    - Are the ensemble means being done correctly?
+    - Area averaging and land masking good?
+
 How to run:
 
 1) activate CVDP development conda envrionment: `conda activate cvdp-dev` (must build first if haven't yet, see README.md)
 
 2) Go to directory `cvdp`, and run: `python cli.py <directory for saved images>`, that's it.
-    * or if using non defualt `example_config.yaml` file: `python cli.py -c <path to custom config yaml> <directory for saved images>`
+    * or if using non default `example_config.yaml` file: `python cli.py -c <path to custom config yaml> <directory for saved images>`
     * ie `python cli.py -c /glade/work/richling/CVDP-python-dev/CVDP-python/test_config_yamls/example_config_no_ens_1_solo.yaml cvdp-output/`
+
+* You can put `time` in front of the python call to get the time the script takes to run `time python cli.py ...`
 
 
 This workflow has a rigid structure, rife with loops. Obviously this is speed-built code that could benefit from refactoring and could better thought out.
+
+
+03/20206 Updates:
+Refactoring `AtmOcnGR` into logical break points. This script is really doing four actions:
+* Determining which plots are valid
+* Gathering data
+* Configuring plot dispatch
+* Saving figures
+
+Thus this refactored structure is:
+graphics()
+    ├── iterate_plot_space()
+    ├── determine_case()
+    ├── build_plot()
+    │     ├── build_standard_plot()
+    │     ├── build_npi_plot()
+    │     └── build_eof_plot()
+    └── save_figures()
+
+This will also refactor `gather_data`; currently it is trying to do 5 jobs:
+* Iterating runs
+* Handling ensemble vs single-member logic
+* Handling trends vs means
+* Handling special analysis (NPI, EOF)
+* Managing attrs + metadata
+
+into:
+gather_data()
+    ├── process_run()
+    │     ├── process_member()
+    │     └── compute_analysis()
+
+
+Refactoring global lat/lon plots
+graphics()
+    ↓
+data preparation
+    ↓
+build_panels()
+    ↓
+global_latlon_plot()
+        ↓
+    draw_panel()
+
