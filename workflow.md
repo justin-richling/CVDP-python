@@ -175,11 +175,9 @@ python cli.py -c test_config_yamls/example_config_4_ens_1_solo.yaml 4_ens_1_solo
 
     -> input(s) config yaml file ie `example_config.yaml`
 
-    -> returns `ref_datasets`: list of xarray dataArrays
-
-               `sim_datasets`: list of xarray dataArrays
-
-               `config_dict`: dict chocked full of good meta and actaul data, probably needs some love
+    -> returns `ref_datasets`: list of xarray dataArrays<br>
+               `sim_datasets`: list of xarray dataArrays<br>
+               `config_dict`: dict chocked full of good meta and actaul data, probably needs some love<br>
 
 2) Loop over variables and create graphics
     2) a. -> `diag.AtmOcnMean.get_run_dict()`
