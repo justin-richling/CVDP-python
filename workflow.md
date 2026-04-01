@@ -246,8 +246,8 @@ Spatial mean, spatial mean standard deviation, and trends. For each of those typ
 
 There are several helper functions in this script.
 
-graphics -> main one called in `cli.py`
-plot_worker
-get_plot_title
-get_plot_name
-plot_dispatch -> queues up the plotting setails for each plot, then calls the plotting scripts, `vis.global_plots` and `vis.polar_plots`
+* graphics -> main one called in `cli.py`
+* plot_worker
+* get_plot_title
+* get_plot_name
+* plot_dispatch -> queues up the plotting setails for each plot, then calls the plotting scripts, `vis.global_plots` and `vis.polar_plots`
