@@ -160,12 +160,6 @@ def global_ensemble_plot(arrs: list, arr_diffs:list, vn, ptype, plot_dict, title
             if col == 2:
                 wrap_data = vis_utils.clean_data(vn, wrap_data, ptype, diff=True)
 
-            """contourf_args['levels'] = levels
-            contourf_args['cmap'] = cmap
-            contourf_args['lat'] = lat
-            contourf_args['wrap_lon'] = wrap_lon
-            contourf_args['wrap_data'] = wrap_data"""
-
             # End data gather/clean
             #----------------------
 

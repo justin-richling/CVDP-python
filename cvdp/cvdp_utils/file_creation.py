@@ -124,8 +124,8 @@ def data_read_in_3D(fil0,sy,ey,vari, lsmask=None):
     eydata = int(cpathE[len(cpathE)-9:len(cpathE)-5])    # end year of data
     emdata = int(cpathE[len(cpathE)-5:len(cpathE)-3])    # end month of data
 
-    vname = {"sst":'ts',"TS":'ts',"ts":'ts',"t_surf":'ts',"skt":'ts',
-             "TREFHT":'trefht',"tas":'trefht',"temp":'trefht',"air":'trefht',"temperature_anomaly":'trefht',"temperature":'trefht',"t2m":'trefht',"t_ref":'trefht',"T2":'trefht',"tempanomaly":'trefht',
+    vname = {"sst":'sst',"TS":'sst',"ts":'sst',"t_surf":'sst',"skt":'sst',
+             "TREFHT":'tas',"tas":'tas',"temp":'tas',"air":'tas',"temperature_anomaly":'tas',"temperature":'tas',"t2m":'tas',"t_ref":'tas',"T2":'tas',"tempanomaly":'tas',
              "PSL":'psl',"psl":'psl',"slp":'psl',"SLP":'psl',"prmsl":'psl',"msl":'psl',"slp_dyn":'psl',
              "PRECC":'prect',"PRECL":'prect',"PRECT":'prect',"pr":'prect',"PPT":'prect',"ppt":'prect',"p":'prect',"P":'prect',"precip":'prect',"PRECIP":'prect',"tp":'prect',"prcp":'prect',"prate":'prect'
             }
