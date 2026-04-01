@@ -173,27 +173,39 @@ python cli.py -c test_config_yamls/example_config_4_ens_1_solo.yaml 4_ens_1_solo
 3 main objectives here:
 1) File I/O -> `file_io.get_input_data()`
 
-    -> input(s) config yaml file ie `example_config.yaml`
+    input(s)
+    * config yaml file ie `example_config.yaml`
 
-    -> returns `ref_datasets`: list of xarray dataArrays<br>
-                         `sim_datasets`: list of xarray dataArrays<br>
-                         `config_dict`: dict chocked full of good meta and actaul data, probably needs some love<br>
+    returns
+    * `ref_datasets`: list of xarray dataArrays<br>
+    * `sim_datasets`: list of xarray dataArrays<br>
+    * `config_dict`: dict chocked full of good meta and actaul data, probably needs some love<br>
 
 2) Loop over variables and create graphics
+
     2) a. -> `diag.AtmOcnMean.get_run_dict()`
-        -> input(s) `vn`: variable name
-                    `ref_names`
-                    `sim_names`
-                    `ref_datasets`
-                    `sim_datasets`
-                    `config_dict`
-                    `kwargs`
-        -> returns `kwargs`: dict of keyword args; probably needs some love. Combine with `config_dict`... No.
+
+        input(s) 
+        * `vn`: variable name
+        * `ref_names`
+        * `sim_names`
+        * `ref_datasets`
+        * `sim_datasets`
+        * `config_dict`
+        * `kwargs`
+
+        returns
+        * `kwargs`: dict of keyword args; probably needs some love. Combine with `config_dict`... No.
+
     2) b. -> `vis.AtmOcnGR.graphics()`
-        -> input(s) `plot_loc`: str saved plot location
-                    `plot_dict`: dict of plotting details
-                    `kwargs`
-        -> returns `plot_dict`: dict of delicious plot details (iterative process per variable)
+        input(s)
+        * `plot_loc`: str saved plot location
+        * `plot_dict`: dict of plotting details
+        * `kwargs`
+
+        returns
+        * `plot_dict`: dict of delicious plot details (iterative process per variable)
+
 3) Generate webpages -> `cvdp_utils.web.generate_webpages()`
 
 2) b.
