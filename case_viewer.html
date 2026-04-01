@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CVDP Progress Dashboard</title>
+
+<style>
+html, body { height: 100%; margin: 0; }
+body { display: flex; flex-direction: column; font-family: Arial, sans-serif; }
+
+.controls {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+select { padding: 6px; font-size: 15px; margin: 10px 0; min-width: 220px; }
+
+#experimentTitleHeading {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #f0f8ff;
+  border-left: 6px solid #007acc;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  font-size: 18px;
+  margin: 15px 20px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+  transform: translateY(-10px);
+}
+#experimentTitleHeading.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.viewer { flex: 1; overflow-y: auto; padding: 20px; }
+.section { margin-bottom: 30px; }
+.collage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(45vw, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+.collage img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.hidden { display: none; }
+h2, h3 { margin-top: 0; }
+
+.expLabel {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="controls">
+
+  <!-- LEFT SIDE -->
+  <div>
+    <h2>CVDP Progress Dashboard</h2>
+    <select id="experimentSelect" onchange="updateExperiment()">
+      <option value="">-- Select Experiment --</option>
+    </select>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div>
+    <h3>Compare Across Experiments</h3>
+
+    <select id="compareSectionSelect" onchange="updateCompareVariables()">
+      <option value="">-- Select Section --</option>
+      <option value="global">Global</option>
+      <option value="polar">Polar</option>
+    </select>
+
+    <select id="compareVariableSelect" onchange="updateCompareSubDropdown()">
+      <option value="">-- Select Variable --</option>
+    </select>
+
+    <select id="comparePSLSubSelect" class="hidden" onchange="updateCompareImageType()">
+      <option value="">-- Select PSL Type --</option>
+      <option value="spatialmeans">Spatial Mean</option>
+      <option value="trends">Trends</option>
+      <option value="spatialstddev">Spatial Stddev</option>
+    </select>
+
+    <select id="compareImageTypeSelect" class="hidden" onchange="updateCompareMosaic()">
+      <option value="">-- Select Image Type --</option>
+      <option value="0">Summary</option>
+      <option value="1">Indmem</option>
+      <option value="2">Indmemdiff</option>
+    </select>
+
+  </div>
+
+</div>
+
+<h3 id="experimentTitleHeading" class="hidden"></h3>
+
+<div class="viewer">
+
+  <!-- ORIGINAL VIEWER -->
+  <div id="globalSection" class="section hidden">
+    <h3>Global Maps</h3>
+    <select id="globalVariableSelect" onchange="updateGlobalSubDropdown()">
+      <option value="">-- Select Variable --</option>
+    </select>
+    <select id="globalPSLSubSelect" class="hidden" onchange="updateCollage('global')">
+      <option value="">-- Select PSL Type --</option>
+      <option value="spatialmeans">Spatial Mean</option>
+      <option value="trends">Trends</option>
+      <option value="spatialstddev">Spatial Stddev</option>
+    </select>
+    <div id="globalCollage" class="collage"></div>
+  </div>
+
+  <div id="polarSection" class="section hidden">
+    <h3>Polar Maps</h3>
+    <select id="polarVariableSelect" onchange="updateCollage('polar')">
+      <option value="">-- Select EOF Variable --</option>
+    </select>
+    <div id="polarCollage" class="collage"></div>
+  </div>
+
+  <!-- CROSS EXPERIMENT -->
+  <div id="compareSection" class="section hidden">
+    <h3>All Experiments Mosaic</h3>
+    <div id="compareCollage" class="collage"></div>
+  </div>
+
+</div>
+
+<script>
+
+const brokenImageURL = "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/file_not_found_image.png";
+const experiments = {};
+
+/* ---------------- EXPERIMENT SETUP ---------------- */
+
+for (let members = 3; members <= 10; members++) {
+
+  const totalSims = members + 1;
+  const key = `CESM-LE w/ ${members} members and CESM1-LENS_1-10 simulation`;
+  const baseURL = `https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__${members}_ens_mems__${totalSims}_total_sims`;
+
+  experiments[key] = {
+    global: {
+      PSL: {
+        spatialmeans: buildSet(baseURL,"psl_spatialmean_djf"),
+        trends: buildSet(baseURL,"psl_trends_djf"),
+        spatialstddev: buildSet(baseURL,"psl_spatialstddev_djf")
+      },
+      NPI: buildSet(baseURL,"npi_pattern_ndjfm")
+    },
+    polar: {
+      NAM: buildSet(baseURL,"nam_pattern_djf"),
+      SAM: buildSet(baseURL,"sam_pattern_djf"),
+      PSA1: buildSet(baseURL,"psa1_pattern_djf"),
+      PSA2: buildSet(baseURL,"psa2_pattern_djf")
+    }
+  };
+}
+
+experiments["CESM-LE w/ 20 members"] = {
+      global: {
+        PSL: {
+          spatialmeans: [
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_spatialmean_djf.summary.png",
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_spatialmean_djf.indmem.png",
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_spatialmean_djf.indmemdiff.png",
+          ],
+          trends: [
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_trends_djf.summary.png",
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_trends_djf.indmem.png",
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_trends_djf.indmemdiff.png",
+          ],
+          spatialstddev: [
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_spatialstddev_djf.summary.png",
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_spatialstddev_djf.indmem.png",
+            "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psl_spatialstddev_djf.indmemdiff.png",
+          ]
+        },
+        NPI: [
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/npi_pattern_ndjfm.summary.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/npi_pattern_ndjfm.indmem.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/npi_pattern_ndjfm.indmemdiff.png"
+        ]
+      },
+      polar: {
+        NAM: [
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/nam_pattern_djf.summary.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/nam_pattern_djf.indmem.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/nam_pattern_djf.indmemdiff.png"
+        ],
+        SAM: [
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/sam_pattern_djf.summary.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/sam_pattern_djf.indmem.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/sam_pattern_djf.indmemdiff.png"
+        ],
+        PSA1: [
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psa1_pattern_djf.summary.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psa1_pattern_djf.indmem.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psa1_pattern_djf.indmemdiff.png"
+        ],
+        PSA2: [
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psa2_pattern_djf.summary.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psa2_pattern_djf.indmem.png",
+          "https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__20_ens_mems__20_total_sims/psa2_pattern_djf.indmemdiff.png"
+        ],
+      }
+    }
+
+
+const baseCompURL = `https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/output__0_ens_mems__1_total_sims`;
+const baseCompURL_2 = `https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/`;
+
+experiments["1 Simulation vs NCL"] = {
+  global: {
+    PSL: {
+      spatialmeans: [
+        [
+          `${baseCompURL}/psl_spatialmean_djf.summary.png`,
+          `${baseCompURL_2}/psl_spatialmean_djf.summary.png`
+        ],
+        [
+          `${baseCompURL}/psl_spatialmean_djf.indmem.png`,
+          `${baseCompURL_2}/psl_spatialmean_djf.indmem.png`
+        ],
+        [
+          `${baseCompURL}/psl_spatialmean_djf.indmemdiff.png`,
+          `${baseCompURL_2}/psl_spatialmean_djf.indmemdiff.png`
+        ]
+      ],
+      trends: [
+        [
+          `${baseCompURL}/psl_trends_djf.summary.png`,
+          `${baseCompURL_2}/psl_trends_djf.summary.png`
+        ],
+        [
+          `${baseCompURL}/psl_trends_djf.indmem.png`,
+          `${baseCompURL_2}/psl_trends_djf.indmem.png`
+        ],
+        [
+          `${baseCompURL}/psl_trends_djf.indmemdiff.png`,
+          `${baseCompURL_2}/psl_trends_djf.indmemdiff.png`
+        ]
+      ],
+      spatialstddev: [
+        [
+          `${baseCompURL}/psl_spatialstddev_djf.summary.png`,
+          `${baseCompURL_2}/psl_spatialstddev_djf.summary.png`
+        ],
+        [
+          `${baseCompURL}/psl_spatialstddev_djf.indmem.png`,
+          `${baseCompURL_2}/psl_spatialstddev_djf.indmem.png`
+        ],
+        [
+          `${baseCompURL}/psl_spatialstddev_djf.indmemdiff.png`,
+          `${baseCompURL_2}/psl_spatialstddev_djf.indmemdiff.png`
+        ]
+      ]
+    },
+    NPI: [
+      [
+        `${baseCompURL}/npi_pattern_ndjfm.summary.png`,
+        `${baseCompURL_2}/npi_pattern_ndjfm.summary.png`
+      ],
+      [
+        `${baseCompURL}/npi_pattern_ndjfm.indmem.png`,
+        `${baseCompURL_2}/npi_pattern_ndjfm.indmem.png`
+      ],
+      [
+        `${baseCompURL}/npi_pattern_ndjfm.indmemdiff.png`,
+        `${baseCompURL_2}/npi_pattern_ndjfm.indmemdiff.png`
+      ]
+    ]
+  },
+  polar: {
+    NAM: [
+      [
+        `${baseCompURL}/nam_pattern_djf.summary.png`,
+        `${baseCompURL_2}/nam_pattern_djf.summary.png`
+      ],
+      [
+        `${baseCompURL}/nam_pattern_djf.indmem.png`,
+        `${baseCompURL_2}/nam_pattern_djf.indmem.png`
+      ],
+      [
+        `${baseCompURL}/nam_pattern_djf.indmemdiff.png`,
+        `${baseCompURL_2}/nam_pattern_djf.indmemdiff.png`
+      ]
+    ],
+    SAM: [
+      [
+        `${baseCompURL}/sam_pattern_djf.summary.png`,
+        `${baseCompURL_2}/sam_pattern_djf.summary.png`
+      ],
+      [
+        `${baseCompURL}/sam_pattern_djf.indmem.png`,
+        `${baseCompURL_2}/sam_pattern_djf.indmem.png`
+      ],
+      [
+        `${baseCompURL}/sam_pattern_djf.indmemdiff.png`,
+        `${baseCompURL_2}/sam_pattern_djf.indmemdiff.png`
+      ]
+    ],
+    PSA1: [
+      [
+        `${baseCompURL}/psa1_pattern_djf.summary.png`,
+        `${baseCompURL_2}/psa1_pattern_djf.summary.png`
+      ],
+      [
+        `${baseCompURL}/psa1_pattern_djf.indmem.png`,
+        `${baseCompURL_2}/psa1_pattern_djf.indmem.png`
+      ],
+      [
+        `${baseCompURL}/psa1_pattern_djf.indmemdiff.png`,
+        `${baseCompURL_2}/psa1_pattern_djf.indmemdiff.png`
+      ]
+    ],
+    PSA2: [
+      [
+        `${baseCompURL}/psa2_pattern_djf.summary.png`,
+        `${baseCompURL_2}/psa2_pattern_djf.summary.png`
+      ],
+      [
+        `${baseCompURL}/psa2_pattern_djf.indmem.png`,
+        `${baseCompURL_2}/psa2_pattern_djf.indmem.png`
+      ],
+      [
+        `${baseCompURL}/psa2_pattern_djf.indmemdiff.png`,
+        `${baseCompURL_2}/psa2_pattern_djf.indmemdiff.png`
+      ]
+    ]
+  }
+};
+
+function buildSet(baseURL,name){
+  return [
+    `${baseURL}/${name}.summary.png`,
+    `${baseURL}/${name}.indmem.png`,
+    `${baseURL}/${name}.indmemdiff.png`
+  ];
+}
+
+/* ---------------- ORIGINAL VIEWER ---------------- */
+
+const expSelect = document.getElementById("experimentSelect");
+
+/*Object.keys(experiments).forEach(key=>{
+  const option=document.createElement("option");
+  option.value=key;
+  option.textContent=key.match(/(\d+) members/)
+    ? `${parseInt(key.match(/(\d+) members/)[1])+1} simulations`
+    : key;
+  expSelect.appendChild(option);
+});*/
+
+Object.keys(experiments).forEach(key => {
+  const option = document.createElement("option");
+  option.value = key;
+
+  const match = key.match(/(\d+) members/);
+  if (match) {
+    let numMembers = parseInt(match[1]);
+    // Only add 1 if this is NOT a "NO solo simulation" experiment
+    if (!key.includes("NO solo simulation")) {
+      numMembers += 1;
+    }
+    option.textContent = `${numMembers} simulations`;
+  } else {
+    option.textContent = key;
+  }
+
+  expSelect.appendChild(option);
+});
+
+/*
+function updateExperiment() {
+  const exp = expSelect.value;
+  const heading = document.getElementById("experimentTitleHeading");
+
+  if (exp) {
+    heading.textContent = `${exp} — ${expSelect.selectedOptions[0].text}`;
+    heading.classList.add("visible");
+    heading.classList.remove("hidden");
+  } else {
+    heading.textContent = "";
+    heading.classList.remove("visible");
+    heading.classList.add("hidden");
+  }
+
+  resetSection("global");
+  resetSection("polar");
+  if (!exp) return;
+
+  populateVariableDropdown("global", experiments[exp].global);
+  populateVariableDropdown("polar", experiments[exp].polar);
+
+  document.getElementById("globalSection").classList.remove("hidden");
+  document.getElementById("polarSection").classList.remove("hidden");
+}
+*/
+
+function clearExperimentHeading() {
+  const heading = document.getElementById("experimentTitleHeading");
+  heading.textContent = "";
+  heading.classList.remove("visible");
+  heading.classList.add("hidden");
+}
+
+function updateExperiment(){
+  const exp=expSelect.value;
+  const heading = document.getElementById("experimentTitleHeading");
+
+  // -----------------------------
+  // Reset right-side mosaic & dropdowns
+  // -----------------------------
+  document.getElementById("compareCollage").innerHTML = "";
+  document.getElementById("compareSection").classList.add("hidden");
+  document.getElementById("compareSectionSelect").value = "";
+  document.getElementById("compareVariableSelect").value = "";
+  document.getElementById("comparePSLSubSelect").value = "";
+  document.getElementById("compareImageTypeSelect").value = "";
+  document.getElementById("comparePSLSubSelect").classList.add("hidden");
+  document.getElementById("compareImageTypeSelect").classList.add("hidden");
+
+  if (exp) {
+    heading.textContent = `${exp} — ${expSelect.selectedOptions[0].text}`;
+    heading.classList.add("visible");
+    heading.classList.remove("hidden");
+  } else {
+    heading.textContent = "";
+    heading.classList.remove("visible");
+    heading.classList.add("hidden");
+  }
+
+  resetSection("global");
+  resetSection("polar");
+  if(!exp) return;
+
+  populateVariableDropdown("global",experiments[exp].global);
+  populateVariableDropdown("polar",experiments[exp].polar);
+
+  document.getElementById("globalSection").classList.remove("hidden");
+  document.getElementById("polarSection").classList.remove("hidden");
+}
+
+function populateVariableDropdown(type,data){
+  const select=document.getElementById(type+"VariableSelect");
+  select.innerHTML=`<option value="">-- Select Variable --</option>`;
+  Object.keys(data).forEach(v=>{
+    const opt=document.createElement("option");
+    opt.value=v;
+    opt.textContent=v;
+    select.appendChild(opt);
+  });
+}
+
+function updateGlobalSubDropdown(){
+  const val=document.getElementById("globalVariableSelect").value;
+  if(val==="PSL"){
+    document.getElementById("globalPSLSubSelect").classList.remove("hidden");
+  }else{
+    document.getElementById("globalPSLSubSelect").classList.add("hidden");
+    updateCollage("global");
+  }
+}
+
+function updateCollage(type){
+
+  // Clear compare section when using left viewer
+  document.getElementById("compareCollage").innerHTML = "";
+  document.getElementById("compareSection").classList.add("hidden");
+
+  const exp=expSelect.value;
+  const collage=document.getElementById(type+"Collage");
+  collage.innerHTML="";
+  const variable=document.getElementById(type+"VariableSelect").value;
+  if(!variable) return;
+
+  let arr;
+  if(type==="global" && variable==="PSL"){
+    const sub=document.getElementById("globalPSLSubSelect").value;
+    if(!sub) return;
+    arr=experiments[exp][type][variable][sub];
+  }else{
+    arr=experiments[exp][type][variable];
+  }
+
+  arr.forEach(item => {
+
+    // If it's a pair of images
+    if (Array.isArray(item)) {
+
+      const pairWrapper = document.createElement("div");
+      /*pairWrapper.style.display = "grid";
+      pairWrapper.style.gridTemplateColumns = "1fr 1fr";
+      pairWrapper.style.gap = "10px";
+      */
+
+      pairWrapper.style.gridColumn = "1 / -1";
+      pairWrapper.style.display = "grid";
+      pairWrapper.style.gridTemplateColumns = "1fr 1fr";
+      pairWrapper.style.gap = "15px";
+      pairWrapper.style.marginBottom = "25px";
+
+      // ---------- COLUMN HEADERS ----------
+      const pythonLabel = document.createElement("div");
+      pythonLabel.textContent = "Python";
+      pythonLabel.style.fontWeight = "bold";
+      pythonLabel.style.textAlign = "center";
+      pythonLabel.style.paddingBottom = "5px";
+
+      const nclLabel = document.createElement("div");
+      nclLabel.textContent = "NCL";
+      nclLabel.style.fontWeight = "bold";
+      nclLabel.style.textAlign = "center";
+      nclLabel.style.paddingBottom = "5px";
+
+      pairWrapper.appendChild(pythonLabel);
+      pairWrapper.appendChild(nclLabel);
+
+      item.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.onerror = () => {
+          img.src = brokenImageURL;
+        };
+        pairWrapper.appendChild(img);
+      });
+
+      collage.appendChild(pairWrapper);
+
+    } else {
+
+      // Normal single image case
+      const img = document.createElement("img");
+      img.src = item;
+      img.onerror = () => {
+        img.src = brokenImageURL;
+      };
+
+      collage.appendChild(img);
+    }
+
+  });
+}
+
+function resetSection(type){
+  document.getElementById(type+"Collage").innerHTML="";
+  document.getElementById(type+"Section").classList.add("hidden");
+}
+
+/* ---------------- CROSS EXPERIMENT ---------------- */
+
+function updateCompareVariables(){
+  const section=document.getElementById("compareSectionSelect").value;
+  const varSelect=document.getElementById("compareVariableSelect");
+  varSelect.innerHTML=`<option value="">-- Select Variable --</option>`;
+  document.getElementById("comparePSLSubSelect").classList.add("hidden");
+  document.getElementById("compareImageTypeSelect").classList.add("hidden");
+  if(!section) return;
+
+  const firstExp=Object.keys(experiments)[0];
+  Object.keys(experiments[firstExp][section]).forEach(v=>{
+    const opt=document.createElement("option");
+    opt.value=v;
+    opt.textContent=v;
+    varSelect.appendChild(opt);
+  });
+}
+
+function updateCompareSubDropdown(){
+  const variable=document.getElementById("compareVariableSelect").value;
+  document.getElementById("comparePSLSubSelect").classList.add("hidden");
+  document.getElementById("compareImageTypeSelect").classList.add("hidden");
+
+  if(variable==="PSL"){
+    document.getElementById("comparePSLSubSelect").classList.remove("hidden");
+  }else if(variable){
+    document.getElementById("compareImageTypeSelect").classList.remove("hidden");
+  }
+}
+
+function updateCompareImageType(){
+  const sub=document.getElementById("comparePSLSubSelect").value;
+  if(sub){
+    document.getElementById("compareImageTypeSelect").classList.remove("hidden");
+  }
+}
+
+function updateCompareMosaic(){
+  clearExperimentHeading();   // 👈 add this
+
+  // ✅ clear left side
+  document.getElementById("globalCollage").innerHTML = "";
+  document.getElementById("polarCollage").innerHTML = "";
+  document.getElementById("globalSection").classList.add("hidden");
+  document.getElementById("polarSection").classList.add("hidden");
+
+  // ✅ reset experiment dropdown
+  expSelect.value = "";
+
+  const section=document.getElementById("compareSectionSelect").value;
+  const variable=document.getElementById("compareVariableSelect").value;
+  const sub=document.getElementById("comparePSLSubSelect").value;
+  const index=document.getElementById("compareImageTypeSelect").value;
+
+  if(!section||!variable||index==="") return;
+  if(variable==="PSL"&&!sub) return;
+
+  const collage=document.getElementById("compareCollage");
+  collage.innerHTML="";
+
+  Object.keys(experiments)
+    .filter(expName => expName !== "1 Simulation vs NCL")
+    .forEach(expName => {
+
+    let arr;
+    if(variable==="PSL"){
+      arr=experiments[expName][section][variable][sub];
+    }else{
+      arr=experiments[expName][section][variable];
+    }
+
+    if(!arr||!arr[index]) return;
+
+    const wrapper=document.createElement("div");
+    const label=document.createElement("div");
+    label.className="expLabel";
+    label.textContent=expName;
+
+    const img=document.createElement("img");
+    img.src=arr[index];
+    img.onerror = () => {
+        img.src = brokenImageURL;
+        img.style.width = "100%";   // make it same as collage images
+        img.style.height = "auto";  // keep aspect ratio
+    };
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(img);
+    collage.appendChild(wrapper);
+  });
+
+  document.getElementById("compareSection").classList.remove("hidden");
+}
+
+</script>
+
+</body>
+</html>

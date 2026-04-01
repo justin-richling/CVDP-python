@@ -27,15 +27,15 @@ CAPTION {text-align:left; font-size:14pt; font-weight:bold}
 <li class="list-inline-item"><a href="http://dx.doi.org/10.5065/h7c7-f961">User's Guide</a></li><br>
 <li class="list-inline-item">Metrics: <a href="metrics.ensemble.pc.html">Graphics</a> | <a href="metrics.table_0E.html">Ensemble Tables</a> | 
 <li class="list-inline-item">Namelists: <a href="namelist_obs.html">Input</a> | <a href="namelist_msftmz.html">Derived</a></li>
-<li class="list-inline-item">Created: {{ create_time }}<br>CVDP-LE Version 0.0.1</li>
-<li class="list-inline-item"><b>Ensemble Summary</b> | <a href="index_indmem.html">Individual Members</a></li>
-<li class="list-inline-item"><a href="ncl_compare_index.html">Comparisons to NCL Output</a></li>
+<li class="list-inline-item">Created: {{ create_time }} UTC<br>CVDP-Python Version 0.0.1</li>
+<li class="list-inline-item"><a href="index.html">Python Ensemble Summary</a>| <a href="indmem_index.html">Python Individual Members</a></li>
+<li class="list-inline-item"><b>NCL Comparison Ensemble Summary</b> | <a href="ncl_compare_indmem_index.html">NCL Comparison Individual Members</a></li>
 </ul></td>
 </tr>
 </table>
 </div>
 <div class="col align-self-center">
-<h2 class="text-center">Python Images</h2>
+<h2 class="text-center">Python-NCL Generated Images Comparison</h2>
 </div>
 </div>
 <div class="row">
@@ -64,17 +64,81 @@ CAPTION {text-align:left; font-size:14pt; font-weight:bold}
 </tr>
 <tr class="d-flex">
 <td class="col"><b>PSL</b></td>
-<!--<td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_djf.summary.png') }}'); return false;">DJF</a></td>-->
-<td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_djf.summary.png') }}'); return false;">DJF</a></td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_djf.summary.png') }}',
+'https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/psl_spatialmean_djf.summary.png'
+); return false;">
+DJF
+</a>
+</td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_jfm.summary.png') }}',
+'https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/psl_spatialmean_jfm.summary.png'
+); return false;">
+JFM
+</a>
+</td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_mam.summary.png') }}',
+'https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/psl_spatialmean_mam.summary.png'
+); return false;">
+MAM
+</a>
+</td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_jja.summary.png') }}',
+'{{ncl_plot_loc}}/psl_spatialmean_jja.summary.png'
+); return false;">
+JJA
+</a>
+</td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_jas.summary.png') }}',
+'https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/psl_spatialmean_jas.summary.png'
+); return false;">
+JAS
+</a>
+</td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_son.summary.png') }}',
+'https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/psl_spatialmean_son.summary.png'
+); return false;">
+SON
+</a>
+</td>
+<td class="col">
+<a href="#"
+onclick="showImage(
+'{{ img('psl_spatialmean_ann.summary.png') }}',
+'https://project.cgd.ucar.edu/projects/ADF/cvdp-python/run_examples/ncl_plots/psl_spatialmean_ann.summary.png'
+); return false;">
+ANN
+</a>
+</td>
+<!--<td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_djf.summary.png') }}'); return false;">DJF</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_jfm.summary.png') }}'); return false;">JFM</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_mam.summary.png') }}'); return false;">MAM</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_jja.summary.png') }}'); return false;">JJA</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_jas.summary.png') }}'); return false;">JAS</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_son.summary.png') }}'); return false;">SON</a></td>
-<td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_ann.summary.png') }}'); return false;">ANN</a></td>
+<td class="col"><a href="#" onclick="showImage('{{ img('psl_spatialmean_ann.summary.png') }}'); return false;">ANN</a></td>-->
+
 </tr>
 <tr class="d-flex">
 <td class="col"><b>PR</b></td>
+<!--<td class="col"><a href="#" onclick="showImage('{{ img('pr_spatialmean_djf.summary.png') }}'); return false;">DJF</a></td>-->
 <td class="col"><a href="#" onclick="showImage('{{ img('pr_spatialmean_djf.summary.png') }}'); return false;">DJF</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('pr_spatialmean_jfm.summary.png') }}'); return false;">JFM</a></td>
 <td class="col"><a href="#" onclick="showImage('{{ img('pr_spatialmean_mam.summary.png') }}'); return false;">MAM</a></td>
@@ -213,13 +277,14 @@ CAPTION {text-align:left; font-size:14pt; font-weight:bold}
 </tr>
 <tr class="d-flex">
 <td class="col"><b>NPI</b></td>
+<!--<td class="col"><a href="#" onclick="showImage('{{ img('npi_pattern_ndjfm.summary.png') }}'); return false;">NDJFM</a></td>-->
 <td class="col"><a href="#" onclick="showImage('{{ img('npi_pattern_ndjfm.summary.png') }}'); return false;">NDJFM</a></td>
-<td class="col"><a href="#"></a></td>
-<td class="col"><a href="#"></a></td>
-<td class="col"><a href="#"></a></td>
-<td class="col"><a href="#"></a></td>
-<td class="col"><a href="#"></a></td>
-<td class="col"><a href="#"></a></td>
+<td class="col"><a href=""></a></td>
+<td class="col"><a href=""></a></td>
+<td class="col"><a href=""></a></td>
+<td class="col"><a href=""></a></td>
+<td class="col"><a href=""></a></td>
+<td class="col"><a href=""></a></td>
 </tr>
 <tr class="d-flex">
 <td class="col"><b>SIC NH</b></td>
@@ -584,12 +649,17 @@ PR</td>
 
 
 <!-- Image Popup Modal -->
+<!--<div id="imgModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="popupImg">
+</div>-->
 
 <div id="imgModal" class="modal">
   <span class="close">&times;</span>
 
   <div class="modal-content-container">
-      <img class="popupImg" id="popupImg">
+      <img class="popupImg" id="popupImg1">
+      <img class="popupImg" id="popupImg2">
   </div>
 </div>
 
@@ -624,6 +694,21 @@ PR</td>
   cursor: pointer;
 }
 
+/*    Side by side      */
+/*.modal-content-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: auto;
+  max-width: 95%;
+}*/
+
+/*.popupImg {
+  max-width: 45%;
+  max-height: 85vh;
+  cursor: pointer;
+}*/
+
 .modal-content-container {
   display: flex;
   flex-direction: column;
@@ -637,21 +722,37 @@ PR</td>
   max-height: 80vh;
   cursor: pointer;
 }
+
 </style>
 
 
 <script>
 
-function showImage(src) {
+function showImage(src1, src2=null) {
 
     const modal = document.getElementById("imgModal");
-    const modalImg = document.getElementById("popupImg");
+    const img1 = document.getElementById("popupImg1");
+    const img2 = document.getElementById("popupImg2");
 
     modal.style.display = "block";
-    modalImg.src = src;
 
-    modalImg.onclick = function() {
-        window.open(src, "_blank");
+    img1.src = src1;
+    img1.style.display = "block";
+
+    img1.onclick = function() {
+        window.open(src1, "_blank");
+    }
+
+    if(src2){
+        img2.src = src2;
+        img2.style.display = "block";
+
+        img2.onclick = function() {
+            window.open(src2, "_blank");
+        }
+
+    } else {
+        img2.style.display = "none";
     }
 }
 
