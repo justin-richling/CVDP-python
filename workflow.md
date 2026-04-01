@@ -174,16 +174,16 @@ python cli.py -c test_config_yamls/example_config_4_ens_1_solo.yaml 4_ens_1_solo
 1) File I/O -> `file_io.get_input_data()`
 
     input(s)
-    * config yaml file ie `example_config.yaml`
+    * config yaml file ie `example_config.yaml` -> done at command line 
 
     returns
-    * `ref_datasets`: list of xarray dataArrays<br>
-    * `sim_datasets`: list of xarray dataArrays<br>
-    * `config_dict`: dict chocked full of good meta and actaul data, probably needs some love<br>
+    * `ref_datasets`: list of xarray dataArrays
+    * `sim_datasets`: list of xarray dataArrays
+    * `config_dict`: dict chocked full of good meta and actaul data, probably needs some love
 
 2) Loop over variables and create graphics
 
-    2) a. -> `diag.AtmOcnMean.get_run_dict()`
+    a. -> `diag.AtmOcnMean.get_run_dict()`
 
         input(s) 
         * `vn`: variable name
@@ -197,7 +197,7 @@ python cli.py -c test_config_yamls/example_config_4_ens_1_solo.yaml 4_ens_1_solo
         returns
         * `kwargs`: dict of keyword args; probably needs some love. Combine with `config_dict`... No.
 
-    2) b. -> `vis.AtmOcnGR.graphics()`
+    b. -> `vis.AtmOcnGR.graphics()`
         input(s)
         * `plot_loc`: str saved plot location
         * `plot_dict`: dict of plotting details
@@ -208,4 +208,46 @@ python cli.py -c test_config_yamls/example_config_4_ens_1_solo.yaml 4_ens_1_solo
 
 3) Generate webpages -> `cvdp_utils.web.generate_webpages()`
 
-2) b.
+
+#### `file_io.get_input_data()`
+
+Basically reads in all the input files, and cleans then to an extent. It also resoves paths and sets defualts, conversions, and returns list of xarray dataArrays
+
+Has some code built by AI, go back through and make sure it is up to code and that it fits with our workflow/structure.
+
+* it does introduce logging, with is good.
+
+Note: This will be reworked by Cameron and/or Adam
+
+#### `diag.AtmOcnMean.get_run_dict()`
+
+This will grab datasets and run names and build out a dictionary to house all this info to keep everything straight.
+
+It works on ensembles, so it keeps track of the numbers, and other metadata as well.
+
+This dictionary then is fed into the graphics method `vis.AtmOcnGR.graphics()`
+
+#### `vis.AtmOcnGR.graphics()`
+
+Heavy lifting of the plotting scripts. Broken into 3 (2 working right now) plotting categories
+
+1) Global
+
+2) Polar
+
+3) Timeseries (working, but not up to the level of the new refactoring yet)
+
+For the spatial plots, there are 3 sub plotting groups:
+
+Spatial mean, spatial mean standard deviation, and trends. For each of those types are plots:
+* summary - sim (or ensemble mean)  |  ref (or ensemble mean??)  |  diff  |  Rank (not working)
+* individual members - "postage stamp" plots
+* individual member differences from reference(s) - "postage stamp" plots
+
+There are several helper functions in this script.
+
+graphics -> main one called in `cli.py`
+plot_worker
+get_plot_title
+get_plot_name
+plot_dispatch -> queues up the plotting setails for each plot, then calls the plotting scripts, `vis.global_plots` and `vis.polar_plots`
