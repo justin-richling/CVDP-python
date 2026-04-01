@@ -376,7 +376,7 @@ def global_indmem_latlon_plot(vn, arrs, plot_dict, title, ptype):
     #hgt  = PANEL_H + (PANEL_H/2 * (nrows-1)) #PANEL_H * nrows #13
     hgt  = PANEL_H * nrows #10
 
-    print("\n\nhgt,wdth",hgt,wdth)
+    #print("\n\nhgt,wdth",hgt,wdth)
 
     ew_fontsize=8
     title_fontsize = 14
@@ -682,7 +682,7 @@ def global_indmemdiff_latlon_plot(vn, arrs, plot_dict, title, ptype):
     #hgt  = PANEL_H + (PANEL_H/2 * (nrows-1)) #PANEL_H * nrows #13
     hgt  = PANEL_H * nrows #10
 
-    print("\n\nindmemdiff hgt,wdth",hgt,wdth)
+    #print("\n\nindmemdiff hgt,wdth",hgt,wdth)
 
     ew_fontsize=8
     title_fontsize = 14
